@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.vercel/
+.env
+.env.*
+!.env.example
+.DS_Store
+test-results/
+playwright-report/
+
+# Carpetas de trabajo local, no se publican
+Claude outputs/
+.design-backups/
+public-preview/
+aisolutionsblue/

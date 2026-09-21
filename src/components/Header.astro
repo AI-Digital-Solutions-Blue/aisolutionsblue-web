@@ -1,0 +1,40 @@
+---
+import Icon from './Icon.astro';
+const { home = false } = Astro.props;
+const prefix = home ? '' : '/';
+---
+
+<header class="site-header">
+  <div class="header-inner shell">
+    <a class="brand" href="/" aria-label="Blue — inicio">
+      <img
+        src="/assets/logo.webp"
+        alt="AI Digital Solutions Blue"
+        width="1016"
+        height="472"
+        fetchpriority="high"
+      />
+    </a>
+    <nav id="main-navigation" aria-label="Navegación principal">
+      <a href={`${prefix}#soluciones`}>Soluciones</a>
+      <a href={`${prefix}#proyectos`}>Productos</a>
+      <a href={`${prefix}#nosotros`}>Así es Blue</a>
+      <a
+        class="nav-contact"
+        href="/contacto"
+        aria-current={Astro.url.pathname.replace(/\/$/, '') === '/contacto' ? 'page' : undefined}
+      >
+        Hablemos <Icon name="diagonal" size={17} />
+      </a>
+    </nav>
+    <button
+      class="menu-toggle"
+      aria-expanded="false"
+      aria-controls="main-navigation"
+      aria-label="Abrir menú"
+    >
+      <Icon name="menu" />
+      <Icon name="close" />
+    </button>
+  </div>
+</header>

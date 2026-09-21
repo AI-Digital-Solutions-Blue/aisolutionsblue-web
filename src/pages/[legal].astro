@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import pages from '../data/legal.json';
+export function getStaticPaths() {
+  return pages.map((page) => ({ params: { legal: page.slug }, props: { page } }));
+}
+const { page } = Astro.props;
+---
+
+<Layout
+  title={`${page.title} · Blue`}
+  description={`Información de ${page.title.toLowerCase()} de AI Digital Solutions Blue, S.L.`}
+>
+  <Header />
+  <main id="main" class="legal-main shell">
+    <div class="legal-content">
+      <a class="text-link" href="/">
+        ← Volver a Blue
+      </a>
+      <div set:html={page.html} />
+    </div>
+  </main>
+  <Footer />
+</Layout>

@@ -1,0 +1,163 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import HeroScene from '../components/HeroScene.astro';
+import Project from '../components/Project.astro';
+import ClosingCTA from '../components/ClosingCTA.astro';
+import { projects } from '../data/site';
+---
+
+<Layout>
+  <Header home />
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid" aria-hidden="true">
+        <canvas data-dot-grid></canvas>
+      </div>
+      <div class="shell hero-layout">
+        <div class="hero-copy">
+          <div class="eyebrow hero-eyebrow">SOLUCIONES A MEDIDA. IMPACTO REAL.</div>
+          <h1 id="hero-title">
+            <span class="hero-title-line">Inteligencia artificial</span>{' '}
+            <span class="hero-emphasis hero-title-line">para hacer crecer tu negocio.</span>
+          </h1>
+          <p class="hero-description">
+            Atiende mejor a tus clientes, automatiza tareas y dedica más tiempo a lo que importa.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-blue" href="/contacto">
+              Hablemos de tu negocio <Icon name="diagonal" size={19} />
+            </a>
+            <a class="hero-secondary" href="#proyectos">
+              Descubre lo que hacemos <Icon name="arrow" size={18} />
+            </a>
+          </div>
+        </div>
+        <div
+          class="product-universe"
+          data-product-universe
+          aria-label="Productos desarrollados por Blue"
+        >
+          <div class="universe-horizon" aria-hidden="true"></div>
+          {projects.map((project, i) => (
+            <a href={`#${project.id}`} class={`universe-product universe-product-${i}`}>
+              <div class="universe-caption">
+                <span>{project.name}</span>
+                <Icon name="diagonal" size={17} />
+              </div>
+              <img
+                src={project.images[0]}
+                alt={project.alts[0]}
+                width="1200"
+                height={project.id === 'tumesaya' ? '800' : '900'}
+                loading="eager"
+                decoding="async"
+              />
+              <div class="universe-category">
+                {project.category}
+                <span>0{i + 1}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+        <p class="mobile-product-hint">
+          <span>Desliza para explorar nuestros productos</span>
+          <span aria-hidden="true">↔</span>
+        </p>
+        <div class="hero-bottom">
+          <span>TECNOLOGÍA A MEDIDA. POSIBILIDADES REALES.</span>
+          <a href="#soluciones">
+            Explora Blue <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+      </div>
+    </section>
+    <section class="intelligence-section" id="soluciones" aria-labelledby="intelligence-title">
+      <div class="intelligence-grid" aria-hidden="true"></div>
+      <div class="intelligence-glow" data-signal-ambient aria-hidden="true"></div>
+      <div class="shell">
+        <div class="intelligence-heading">
+          <span class="eyebrow">BLUE, EN ACCIÓN</span>
+          <h2 id="intelligence-title">
+            Menos tareas.
+            <br />
+            <span>Más posibilidades.</span>
+          </h2>
+          <p>
+            Conectamos inteligencia artificial y automatización con los procesos de tu negocio.
+            Soluciones a medida para trabajar mejor.
+          </p>
+        </div>
+        <HeroScene />
+      </div>
+    </section>
+
+    <section class="projects-section section-space" id="proyectos" aria-labelledby="projects-title">
+      <div class="shell">
+        <div class="section-heading products-intro">
+          <h2 id="projects-title">Nuestros productos.</h2>
+          <p>Tres formas de simplificar el trabajo.</p>
+        </div>
+      </div>
+      <div class="projects-list">
+        {projects.map((project) => (
+          <Project project={project} />
+        ))}
+      </div>
+    </section>
+
+    <section class="about-section section-space" id="nosotros" aria-labelledby="about-title">
+      <div class="shell">
+        <div class="about-intro">
+          <div class="about-heading">
+            <h2 id="about-title">
+              Tecnología que conecta.
+              <br />
+              <span class="blue-text">Negocios que avanzan.</span>
+            </h2>
+            <p>
+              Desde Las Palmas de Gran Canaria, diseñamos y desarrollamos soluciones de IA a medida.
+              Escuchamos tu reto, definimos una propuesta y la ponemos en marcha contigo.
+            </p>
+          </div>
+          <figure class="about-photo">
+            <img
+              src="/assets/blue-computer.webp"
+              alt="Uso de un portátil y un teléfono para organizar el trabajo digital"
+              width="1016"
+              height="572"
+              loading="lazy"
+            />
+            <figcaption>
+              Herramientas conectadas con la forma de trabajar de cada negocio.
+            </figcaption>
+          </figure>
+        </div>
+        <div class="affiliations">
+          <span>DESDE CANARIAS, CON VISIÓN DE FUTURO.</span>
+          <div>
+            <img
+              src="/assets/logos/canarias-zec.webp"
+              width="410"
+              height="95"
+              alt="Canarias ZEC"
+              loading="lazy"
+            />
+            <img
+              src="/assets/logos/acelera.webp"
+              width="150"
+              height="57"
+              alt="Acelera Pyme"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <ClosingCTA />
+  </main>
+  <Footer />
+</Layout>

@@ -1,0 +1,9 @@
+node_modules
+dist
+.astro
+aisolutionsblue
+public/assets
+src/data/legal.json
+package-lock.json
+
+.design-backups

@@ -1,0 +1,83 @@
+---
+import { company } from '../data/site';
+import Icon from './Icon.astro';
+---
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-top">
+      <a class="brand footer-brand" href="/" aria-label="Blue — inicio">
+        <img
+          src="/assets/logo.webp"
+          alt="AI Digital Solutions Blue"
+          width="1016"
+          height="472"
+          loading="lazy"
+        />
+      </a>
+      <address class="footer-address">
+        C. Juan Rejón, 67, 35008 Las Palmas de Gran Canaria, Las Palmas
+      </address>
+      <div class="footer-social">
+        <a
+          href="https://www.linkedin.com/company/ai-digital-solutions-blue/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn (nueva pestaña)"
+        >
+          <Icon name="linkedin" size={22} />
+        </a>
+        <a
+          href="https://www.instagram.com/aisolutionsblue/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram (nueva pestaña)"
+        >
+          <Icon name="instagram" size={22} />
+        </a>
+        <a
+          href="https://www.facebook.com/aidigitalsolutionsblue"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook (nueva pestaña)"
+        >
+          <Icon name="facebook" size={22} />
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>
+        © {new Date().getFullYear()} {company.name}
+      </span>
+      <nav aria-label="Información legal">
+        <a href="/privacy-policy">Privacidad</a>
+        <a href="/terms-and-conditions">Aviso legal</a>
+        <a href="/cookies">Cookies</a>
+        <a href="/cancel-policy">Cancelaciones</a>
+        <a href="/return-policy">Reembolsos</a>
+      </nav>
+      <a href="#top" class="back-top" aria-label="Volver al inicio de la página">
+        Volver arriba ↑
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-address {
+    max-width: 30rem;
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    font-style: normal;
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+
+  @media (max-width: 640px) {
+    .footer-address {
+      order: 3;
+      flex-basis: 100%;
+    }
+  }
+</style>

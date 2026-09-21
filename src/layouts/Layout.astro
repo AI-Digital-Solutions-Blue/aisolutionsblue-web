@@ -1,0 +1,96 @@
+---
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/dm-sans';
+import '../styles/global.css';
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Blue · Inteligencia artificial para impulsar tu negocio',
+  description = 'IA y automatización a medida para tu negocio. Atención al cliente, procesos conectados y soluciones para trabajar mejor.',
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'AI Digital Solutions Blue, S.L.',
+  url: Astro.site?.href,
+  logo: new URL('/assets/logo.webp', Astro.site).href,
+  email: 'marketing@aisolutionsblue.com',
+  telephone: '+34886020705',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Calle Carvajal 26',
+    postalCode: '35004',
+    addressLocality: 'Las Palmas de Gran Canaria',
+    addressCountry: 'ES',
+  },
+  sameAs: [
+    'https://www.linkedin.com/company/ai-digital-solutions-blue/',
+    'https://www.instagram.com/aisolutionsblue/',
+  ],
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f9fc" />
+    <meta name="color-scheme" content="light" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/assets/aisolutionsblue-favicon.ico" sizes="16x16" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content="AI Digital Solutions Blue" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/assets/blue-computer.webp', Astro.site)} />
+    <meta
+      property="og:image:alt"
+      content="AI Digital Solutions Blue — tecnología para tu negocio"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">
+      Saltar al contenido
+    </a>
+    <noscript>
+      <style is:inline>
+        .gallery-arrows,
+        .mobile-product-hint {
+          display: none;
+        }
+        @media (max-width: 640px) {
+          .header-inner {
+            height: auto;
+            min-height: 72px;
+            flex-wrap: wrap;
+            padding-top: 12px;
+          }
+          .site-header nav {
+            position: static;
+            display: flex;
+            flex-basis: 100%;
+            padding: 12px 0;
+            border: 0;
+          }
+          .menu-toggle {
+            display: none;
+          }
+        }
+      </style>
+    </noscript>
+    <slot />
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

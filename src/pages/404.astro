@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Página no encontrada · Blue">
+  <Header />
+  <main id="main" class="error-page shell">
+    <span class="eyebrow" style="justify-content:center">
+      NOS HEMOS SALIDO DEL CAMINO
+    </span>
+    <h1>404</h1>
+    <h2>Volvamos a conectar.</h2>
+    <p>La página que buscas no está disponible.</p>
+    <a class="button button-blue" href="/">
+      Volver al inicio ↗
+    </a>
+  </main>
+  <Footer />
+</Layout>

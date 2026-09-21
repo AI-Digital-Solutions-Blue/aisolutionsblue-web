@@ -1,0 +1,39 @@
+---
+import Icon from './Icon.astro';
+---
+
+<div class="hero-scene" role="group" aria-label="Cómo ayudamos con IA y automatización">
+  <div class="scene-panel">
+    <div class="signal-flow" data-signal>
+      <ol class="flow-steps">
+        <li class="flow-step">
+          <span class="flow-node" aria-hidden="true">
+            <Icon name="voice" size={20} />
+          </span>
+          <div class="flow-copy">
+            <span class="flow-label">01 · ATENCIÓN INTELIGENTE</span>
+            <p>Responde consultas y acompaña a tus clientes.</p>
+          </div>
+        </li>
+        <li class="flow-step">
+          <span class="flow-node flow-node-blue" aria-hidden="true">
+            <Icon name="connections" size={20} />
+          </span>
+          <div class="flow-copy">
+            <span class="flow-label">02 · PROCESOS CONECTADOS</span>
+            <p>Automatiza tareas y organiza la información.</p>
+          </div>
+        </li>
+        <li class="flow-step">
+          <span class="flow-node" aria-hidden="true">
+            <Icon name="check" size={20} />
+          </span>
+          <div class="flow-copy">
+            <span class="flow-label">03 · TIEMPO PARA AVANZAR</span>
+            <p class="flow-result">Libera a tu equipo para centrarse en lo que importa.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>

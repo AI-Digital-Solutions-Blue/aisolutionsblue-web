@@ -1,0 +1,127 @@
+---
+import Icon from './Icon.astro';
+import { company } from '../data/site';
+import { CONTACT_INTERESTS } from '../lib/contact';
+---
+
+<section class="contact-section section-space" id="contacto" aria-labelledby="contact-title">
+  <div class="shell contact-layout">
+    <div class="contact-copy">
+      <h1 id="contact-title">
+        Cuéntanos qué
+        <br />
+        <span class="blue-text">necesitas hacer posible.</span>
+      </h1>
+    </div>
+    <form
+      class="contact-form"
+      action="/api/contact"
+      method="POST"
+      aria-labelledby="contact-title"
+      data-contact-form
+    >
+      <h2 class="form-title">Empecemos.</h2>
+      <p class="form-intro">Déjanos tus datos y te contactaremos.</p>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="name">
+            Tu nombre <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="name"
+            name="name"
+            autocomplete="name"
+            placeholder="Nombre y apellidos"
+            required
+            minlength="2"
+            maxlength="100"
+          />
+        </div>
+        <div class="form-field">
+          <label for="email">
+            Email <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="tu@negocio.com"
+            required
+            maxlength="254"
+          />
+        </div>
+        <div class="form-field">
+          <label for="phone">
+            Teléfono <span class="optional">(opcional)</span>
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
+            placeholder="Tu teléfono de contacto"
+            maxlength="30"
+          />
+        </div>
+        <div class="form-field">
+          <label for="interest">
+            ¿En qué podemos ayudarte? <span aria-hidden="true">*</span>
+          </label>
+          <select id="interest" name="interest" required>
+            <option value="" disabled selected>
+              Selecciona una opción
+            </option>
+            {CONTACT_INTERESTS.map((option) => (
+              <option value={option}>{option}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="message">
+          ¿Qué te gustaría mejorar? <span aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          rows="4"
+          required
+          minlength="10"
+          maxlength="3000"
+          placeholder="Cuéntanos un poco sobre tu negocio y lo que necesitas…"
+        ></textarea>
+      </div>
+      <div class="form-trap" aria-hidden="true">
+        <label for="website">Deja este campo vacío</label>
+        <input id="website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+      <label class="consent-label">
+        <input type="checkbox" name="consent" required value="yes" />
+        <span>
+          He leído y acepto la{' '}
+          <a href="/privacy-policy" target="_blank" rel="noopener">
+            política de privacidad<span class="sr-only"> (nueva pestaña)</span>
+          </a>{' '}
+          y los{' '}
+          <a href="/terms-and-conditions" target="_blank" rel="noopener">
+            términos y condiciones<span class="sr-only"> (nueva pestaña)</span>
+          </a>
+          .
+        </span>
+      </label>
+      <button type="submit" class="button button-blue form-submit">
+        <span data-submit-label>Hablemos de tu proyecto</span>
+        <Icon name="diagonal" size={20} />
+      </button>
+      <p class="form-note">
+        Los campos con * son obligatorios. Usaremos tus datos para atender tu consulta.
+      </p>
+      <div class="form-status" tabindex="-1" role="status" aria-live="polite" hidden></div>
+    </form>
+    <div class="direct-contact">
+      <a href={`mailto:${company.email}`}>{company.email}</a>
+      <span>Desde Las Palmas de Gran Canaria.</span>
+    </div>
+  </div>
+</section>

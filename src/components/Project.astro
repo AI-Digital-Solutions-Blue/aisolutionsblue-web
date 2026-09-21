@@ -1,0 +1,111 @@
+---
+import Icon from './Icon.astro';
+import type { projects } from '../data/site';
+import { showcases } from '../data/showcases';
+import '../styles/showcase.css';
+interface Props {
+  project: (typeof projects)[number];
+}
+const { project } = Astro.props;
+const story = showcases[project.id];
+const slides = [
+  ...story.views,
+  ...project.images.map((image, index) => ({
+    image,
+    alt: project.alts[index],
+    caption: project.alts[index],
+    icon: project.id === 'tumesaya' ? 'restaurant' : 'connections',
+    kind: 'device',
+  })),
+].filter((slide, index, all) => all.findIndex((item) => item.image === slide.image) === index);
+---
+
+<article class={`product-showcase showcase-${project.id}`} id={project.id} data-showcase>
+  <div class="shell showcase-layout">
+    <div class="showcase-copy">
+      <h3 class="showcase-name">{project.name}</h3>
+      <p class="showcase-headline">{story.headline}</p>
+      <p class="showcase-description">{story.description}</p>
+      <a href={project.website} class="showcase-link" target="_blank" rel="noopener noreferrer">
+        Visitar web <Icon name="diagonal" size={18} />
+        <span class="sr-only"> de {project.name} (nueva pestaña)</span>
+      </a>
+    </div>
+    <div
+      class="showcase-explorer"
+      role="region"
+      aria-roledescription="carrusel"
+      aria-label={`Imágenes de ${project.name}`}
+      data-carousel
+    >
+      <div class="showcase-stage" aria-live="off">
+        {slides.map((view, index) => (
+          <figure
+            class={`showcase-panel showcase-panel-${view.kind}`}
+            id={`${project.id}-view-${index}`}
+            role="group"
+            aria-roledescription="diapositiva"
+            aria-label={`${index + 1} de ${slides.length}`}
+            aria-hidden={index !== 0 ? 'true' : 'false'}
+            data-slide
+            hidden={index !== 0}
+          >
+            <div class="showcase-picture">
+              <img
+                src={view.image}
+                alt={view.alt}
+                width="1302"
+                height="800"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <figcaption>
+              <span>{view.caption}</span>
+              <Icon name={view.icon} size={20} />
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <div class="showcase-carousel-controls" hidden>
+        <span class="showcase-carousel-count" aria-hidden="true">
+          <span data-slide-count>01</span> / {String(slides.length).padStart(2, '0')}
+        </span>
+        <div class="showcase-carousel-buttons">
+          <button
+            type="button"
+            data-carousel-prev
+            aria-label={`Imagen anterior de ${project.name}`}
+          >
+            <Icon name="arrow" size={17} />
+          </button>
+          <button
+            type="button"
+            data-carousel-next
+            aria-label={`Siguiente imagen de ${project.name}`}
+          >
+            <Icon name="arrow" size={17} />
+          </button>
+        </div>
+      </div>
+      <p class="sr-only" data-carousel-status role="status"></p>
+    </div>
+    <ul class="showcase-benefits" aria-label={`Funciones de ${project.name}`}>
+      {story.benefits.map((benefit) => (
+        <li>
+          <span class="showcase-benefit-icon">
+            <Icon name={benefit.icon} size={20} />
+          </span>
+          <div>
+            <h4>{benefit.title}</h4>
+            <p>{benefit.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</article>
+
+<script>
+  import '../scripts/showcase';
+</script>

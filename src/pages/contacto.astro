@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Contact from '../components/Contact.astro';
+---
+
+<Layout
+  title="Hablemos de tu negocio · Blue"
+  description="Cuéntanos qué necesitas hacer posible. Hablemos de cómo la inteligencia artificial puede ayudar a crecer a tu negocio."
+>
+  <Header />
+  <main id="main" class="contact-page">
+    <Contact />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .contact-page :global(.contact-section) {
+    min-height: calc(100svh - 90px);
+    padding-block: clamp(52px, 7vw, 100px);
+  }
+  @media (max-width: 700px) {
+    .contact-page :global(.contact-section) {
+      padding-block: 42px 56px;
+    }
+  }
+</style>
