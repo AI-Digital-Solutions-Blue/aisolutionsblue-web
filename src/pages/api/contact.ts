@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import process from 'node:process';
-import { Resend } from 'resend';
-import { contactEmail, createRateLimiter, validateContact } from '../../lib/contact';
+import { contactEmail, createRateLimiter, parseSender, validateContact } from '../../lib/contact';
 
 export const prerender = false;
 const allowRequest = createRateLimiter();
@@ -66,9 +65,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (form.get('website')) return respond(request, 200, 'Solicitud recibida.');
   const validation = validateContact(form);
   if (!validation.ok) return respond(request, 400, validation.message);
-  const apiKey = process.env.RESEND_API_KEY || import.meta.env.RESEND_API_KEY;
+  const apiKey = process.env.BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
   const from = process.env.CONTACT_FROM || import.meta.env.CONTACT_FROM;
-  if (!apiKey || !from)
+  const sender = from ? parseSender(from) : null;
+  if (!apiKey || !sender)
     return respond(request, 503, 'El formulario no está disponible en este momento.');
   if (!allowRequest(clientAddress || 'unknown'))
     return respond(
@@ -76,13 +76,40 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       429,
       'Has enviado varias consultas. Espera unos minutos antes de intentarlo de nuevo.',
     );
+  const message = contactEmail(validation.data);
   try {
-    const resend = new Resend(apiKey);
-    const { data, error } = await resend.emails.send(
-      { from, ...contactEmail(validation.data) },
-      { idempotencyKey: `blue-contact/${validation.data.requestId}` },
-    );
-    if (error || !data?.id)
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    let response: Response;
+    try {
+      response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': apiKey,
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          sender,
+          to: message.to.map((email) => ({ email })),
+          replyTo: { email: message.replyTo },
+          subject: message.subject,
+          textContent: message.text,
+          headers: { 'X-Blue-Request-Id': validation.data.requestId },
+        }),
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+    if (!response.ok)
+      return respond(
+        request,
+        502,
+        'No se ha podido confirmar el envío. Inténtalo de nuevo en unos minutos.',
+      );
+    const result = (await response.json().catch(() => null)) as { messageId?: string } | null;
+    if (!result?.messageId)
       return respond(
         request,
         502,

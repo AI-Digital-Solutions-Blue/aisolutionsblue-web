@@ -1,8 +1,19 @@
 export const CONTACT_RECIPIENTS = [
   'alejandro.guerra@aisolutionsblue.com',
   'cristian.urien@aisolutionsblue.com',
-  'pablo.gonzalez@siweb.es',
+  'pablo.gonzalez@aisolutionsblue.com',
+  'marketing@aisolutionsblue.com',
 ] as const;
+
+// "Blue <marketing@aisolutionsblue.com>" o "marketing@aisolutionsblue.com"
+export function parseSender(value: string): { email: string; name?: string } | null {
+  const match = value.trim().match(/^(?:(.*?)\s*<\s*([^<>\s]+@[^<>\s]+)\s*>|([^<>\s]+@[^<>\s]+))$/);
+  if (!match) return null;
+  const email = (match[2] || match[3] || '').trim();
+  const name = (match[1] || '').trim().replace(/^"|"$/g, '');
+  if (!email) return null;
+  return name ? { email, name } : { email };
+}
 
 export const CONTACT_INTERESTS = [
   'Atención al cliente con IA',

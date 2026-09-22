@@ -4,6 +4,7 @@ import {
   CONTACT_RECIPIENTS,
   contactEmail,
   createRateLimiter,
+  parseSender,
   validateContact,
 } from '../src/lib/contact';
 
@@ -62,7 +63,8 @@ test('el visitante no puede cambiar los destinatarios y el mensaje se envía com
   assert.deepEqual(email.to, [
     'alejandro.guerra@aisolutionsblue.com',
     'cristian.urien@aisolutionsblue.com',
-    'pablo.gonzalez@siweb.es',
+    'pablo.gonzalez@aisolutionsblue.com',
+    'marketing@aisolutionsblue.com',
   ]);
   assert.deepEqual(email.to, CONTACT_RECIPIENTS);
   assert.equal(email.replyTo, 'maria@example.com');
@@ -98,4 +100,15 @@ test('el limitador conserva memoria acotada y libera entradas caducadas', () => 
   assert.equal(allow('b', 0), true);
   assert.equal(allow('c', 10), false);
   assert.equal(allow('c', 1001), true);
+});
+
+test('interpreta el remitente con y sin nombre, y rechaza valores invalidos', () => {
+  assert.deepEqual(parseSender('Blue <marketing@aisolutionsblue.com>'), {
+    email: 'marketing@aisolutionsblue.com',
+    name: 'Blue',
+  });
+  assert.deepEqual(parseSender('  marketing@aisolutionsblue.com  '), {
+    email: 'marketing@aisolutionsblue.com',
+  });
+  for (const value of ['', 'sin-arroba', 'Blue <sin-arroba>']) assert.equal(parseSender(value), null);
 });
