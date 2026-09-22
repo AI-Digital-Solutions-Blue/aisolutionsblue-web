@@ -32,13 +32,16 @@ crea como `TXT`.
 | `autoconfig` | `82.98.145.51` | Configuracion automatica de clientes de correo |
 | `autodiscover` | `82.98.145.60` | Configuracion automatica en Outlook |
 
-### CNAME (3)
+### CNAME (6)
 
 | Host | Valor | Para que sirve |
 | --- | --- | --- |
 | `www` | `dc1e90f2facf0683.vercel-dns-017.com.` | Redirige al dominio raiz, en Vercel |
 | `brevo1._domainkey` | `b1.aisolutionsblue-com.dkim.brevo.com.` | Firma DKIM de Brevo |
 | `brevo2._domainkey` | `b2.aisolutionsblue-com.dkim.brevo.com.` | Firma DKIM de Brevo |
+| `em` | `em-aisolutionsblue-com.brand.brevosend.com.` | Subdominio con marca de Brevo |
+| `r.em` | `em-aisolutionsblue-com.r.brand.brevosend.com.` | Redirecciones de enlaces de Brevo |
+| `img.em` | `em-aisolutionsblue-com.img.brand.brevosend.com.` | Imagenes de los correos de Brevo |
 
 ### MX (1)
 
@@ -46,7 +49,7 @@ crea como `TXT`.
 | --- | --- | --- |
 | `@` | 10 | `mail.aisolutionsblue.com.` |
 
-### TXT (8)
+### TXT (9)
 
 | Host | Valor |
 | --- | --- |
@@ -55,12 +58,23 @@ crea como `TXT`.
 | `@` | `google-site-verification=P0cEljgFozUFI-H3Ea6YcCV94YDPFSV2z507khoL6nI` |
 | `@` | `brevo-code:a94de9187dd9a26cbc5b6d508761df62` |
 | `@` | `brevo-code:82b5b003613555f3cb2e36f8cd924d03` |
+| `@` | `brevo-code:ac32671fe690aaaceb5bfea4f45dd2b7` |
+
 | `_dmarc` | `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com` |
 | `_twilio` | `twilio-domain-verification=00dcbec05cd6cb850b1cfeeb70b4f2fc` |
 | `mail._domainkey` | `k=rsa;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDeMVIzrCa3T14JsNY0IRv5/2V1/v2itlviLQBwXsa7shBD6TrBkswsFUToPyMRWC9tbR/5ey0nRBH0ZVxp+lsmTxid2Y2z+FApQ6ra2VsXfbJP3HE6wAO0YTVEJt1TmeczhEd2Jiz/fcabIISgXEdSpTYJhb0ct0VJRxcg4c8c7wIDAQAB` |
 | `default._domainkey` | `v=DKIM1; g=*; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDfPISmo0K/qvksrlbaAF5SPPYce/uwvO3xL14a9HPpAuSIlOB8S5Rq3iNgjze0sSPxNZLBw0tmvgKKF4/f0eFapHG7GUZafHuNCGZWARlN13JMptBnK7N0WFqZYoepOtZSp6HzLcku/oNWWYEueg8GqEBSGZFUfHIhfDN3wFQ2mwIDAQAB` |
 
-Son nueve filas porque el SPF cuenta como TXT. En total, 18 registros.
+Son diez filas porque el SPF cuenta como TXT. En total, 22 registros propios
+(GoDaddy anade ademas `NS`, `SOA` y `CNAME _domainconnect`, que no se tocan).
+
+Los tres `brevo-code` son de tres cuentas de Brevo distintas: dos heredadas y
+`ac32671f...`, que es la cuenta de AI Digital Solutions Blue que envia el
+formulario de contacto de la web.
+
+El SPF (`v=spf1 a mx ~all`) no incluye a Brevo y no hace falta: Brevo firma con
+DKIM (`brevo1`/`brevo2`) y usa su propio dominio de retorno, asi que DMARC
+alinea por DKIM.
 
 ## Que depende de que
 
