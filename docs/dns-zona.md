@@ -5,9 +5,15 @@ Diego Bares el 22 de septiembre de 2026 y contrastado contra las respuestas DNS
 reales el mismo dia. Sirve para recrear la zona en GoDaddy sin perder ningun
 servicio.
 
-El dominio esta registrado en GoDaddy. Los servidores de nombres actuales son
-`ns.dinahosting.com`, `ns2`, `ns3` y `ns4`. El TTL de la zona esta en 300
-segundos.
+El dominio esta registrado en GoDaddy. **La zona se migro a GoDaddy el 22 de
+septiembre de 2026**: los servidores de nombres son ahora
+`ns29.domaincontrol.com` y `ns30.domaincontrol.com`. Los 18 registros se
+recrearon uno a uno y se comprobaron por DNS: todos resuelven igual que en
+Dinahosting.
+
+Para volver atras, los servidores de nombres anteriores eran
+`ns.dinahosting.com`, `ns2`, `ns3` y `ns4`, y esa zona sigue existiendo en
+Dinahosting como red de seguridad.
 
 ## Los 18 registros
 
@@ -70,7 +76,7 @@ Son nueve filas porque el SPF cuenta como TXT. En total, 18 registros.
 Se comprobo que `webmail`, `smtp`, `imap` y `pop` no existen en la zona, asi que
 no hay nada mas que recrear.
 
-## Como se hace la mudanza a GoDaddy
+## Como se hizo la mudanza a GoDaddy
 
 GoDaddy no deja crear registros mientras el DNS lo sirva otro proveedor, asi que
 la zona no se puede dejar preparada de antemano. El orden es:
@@ -90,3 +96,12 @@ consultarse.
 Los servidores de nombres de un `.com` tardan hasta 48 horas en propagarse del
 todo, de modo que durante el cambio la mayoria de los resolvers siguen usando la
 zona completa de Dinahosting mientras se carga la de GoDaddy.
+
+
+## Registros que anade GoDaddy por su cuenta
+
+Al activar la zona, GoDaddy creo un `A @` a una IP de aparcamiento, un
+`CNAME www` al propio dominio y un `TXT _dmarc` con su politica por defecto
+(`p=quarantine`, informes a `onsecureserver.net`). Los tres se corrigieron con
+los valores buenos. Ademas quedan un `CNAME _domainconnect` y los `NS` y `SOA`
+propios de GoDaddy, que son suyos y no se tocan.
