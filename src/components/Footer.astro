@@ -16,7 +16,15 @@ import Icon from './Icon.astro';
         />
       </a>
       <address class="footer-address">
-        C. Juan Rejón, 67, 35008 Las Palmas de Gran Canaria, Las Palmas
+        <a
+          class="footer-map"
+          href={company.mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${company.address} Ver en Google Maps (nueva pestaña)`}
+        >
+          {company.address}
+        </a>
         <a class="footer-phone" href={`tel:${company.phoneHref}`}>{company.phone}</a>
       </address>
       <div class="footer-social">
@@ -75,6 +83,7 @@ import Icon from './Icon.astro';
     text-wrap: pretty;
   }
 
+  .footer-map,
   .footer-phone {
     display: inline-block;
     padding: 4px 0;
@@ -83,6 +92,8 @@ import Icon from './Icon.astro';
     transition: color 180ms ease;
   }
 
+  .footer-map:hover,
+  .footer-map:focus-visible,
   .footer-phone:hover,
   .footer-phone:focus-visible {
     color: var(--blue);

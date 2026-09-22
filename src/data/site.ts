@@ -4,7 +4,9 @@ export const company = {
   email: 'marketing@aisolutionsblue.com',
   phone: '+34 618 67 91 80',
   phoneHref: '+34618679180',
-  address: 'Calle Carvajal 26, 35004 Las Palmas de Gran Canaria',
+  address: 'Calle Carvajal, 26, Bajo. 35004 Las Palmas de Gran Canaria (Las Palmas). España.',
+  mapsUrl:
+    'https://www.google.com/maps/search/?api=1&query=Calle+Carvajal+26+35004+Las+Palmas+de+Gran+Canaria+Espa%C3%B1a',
 };
 
 export const services = [
