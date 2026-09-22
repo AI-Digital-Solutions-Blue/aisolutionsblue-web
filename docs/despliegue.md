@@ -44,5 +44,5 @@ anterior con *Instant Rollback*, sin tocar el código.
 - El DNS del dominio no está en GoDaddy sino en Dinahosting
   (`ns.dinahosting.com` … `ns4.dinahosting.com`). Para publicar en el dominio
   hacen falta dos registros: `A @ -> 216.198.79.1` y
-  `CNAME www -> 3d5c7c6d09b5fe50.vercel-dns-017.com.`. Los MX y los TXT del
+  `CNAME www -> dc1e90f2facf0683.vercel-dns-017.com.`. Los MX y los TXT del
   correo no se tocan.
