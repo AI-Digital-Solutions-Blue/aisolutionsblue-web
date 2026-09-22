@@ -2,8 +2,8 @@ export const company = {
   name: 'AI Digital Solutions Blue',
   legalName: 'AI Digital Solutions Blue, S.L.',
   email: 'marketing@aisolutionsblue.com',
-  phone: '+34 886 02 07 05',
-  phoneHref: '+34886020705',
+  phone: '+34 618 67 91 80',
+  phoneHref: '+34618679180',
   address: 'Calle Carvajal 26, 35004 Las Palmas de Gran Canaria',
 };
 
