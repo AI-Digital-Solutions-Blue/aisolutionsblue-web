@@ -1,15 +1,15 @@
 # Despliegue
 
 La web se publica con Vercel, en el proyecto `aisolutionsblue-web` de la cuenta
-de Vercel de AI Digital Solutions Blue. El código vive en
+de Vercel **AI Digital Solutions Blue** (cristian.urien@aisolutionsblue.com). El código vive en
 `AI-Digital-Solutions-Blue/aisolutionsblue-web`.
 
 ## Dos entornos, dos ramas
 
 | Entorno | Rama | URL |
 | --- | --- | --- |
-| Producción | `main` | `aisolutionsblue.com` (pendiente de DNS) y `aisolutionsblue-web.vercel.app` |
-| Staging | `staging` | URL fija de la rama en Vercel, indicada abajo |
+| Producción | `main` | `aisolutionsblue.com` (pendiente de DNS) y `aisolutionsblue-web-xi.vercel.app` |
+| Staging | `staging` | `aisolutionsblue-web-git-staging-ai-digital-solutions-blue.vercel.app` |
 
 Cada `push` despliega automáticamente la rama que le corresponde. No hay
 comandos de despliegue que ejecutar a mano.
@@ -17,7 +17,7 @@ comandos de despliegue que ejecutar a mano.
 ## Flujo de trabajo
 
 1. Todo cambio se hace en `staging` y se sube: `git push origin staging`.
-2. Vercel despliega esa rama en su URL fija. Ahí se revisa y se valida.
+2. Vercel despliega esa rama en su URL fija de staging. Ahí se revisa y se valida.
 3. Cuando el cambio está aprobado, se lleva a producción fusionando:
 
    ```sh
@@ -34,7 +34,8 @@ anterior con *Instant Rollback*, sin tocar el código.
 ## Notas
 
 - Los despliegues de staging llevan cabecera `X-Robots-Tag: noindex`, así que
-  Google no indexa el borrador.
+  Google no indexa el borrador. La protección por contraseña de Vercel está
+  desactivada: cualquiera con el enlace puede abrir staging.
 - El formulario de contacto necesita `RESEND_API_KEY` y `CONTACT_FROM` como
   variables de entorno en Vercel. Sin ellas devuelve un error controlado y
   ofrece el contacto directo; nunca muestra un envío como correcto.
