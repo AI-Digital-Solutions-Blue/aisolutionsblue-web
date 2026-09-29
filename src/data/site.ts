@@ -2,8 +2,8 @@ export const company = {
   name: 'AI Digital Solutions Blue',
   legalName: 'AI Digital Solutions Blue, S.L.',
   email: 'marketing@aisolutionsblue.com',
-  phone: '+34 618 67 91 80',
-  phoneHref: '+34618679180',
+  phone: '+34 689 23 27 92',
+  phoneHref: '+34689232792',
   address: 'Calle Carvajal, 26, Bajo. 35004 Las Palmas de Gran Canaria (Las Palmas). España.',
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=Calle+Carvajal+26+35004+Las+Palmas+de+Gran+Canaria+Espa%C3%B1a',
