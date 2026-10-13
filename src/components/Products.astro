@@ -1,0 +1,83 @@
+---
+import Icon from './Icon.astro';
+import { products } from '../data/products';
+---
+
+<section class="products" id="productos" aria-labelledby="products-title">
+  <div class="shell">
+    <div class="section-intro">
+      <h2 id="products-title" data-reveal>Lo que ya hemos construido.</h2>
+      <p>
+        Productos que nacieron para resolver problemas reales de negocios. Y que hoy funcionan.
+      </p>
+    </div>
+  </div>
+
+  {products.map((product, index) => (
+    <article
+      class:list={['product', { 'product-flip': index % 2 === 1 }]}
+      id={product.slug}
+      aria-labelledby={`${product.slug}-name`}
+    >
+      <div class="shell product-layout">
+        <div class="product-media" data-product-media>
+          <div class="product-frame product-frame-main">
+            <img
+              src={product.images[0].src}
+              alt={product.images[0].alt}
+              width={product.images[0].width}
+              height={product.images[0].height}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          {product.images[1] && (
+            <div class="product-frame product-frame-detail" data-product-detail>
+              <img
+                src={product.images[1].src}
+                alt={product.images[1].alt}
+                width={product.images[1].width}
+                height={product.images[1].height}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          )}
+        </div>
+        <div class="product-copy">
+          <h3 id={`${product.slug}-name`} class="product-name">
+            {product.name}
+          </h3>
+          <p class="product-meta">
+            <span class:list={['product-relation', { 'is-client': product.relation === 'Caso de cliente' }]}>
+              {product.relation}
+            </span>
+            <span>{product.sector}</span>
+          </p>
+          <p class="product-headline">{product.headline}</p>
+          <p class="product-summary">{product.summary}</p>
+          <ul class="product-benefits">
+            {product.benefits.map((benefit) => (
+              <li>
+                <Icon name="check" size={18} />
+                <span>
+                  <strong>{benefit.title}.</strong> {benefit.text}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div class="product-links">
+            <a class="button button-ink" href={`/productos/${product.slug}`}>
+              {product.relation === 'Caso de cliente' ? 'Ver el caso' : 'Ver el producto'}
+              <Icon name="arrow" size={18} />
+            </a>
+            <a class="text-link" href={product.website} target="_blank" rel="noopener noreferrer">
+              Visitar web <Icon name="diagonal" size={16} />
+              <span class="sr-only"> de {product.name} (nueva pestaña)</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+  ))}
+</section>

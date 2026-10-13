@@ -1,0 +1,85 @@
+---
+import { team, testimonial } from '../data/site';
+import { products } from '../data/products';
+// The team and the testimonial render only once real content exists in src/data/site.ts.
+---
+
+<section class="about" id="nosotros" aria-labelledby="about-title">
+  <div class="shell">
+    <div class="about-layout">
+      <h2 id="about-title" data-reveal>
+        Una empresa nueva, con productos reales.
+      </h2>
+      <div class="about-copy">
+        <p>
+          Somos un equipo de Las Palmas de Gran Canaria que diseña y desarrolla soluciones de
+          inteligencia artificial. Antes de ofrecerte nada, construimos y lanzamos nuestros propios
+          productos: así sabemos qué funciona en una empresa de verdad y qué se queda en una demo.
+        </p>
+        <!-- Where we are and who backs us, on one quiet line under the text. -->
+        <div class="about-meta">
+          <p class="about-place">
+            <span>Desde</span>
+            Las Palmas de Gran Canaria
+          </p>
+          <div class="about-logos">
+            <img
+              src="/assets/logos/canarias-zec.webp"
+              width="410"
+              height="95"
+              alt="Canarias ZEC"
+              loading="lazy"
+            />
+            <img
+              src="/assets/logos/acelera.webp"
+              width="150"
+              height="57"
+              alt="Acelera Pyme"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The products, fanned out: what this team has already built. -->
+    <div class="about-fan" data-fan aria-hidden="true">
+      {products.map((product, i) => (
+        <figure style={`--i:${i}`} data-fan-card data-slug={product.slug}>
+          <img
+            src={product.images[0].src}
+            alt=""
+            width={product.images[0].width}
+            height={product.images[0].height}
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>{product.name}</figcaption>
+        </figure>
+      ))}
+    </div>
+
+    {team.length > 0 && (
+      <ul class="team" aria-label="Equipo de Blue">
+        {team.map((person) => (
+          <li>
+            <img src={person.photo} alt="" width="320" height="400" loading="lazy" />
+            <strong>{person.name}</strong>
+            <span>{person.role}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    {testimonial && (
+      <figure class="testimonial">
+        <blockquote>
+          <p>{testimonial.quote}</p>
+        </blockquote>
+        <figcaption>
+          <strong>{testimonial.name}</strong>, {testimonial.role} · {testimonial.company}
+        </figcaption>
+      </figure>
+    )}
+  </div>
+</section>

@@ -2,16 +2,34 @@
 import Icon from './Icon.astro';
 import { company } from '../data/site';
 import { CONTACT_INTERESTS } from '../lib/contact';
+interface Props {
+  /** h1 on /contacto, h2 when the form closes the home page. */
+  heading?: 'h1' | 'h2';
+  id?: string;
+  /** Section heading; the home page closes with its own line. */
+  title?: string;
+}
+const {
+  heading = 'h1',
+  id = 'contacto',
+  title = 'Contáctanos.',
+} = Astro.props;
+const Heading = heading;
 ---
 
-<section class="contact-section section-space" id="contacto" aria-labelledby="contact-title">
+<section class="contact-section section-space" id={id} aria-labelledby="contact-title">
   <div class="shell contact-layout">
     <div class="contact-copy">
-      <h1 id="contact-title">
-        Cuéntanos qué
-        <br />
-        <span class="blue-text">necesitas hacer posible.</span>
-      </h1>
+      <Heading id="contact-title">{title}</Heading>
+      <p>
+        Cuéntanos cómo es tu negocio y vemos juntos qué te frena y qué tecnología te ayudaría a
+        crecer.
+      </p>
+      <ul class="contact-promises">
+        <li>Sin compromiso.</li>
+        <li>Sin tecnicismos: hablamos de tu negocio.</li>
+        <li>Te respondemos lo antes posible.</li>
+      </ul>
     </div>
     <form
       class="contact-form"
@@ -20,8 +38,7 @@ import { CONTACT_INTERESTS } from '../lib/contact';
       aria-labelledby="contact-title"
       data-contact-form
     >
-      <h2 class="form-title">Empecemos.</h2>
-      <p class="form-intro">Déjanos tus datos y te contactaremos.</p>
+      <p class="form-title">Cuéntanos un poco de tu empresa.</p>
       <div class="form-grid">
         <div class="form-field">
           <label for="name">
@@ -80,7 +97,7 @@ import { CONTACT_INTERESTS } from '../lib/contact';
       </div>
       <div class="form-field">
         <label for="message">
-          ¿Qué te gustaría mejorar? <span aria-hidden="true">*</span>
+          ¿Qué tarea te quita más tiempo? <span aria-hidden="true">*</span>
         </label>
         <textarea
           id="message"
@@ -89,7 +106,7 @@ import { CONTACT_INTERESTS } from '../lib/contact';
           required
           minlength="10"
           maxlength="3000"
-          placeholder="Cuéntanos un poco sobre tu negocio y lo que necesitas…"
+          placeholder="Por ejemplo: contestamos muchas llamadas para dar citas y se nos escapan clientes."
         ></textarea>
       </div>
       <div class="form-trap" aria-hidden="true">
@@ -111,7 +128,7 @@ import { CONTACT_INTERESTS } from '../lib/contact';
         </span>
       </label>
       <button type="submit" class="button button-blue form-submit">
-        <span data-submit-label>Hablemos de tu proyecto</span>
+        <span data-submit-label>Enviar</span>
         <Icon name="diagonal" size={20} />
       </button>
       <p class="form-note">

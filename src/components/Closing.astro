@@ -1,0 +1,69 @@
+---
+// Closing call to action of the home page. The form lives on /contacto.
+import Icon from './Icon.astro';
+import Orbits from './Orbits.astro';
+---
+
+<section class="closing" aria-labelledby="closing-title">
+  <Orbits at="bottom-right" tone="dark" />
+  <div class="shell closing-inner">
+    <!-- prettier-ignore -->
+    <h2 id="closing-title" data-reveal>Tu negocio tiene una idea. Nosotros, la tecnología para hacerla realidad<span class="closing-stop" aria-hidden="true"></span><span class="sr-only">.</span></h2>
+    <a class="button closing-button" href="/contacto">
+      Contáctanos <Icon name="diagonal" size={20} />
+    </a>
+  </div>
+</section>
+
+<style>
+  /* A floating rounded panel rather than an edge-to-edge band. */
+  .closing {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    margin: 0 clamp(12px, 2.4vw, 32px) clamp(12px, 2.4vw, 32px);
+    padding-block: clamp(96px, 12vw, 176px);
+    border-radius: clamp(28px, 4vw, 56px);
+    background:
+      radial-gradient(80% 90% at 90% 100%, #1b2d6b 0%, transparent 60%),
+      var(--ink);
+    color: #f4f7ff;
+  }
+  .closing-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(36px, 4vw, 56px);
+    justify-items: start;
+  }
+  h2 {
+    max-width: 16ch;
+    font-size: clamp(36px, 4.6vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  /* The ring of the logo as the full stop, as in the opening headline. */
+  .closing-stop {
+    display: inline-block;
+    width: 0.2em;
+    height: 0.2em;
+    margin-left: 0.07em;
+    border: 0.055em solid #6f8fff;
+    border-radius: 50%;
+  }
+  .closing-button {
+    min-height: 60px;
+    padding: 16px 30px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 17px;
+    gap: 26px;
+  }
+  .closing-button:hover {
+    background: var(--blue);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+</style>

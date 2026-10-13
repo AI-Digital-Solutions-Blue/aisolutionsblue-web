@@ -22,10 +22,10 @@ HOST=127.0.0.1 PORT=4322 npm run preview
 
 ## Formulario
 
-El endpoint `POST /api/contact` utiliza Resend. Crear un archivo `.env` a partir de `.env.example` para desarrollo. En producción, configurar estas variables en el entorno del servidor:
+El endpoint `POST /api/contact` utiliza Brevo. Crear un archivo `.env` a partir de `.env.example` para desarrollo. En producción, configurar estas variables en el entorno del servidor:
 
-- `RESEND_API_KEY`: clave privada de Resend.
-- `CONTACT_FROM`: remitente perteneciente a un dominio verificado en Resend; por ejemplo `Blue <contacto@aisolutionsblue.com>` una vez verificado.
+- `BREVO_API_KEY`: clave privada de Brevo.
+- `CONTACT_FROM`: remitente de un dominio autenticado en esa cuenta de Brevo; por ejemplo `Blue <marketing@aisolutionsblue.com>`.
 - `SITE_ORIGIN`: origen público exacto; por defecto `https://aisolutionsblue.com`. Para una vista previa de producción, configurar su origen real.
 
 Los destinatarios se fijan exclusivamente en el servidor:
@@ -36,23 +36,25 @@ Los destinatarios se fijan exclusivamente en el servidor:
 
 El email del visitante se usa como Reply-To. Los datos se envían como texto, sin interpolarlos en HTML. Hay validación de servidor, límite de tamaño, comprobación de origen, campo antispam, protección contra doble envío y claves de idempotencia para reintentos. El limitador permite 5 solicitudes por cliente en 15 minutos y mantiene memoria acotada. Para varias réplicas, sustituirlo por un almacén compartido y configurar la dirección del cliente desde un proxy de confianza.
 
-**Sin credenciales, el formulario devuelve un error controlado y ofrece contacto directo. Nunca muestra éxito de un envío real que no haya sido aceptado por el proveedor.** Se debe comprobar la entrega real a los tres destinatarios después de configurar el dominio de envío. La aceptación por Resend no garantiza la llegada a la bandeja de entrada.
+**Sin credenciales, el formulario devuelve un error controlado y ofrece contacto directo. Nunca muestra éxito de un envío real que no haya sido aceptado por el proveedor.** Se debe comprobar la entrega real a los tres destinatarios después de configurar el dominio de envío. La aceptación por Brevo no garantiza la llegada a la bandeja de entrada.
 
 No se han enviado emails durante el desarrollo.
 
 ## Contenido y assets
 
-- `src/data/site.ts`: empresa y proyectos (también conserva el catálogo y las preguntas de la versión anterior).
-- `src/components/`: cabecera, pie, escena del hero, proyectos y formulario.
+- `src/data/site.ts`: empresa, casos de uso de la portada, proceso, preguntas frecuentes y los huecos (ocultos mientras estén vacíos) para equipo y testimonio.
+- `src/data/products.ts`: líneas de servicio y los cuatro productos o casos; alimenta la portada y `/productos/[slug]`.
+- `src/components/`: cabecera, pie, apertura (`Opening`), servicios, productos, proceso, nosotros, preguntas y formulario.
 - `src/styles/global.css`: estilos, responsive y movimiento reducido.
 - `src/scripts/site.ts`: menú, galerías y formulario.
-- `src/scripts/motion.ts`: retícula de puntos y presentación de producto ligada al scroll.
-- `src/scripts/signal.ts`: luz que recorre la línea, respuesta de los nodos y halo ambiental de la sección azul.
-- `docs/direccion-producto.md`: dirección visual aprobada que sustituye al brief anterior.
+- `src/scripts/opening.ts`: entrada con el anillo, campo de partículas de la portada y panel fijado al scroll.
+- `src/scripts/field.ts` y `src/scripts/shapes.ts`: campo de partículas en WebGL2 y las formas que toma en el panel.
+- `src/scripts/home.ts`: titulares que se revelan, profundidad de las capturas y línea del proceso (GSAP).
+- `docs/direccion-2026-10.md` y `PRODUCT.md`: dirección aprobada en octubre de 2026; sustituye a `direccion-producto.md`.
 - `src/data/legal.json`: textos legales extraídos del sitio público.
 - `public/assets/`: copias de los assets web; `aisolutionsblue/` conserva los originales intactos.
 
-Los tres proyectos tienen la misma estructura y espacio. No se han añadido cifras, testimonios ni resultados inventados. El contacto público es marketing@aisolutionsblue.com; no hay enlace de reserva de reuniones.
+Los tres proyectos tienen la misma estructura y espacio. No se han añadido cifras, testimonios ni resultados inventados. El contacto público es info@aisolutionsblue.com; no hay enlace de reserva de reuniones.
 
 ## Publicación pendiente
 
@@ -94,4 +96,4 @@ La sección azul incluye un destello con estela que recorre los tres nodos en ci
 
 Publicada con Sites en https://blue-ai-digital-solutions-preview.siweb-4224.chatgpt.site, con acceso público sin depender del servidor local. El dominio comercial no se ha modificado. La copia estática y su manifiesto de alojamiento están en `public-preview/`, con repositorio independiente.
 
-Esta copia conserva el diseño y las interacciones de la landing. El formulario está deshabilitado explícitamente y ofrece marketing@aisolutionsblue.com hasta configurar el servicio de envío. Para publicar cambios hay que regenerar esa copia desde el build actual y desplegar una nueva versión del mismo Site.
+Esta copia conserva el diseño y las interacciones de la landing. El formulario está deshabilitado explícitamente y ofrece info@aisolutionsblue.com hasta configurar el servicio de envío. Para publicar cambios hay que regenerar esa copia desde el build actual y desplegar una nueva versión del mismo Site.

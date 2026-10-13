@@ -1,0 +1,565 @@
+/* Reel: the opening of the home page, filling the first screen below the header. Every size
+   follows the frame (container units), so the reel scales as one piece and the timeline never
+   measures layout. */
+.reel {
+  position: relative;
+  z-index: 1;
+  margin: 0 clamp(12px, 1.6vw, 24px);
+}
+.reel-frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  height: calc(100svh - var(--header-h, 86px) - clamp(12px, 1.6vw, 24px));
+  min-height: 420px;
+  max-height: 1000px;
+  container-type: size;
+  border-radius: clamp(24px, 3vw, 44px);
+  background: #050a1a;
+  color: #f4f7ff;
+}
+
+.r-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+.r-scene img {
+  display: block;
+  user-select: none;
+}
+
+/* The ring of the logo, drawn as light. */
+.r-mark {
+  position: absolute;
+  width: 9cqmin;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f7bff, #5cc8ff);
+  -webkit-mask: radial-gradient(closest-side, transparent 66%, #000 68%);
+  mask: radial-gradient(closest-side, transparent 66%, #000 68%);
+  filter: drop-shadow(0 0 2.4cqmin #2f7bff80);
+}
+
+/* 1. Process */
+.r-open {
+  background: #050a1a;
+}
+.r-open .r-mark {
+  left: 22%;
+  top: 50%;
+  margin: -4.5cqmin 0 0 -4.5cqmin;
+}
+.r-line {
+  position: absolute;
+  left: calc(22% + 6.5cqmin);
+  top: 50%;
+  width: 16cqw;
+  height: 1px;
+  background: #ffffff59;
+  transform-origin: left;
+}
+.r-words {
+  position: absolute;
+  left: calc(22% + 6.5cqmin + 16cqw + 3cqmin);
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+}
+.r-words span {
+  grid-area: 1 / 1;
+  font-family: var(--display);
+  font-size: 7cqmin;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  opacity: 0;
+}
+@container (aspect-ratio < 1) {
+  .r-open .r-mark {
+    left: 50%;
+    top: 34%;
+  }
+  .r-line {
+    left: 50%;
+    top: calc(34% + 7cqmin);
+    width: 1px;
+    height: 14cqh;
+    transform-origin: top;
+  }
+  .r-words {
+    left: 0;
+    right: 0;
+    top: calc(34% + 7cqmin + 14cqh + 9cqmin);
+    justify-items: center;
+  }
+  .r-words span {
+    font-size: 11cqmin;
+  }
+}
+
+/* 2. Wall of work */
+.r-wall {
+  background: #050a1a;
+  perspective: 120cqw;
+}
+/* The plane holds the tilt; the zoom layer inside it is the one the script animates. */
+.r-plane {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max-content;
+  translate: -50% -50%;
+  transform: rotateX(42deg) rotateZ(-18deg);
+  transform-style: preserve-3d;
+}
+.r-plane-zoom {
+  display: grid;
+  gap: 2.2cqmin;
+  transform-style: preserve-3d;
+}
+.r-row {
+  display: flex;
+  gap: 2.2cqmin;
+}
+.r-row:nth-child(2) {
+  margin-left: -16cqmin;
+}
+.r-tile {
+  flex: none;
+  width: var(--tile, 34cqmin);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 2cqmin;
+  background: #fff;
+  box-shadow: 0 2cqmin 6cqmin #00000080;
+}
+.r-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scale: var(--zoom, 1);
+  transform-origin: var(--focus, 50% 50%);
+}
+.r-row-tall {
+  display: none;
+}
+@container (aspect-ratio < 1) {
+  .r-wall {
+    --tile: 52cqmin;
+  }
+  .r-row-tall {
+    display: flex;
+  }
+  /* A gentler tilt in the tall frame, so the far rows still reach the top. */
+  .r-plane {
+    transform: rotateX(26deg) rotateZ(-16deg);
+  }
+}
+.r-wall::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(70% 70% at 50% 50%, transparent 30%, #050a1acc 100%);
+  pointer-events: none;
+}
+.r-wall-title {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+}
+.r-wall-title span {
+  grid-area: 1 / 1;
+  padding: 1.6cqmin 3.6cqmin;
+  border-radius: 100px;
+  background: #050a1ab3;
+  box-shadow: inset 0 0 0 1px #ffffff1f;
+  backdrop-filter: blur(12px);
+  font-family: var(--display);
+  font-size: clamp(22px, 5.4cqmin, 64px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+/* 3. One stage for the four wishes: words on the left, the product as a 3D card on the right,
+   over moving blue light. */
+.r-build {
+  background: #050a1a;
+}
+/* Two slow pools of blue light; the script moves them between shots. */
+.r-aura {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(38% 42% at var(--ax, 70%) var(--ay, 40%), #2f7bff8c 0%, transparent 70%),
+    radial-gradient(34% 40% at var(--bx, 30%) var(--by, 75%), #5cc8ff59 0%, transparent 70%),
+    radial-gradient(60% 60% at 50% 120%, #12245c 0%, transparent 70%);
+  filter: blur(2cqmin);
+}
+/* A perspective floor of fine lines, for depth. */
+.r-floor {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: -10%;
+  height: 60%;
+  background-image:
+    linear-gradient(#ffffff12 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff12 1px, transparent 1px);
+  background-size: 6cqmin 6cqmin;
+  transform: perspective(60cqh) rotateX(62deg);
+  transform-origin: bottom;
+  -webkit-mask: linear-gradient(to top, #000 10%, transparent 90%);
+  mask: linear-gradient(to top, #000 10%, transparent 90%);
+  animation: r-floor 6s linear infinite;
+}
+@keyframes r-floor {
+  to {
+    background-position: 0 6cqmin;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .r-floor {
+    animation: none;
+  }
+}
+
+.r-say {
+  position: absolute;
+  left: 6cqw;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  width: 40cqw;
+  translate: 0 -50%;
+}
+.r-say-item {
+  grid-area: 1 / 1;
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: 2cqmin;
+}
+.r-kind {
+  padding: 0.8cqmin 1.8cqmin;
+  border-radius: 100px;
+  background: #ffffff14;
+  box-shadow: inset 0 0 0 1px #ffffff26;
+  color: #a6d8ff;
+  font-size: clamp(12px, 1.9cqmin, 18px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0;
+}
+.r-big {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.26em;
+  font-family: var(--display);
+  font-size: clamp(36px, 9.4cqmin, 128px);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  color: #fff;
+}
+/* Each word is a mask the letters rise out of, with room for descenders. */
+.r-big-word {
+  display: inline-flex;
+  overflow: clip;
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
+}
+.r-ch {
+  display: inline-block;
+}
+.r-line-small {
+  max-width: 30ch;
+  color: #b9c4dc;
+  font-size: clamp(14px, 2.2cqmin, 22px);
+  line-height: 1.4;
+  opacity: 0;
+}
+
+.r-cardpos {
+  position: absolute;
+  right: 6cqw;
+  top: 50%;
+  z-index: 2;
+  width: 46cqw;
+  height: 74cqh;
+  translate: 0 -50%;
+  perspective: 1600px;
+  transform-style: preserve-3d;
+}
+.r-pcard-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(100%, calc(74cqh * (var(--ar)))); /* as wide as the area allows at its ratio */
+  aspect-ratio: var(--ar);
+  margin-left: calc(min(100%, calc(74cqh * (var(--ar)))) / -2);
+  translate: 0 -50%;
+  transform-style: preserve-3d;
+}
+/* The part the script moves; the wrapper above only places it. */
+.r-pcard-in {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  visibility: hidden;
+}
+.r-pcard {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 2.4cqmin;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px #ffffff2e,
+    0 4cqmin 10cqmin #000c,
+    0 0 8cqmin #2f7bff40;
+}
+.r-pcard img,
+.r-pcard video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--fit, cover);
+}
+/* A band of light crossing the card, like glass catching it. */
+.r-shine {
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, #ffffff8c 50%, transparent);
+  mix-blend-mode: soft-light;
+}
+/* The scanner reading the ticket. */
+.r-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 18%;
+  background: linear-gradient(180deg, transparent, #5cc8ff59 80%, #5cc8ff);
+  box-shadow: 0 0.4cqmin 2cqmin #5cc8ff;
+  opacity: 0;
+}
+/* Live states around the card: glass pills that pop in. */
+.r-chip {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 1cqmin;
+  padding: 1.2cqmin 2cqmin;
+  border-radius: 100px;
+  background: #ffffffeb;
+  box-shadow: 0 2cqmin 5cqmin #0007;
+  color: #0b1430;
+  font-size: clamp(12px, 2cqmin, 19px);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+}
+.r-chip i {
+  width: 1.4cqmin;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0.5cqmin #22c55e33;
+}
+.r-chip-0 {
+  left: -8%;
+  top: 10%;
+}
+.r-chip-1 {
+  right: -6%;
+  bottom: 10%;
+}
+/* Tiles of the business flying into the one panel. */
+.r-fly {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  padding: 1.2cqmin 2.2cqmin;
+  border-radius: 1.6cqmin;
+  background: #0b1430e6;
+  box-shadow:
+    inset 0 0 0 1px #ffffff2e,
+    0 2cqmin 5cqmin #0008;
+  color: #fff;
+  font-size: clamp(12px, 2.2cqmin, 20px);
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+@container (aspect-ratio < 1) {
+  .r-say {
+    left: 7cqw;
+    right: 7cqw;
+    top: 7cqh;
+    width: auto;
+    translate: none;
+  }
+  .r-big {
+    font-size: clamp(34px, 12.5cqw, 72px);
+  }
+  .r-cardpos {
+    left: 7cqw;
+    right: 7cqw;
+    top: auto;
+    bottom: 6cqh;
+    width: auto;
+    height: 48cqh;
+    translate: none;
+  }
+  .r-pcard-wrap {
+    width: min(100%, calc(48cqh * (var(--ar))));
+    margin-left: calc(min(100%, calc(48cqh * (var(--ar)))) / -2);
+  }
+  .r-chip-0 {
+    left: -3%;
+  }
+  .r-chip-1 {
+    right: -3%;
+  }
+}
+
+/* 4. The three side by side */
+.r-tri {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2cqmin;
+  padding: 3cqmin;
+  background: #050a1a;
+}
+@container (aspect-ratio < 1) {
+  .r-tri {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+}
+.r-tri-col {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 2.6cqmin;
+}
+.r-tri-col img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(12px) brightness(0.55);
+  scale: 1.15;
+}
+.r-tri-col span {
+  position: relative;
+  font-family: var(--display);
+  padding: 0 1.6cqmin;
+  font-size: clamp(26px, 6.4cqmin, 88px);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  text-align: center;
+  text-wrap: balance;
+  color: #fff;
+}
+
+/* 5. Logo: the real wordmark on white; the dot is drawn on its own so it can travel and beat. */
+.r-logo {
+  display: grid;
+  place-items: center;
+  background: #fff;
+}
+.r-logo-box {
+  position: relative;
+  width: min(54cqw, 100cqh);
+}
+@container (aspect-ratio < 1) {
+  .r-logo-box {
+    width: 78cqw;
+  }
+}
+.r-logo-box img {
+  width: 100%;
+  height: auto;
+}
+/* Sits exactly over the dot in logo.webp (measured from the image). */
+.r-dot {
+  position: absolute;
+  left: 0;
+  top: 41.1%;
+  width: 6.89%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #3977ff, #7249ff);
+  -webkit-mask: radial-gradient(closest-side, transparent 59%, #000 61%);
+  mask: radial-gradient(closest-side, transparent 59%, #000 61%);
+}
+
+/* Film grain and the player chrome */
+.r-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.r-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 7;
+  height: 2px;
+  background: #ffffff1a;
+}
+.r-progress span {
+  display: block;
+  height: 100%;
+  background: #5cc8ff;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.r-toggle {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 8;
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 100px;
+  background: #050a1a99;
+  box-shadow: inset 0 0 0 1px #ffffff26;
+  color: #e6ecf8;
+  font-size: 13px;
+  backdrop-filter: blur(8px);
+}
+.r-toggle:hover {
+  background: #050a1acc;
+}
+.r-toggle-play,
+.r-toggle[aria-pressed='true'] .r-toggle-pause {
+  display: none;
+}
+.r-toggle[aria-pressed='true'] .r-toggle-play {
+  display: inline;
+}
+.reel[data-static] .r-toggle,
+.reel[data-static] .r-progress {
+  display: none;
+}

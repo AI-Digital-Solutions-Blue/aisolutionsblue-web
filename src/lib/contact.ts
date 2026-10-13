@@ -16,10 +16,10 @@ export function parseSender(value: string): { email: string; name?: string } | n
 }
 
 export const CONTACT_INTERESTS = [
-  'Atención al cliente con IA',
+  'Agentes de IA (voz, WhatsApp, chat)',
   'Automatización de procesos',
-  'Soluciones a medida',
-  'Quiero orientación',
+  'Software a medida',
+  'Todavía no lo sé',
 ];
 export interface ContactData {
   name: string;

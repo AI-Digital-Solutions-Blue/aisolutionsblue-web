@@ -1,5 +1,4 @@
-import './motion';
-import './signal';
+import './experience';
 
 // Native links, details and forms remain usable when JavaScript is unavailable.
 const menuButton = document.querySelector<HTMLButtonElement>('.menu-toggle');
@@ -126,8 +125,8 @@ if (form) {
           : 'No hemos podido confirmar el envío. Puedes volver a intentarlo.';
       status.textContent = `${message} También puedes escribirnos a `;
       const fallback = document.createElement('a');
-      fallback.href = 'mailto:marketing@aisolutionsblue.com';
-      fallback.textContent = 'marketing@aisolutionsblue.com';
+      fallback.href = 'mailto:info@aisolutionsblue.com';
+      fallback.textContent = 'info@aisolutionsblue.com';
       status.append(fallback, '.');
     } finally {
       submitting = false;
@@ -167,3 +166,5 @@ if (sections.length) {
   );
   updateSection();
 }
+
+export {};

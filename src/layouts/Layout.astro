@@ -17,12 +17,12 @@ const schema = {
   name: 'AI Digital Solutions Blue, S.L.',
   url: Astro.site?.href,
   logo: new URL('/assets/logo.webp', Astro.site).href,
-  email: 'marketing@aisolutionsblue.com',
+  email: 'info@aisolutionsblue.com',
   telephone: '+34689232792',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Calle Carvajal, 26, Bajo',
-    postalCode: '35004',
+    streetAddress: 'Calle Juan Rejón, 67, Planta 3',
+    postalCode: '35008',
     addressLocality: 'Las Palmas de Gran Canaria',
     addressCountry: 'ES',
   },
@@ -51,10 +51,7 @@ const schema = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL('/assets/blue-computer.webp', Astro.site)} />
-    <meta
-      property="og:image:alt"
-      content="AI Digital Solutions Blue — tecnología para tu negocio"
-    />
+    <meta property="og:image:alt" content="AI Digital Solutions Blue, tecnología para tu negocio" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="facebook-domain-verification" content="a8h9iptsl5vgcxsjh282wuugsp7s4u" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)}></script>

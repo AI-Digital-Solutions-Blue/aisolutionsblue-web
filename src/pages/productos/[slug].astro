@@ -1,0 +1,137 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
+import { products, serviceLines, type Product } from '../../data/products';
+import '../../styles/product.css';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+const { product } = Astro.props as { product: Product };
+const isCase = product.relation === 'Caso de cliente';
+const others = products.filter((item) => item.slug !== product.slug);
+---
+
+<Layout
+  title={`${product.name} · ${isCase ? 'Caso de cliente' : 'Producto'} de Blue`}
+  description={`${product.headline} ${product.summary}`}
+>
+  <Header />
+  <main id="main" class="product-page">
+    <section class="pp-hero" aria-labelledby="pp-title">
+      <div class="shell">
+        <a class="pp-back" href="/#productos">
+          <Icon name="arrow" size={16} /> Todos los productos
+        </a>
+        <h1 id="pp-title">{product.name}</h1>
+        <p class="pp-meta">
+          <span class:list={['pp-relation', { 'is-client': isCase }]}>{product.relation}</span>
+          <span>{product.sector}</span>
+        </p>
+        <div class="pp-lead">
+          <p class="pp-headline">{product.headline}</p>
+          <div>
+            <p class="pp-summary">{product.summary}</p>
+            <div class="pp-actions">
+              <a
+                class="button button-ink"
+                href={product.website}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Visitar {product.name} <Icon name="diagonal" size={18} />
+                <span class="sr-only"> (nueva pestaña)</span>
+              </a>
+              <a class="text-link" href="/contacto">
+                Contáctanos <Icon name="arrow" size={16} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pp-gallery" aria-label={`Capturas de ${product.name}`}>
+      <div class="shell pp-gallery-grid">
+        {product.images.map((image, i) => (
+          <figure class:list={['pp-shot', { 'pp-shot-wide': i === 0 }]}>
+            <img
+              src={image.src}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="pp-details" aria-labelledby="pp-details-title">
+      <div class="shell pp-details-grid">
+        <div>
+          <h2 id="pp-details-title">{isCase ? 'El reto' : 'El problema que resuelve'}</h2>
+          <p class="pp-challenge">{product.challenge}</p>
+        </div>
+        <div>
+          <h2>{isCase ? 'Lo que construimos' : 'Qué hace'}</h2>
+          <ul class="pp-benefits">
+            {product.benefits.map((benefit) => (
+              <li>
+                <Icon name="check" size={20} />
+                <span>
+                  <strong>{benefit.title}.</strong> {benefit.text}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p class="pp-lines">
+            Construido con{' '}
+            {product.lines.map((line, i) => (
+              <>
+                <a href={`/#soluciones`}>{serviceLines[line].tech}</a>
+                {i < product.lines.length - 1 ? ' y ' : '.'}
+              </>
+            ))}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pp-cta" aria-labelledby="pp-cta-title">
+      <div class="shell">
+        <h2 id="pp-cta-title">¿Tu negocio tiene un problema parecido?</h2>
+        <p>
+          Cuéntanos tu caso y vemos si se puede resolver con algo así, adaptado a tu forma de
+          trabajar.
+        </p>
+        <a class="button button-blue" href="/contacto">
+          Contáctanos <Icon name="diagonal" size={19} />
+        </a>
+      </div>
+    </section>
+
+    <nav class="pp-others" aria-label="Otros productos">
+      <div class="shell">
+        <ul>
+          {others.map((item) => (
+            <li>
+              <a href={`/productos/${item.slug}`}>
+                <img src={item.images[0].src} alt="" width="1200" height="900" loading="lazy" />
+                <span class="pp-other-name">{item.name}</span>
+                <span class="pp-other-line">{item.headline}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  </main>
+  <Footer />
+</Layout>

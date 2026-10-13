@@ -1,0 +1,450 @@
+/* Opening — Lyra-like restraint: white ground, ink type, one blue accent, one authored moment. */
+
+/* Intelligence field canvases: decorative, behind content, never intercepting input. */
+.field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.opening > .shell {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero: the reel fills the first screen (Reel.astro); the headline and the call follow. */
+.opening-hero {
+  margin-top: clamp(56px, 8vw, 112px);
+}
+/* Headline on the left; the lead and the calls to action on the right, on the headline's
+   baseline, under a fine rule. */
+.opening-hero .opening-text {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 40px clamp(48px, 6vw, 112px);
+  align-items: end;
+}
+.opening-hero .opening-lead {
+  grid-template-columns: 1fr;
+  justify-content: stretch;
+  gap: 28px;
+  margin-top: 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.opening-hero .opening-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+}
+@media (max-width: 900px) {
+  .opening-hero .opening-text {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Headline */
+.opening {
+  position: relative;
+  padding-top: 0;
+  padding-bottom: clamp(56px, 8vw, 104px);
+}
+.opening-title {
+  font-size: clamp(44px, 6vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  color: var(--ink);
+}
+.opening-title .line {
+  display: block;
+  overflow: clip;
+  /* Room for descenders inside the clipping mask. */
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.opening-title .line-inner {
+  display: inline-block;
+}
+.full-stop {
+  display: inline-block;
+  width: 0.2em;
+  height: 0.2em;
+  margin-left: 0.07em;
+  border: 0.055em solid var(--blue);
+  border-radius: 50%;
+  vertical-align: baseline;
+}
+
+.opening-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 34rem) auto;
+  justify-content: space-between;
+  align-items: end;
+  gap: 32px 64px;
+  margin-top: clamp(40px, 6vw, 72px);
+}
+.opening-lead p {
+  font-size: clamp(18px, 1.5vw, 21px);
+  line-height: 1.55;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.opening-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* Stage: the ink chapter where tasks are written out and attributed to a real product. */
+.stage {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+  margin-top: clamp(28px, 3vw, 40px);
+  padding: clamp(28px, 4.4vw, 64px);
+  border-radius: 28px;
+  background: var(--ink);
+  color: #eef2fa;
+}
+.stage-copy {
+  position: relative;
+  z-index: 1;
+}
+.stage-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px 64px;
+  align-items: end;
+  margin-top: clamp(72px, 9vw, 128px);
+}
+.stage-intro h2 {
+  font-size: clamp(32px, 3.8vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+/* The three chapters share one place; only the current one is visible. */
+.stage-titles {
+  display: grid;
+}
+.stage-chapter {
+  grid-area: 1 / 1;
+  display: grid;
+  justify-items: start;
+  align-content: start;
+}
+.stage-count {
+  margin-bottom: clamp(16px, 1.6vw, 22px);
+  color: var(--blue-light);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.stage-count span {
+  color: #8f9bb6;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.stage-swap {
+  display: grid;
+  margin-bottom: clamp(28px, 3vw, 40px);
+}
+.stage-pain,
+.stage-title {
+  grid-area: 1 / 1;
+  max-width: 13ch;
+  font-family: var(--display);
+  font-size: clamp(36px, 4.4vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.stage-title {
+  color: #fff;
+}
+/* The problem, in grey; a blue line strikes each of its lines before it gives way. */
+.stage-pain {
+  color: #6f7c99;
+  visibility: hidden;
+}
+.stage-pain span {
+  --strike: 0%;
+  background: linear-gradient(#5cc8ff, #5cc8ff) no-repeat 0 58% / var(--strike) 0.08em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.stage-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 20px 0 18px;
+  border: 1px solid #ffffff26;
+  border-radius: 100px;
+  font-size: 15px;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.stage-who span {
+  color: #8f9bb6;
+}
+.stage-who span,
+.stage-who strong {
+  white-space: nowrap;
+}
+.stage-who strong {
+  font-weight: 600;
+  color: #fff;
+}
+.stage-who svg {
+  color: var(--blue-light);
+  transition: transform 0.2s;
+}
+.stage-who:hover {
+  background: #ffffff0f;
+  border-color: #ffffff40;
+}
+.stage-who:hover svg {
+  transform: translate(3px, -2px);
+}
+.stage-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 30rem;
+  margin-top: clamp(40px, 5vw, 72px);
+}
+.stage-tabs button {
+  display: grid;
+  gap: 12px;
+  padding: 0 0 6px;
+  border: 0;
+  background: none;
+  color: #8f9bb6;
+  font-size: 13px;
+  text-align: left;
+  min-height: 44px;
+  align-content: start;
+  transition: color 0.2s;
+}
+.stage-tabs button[aria-pressed='true'],
+.stage-tabs button:hover {
+  color: #fff;
+}
+.stage-tab-bar {
+  display: block;
+  height: 2px;
+  background: #ffffff24;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.stage-tab-bar span {
+  display: block;
+  height: 100%;
+  background: var(--blue-light);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.stage-tabs button[aria-pressed='true'] .stage-tab-bar span {
+  transform: scaleX(1);
+}
+.stage[data-scroll] .stage-tabs button .stage-tab-bar span {
+  transform: scaleX(var(--progress, 0));
+}
+.stage-tabs button:focus-visible {
+  outline-color: var(--blue-light);
+  outline-offset: 4px;
+}
+/* The field takes each product's form inside this area; it holds no content of its own. */
+.stage-form {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 3;
+}
+
+@media (max-width: 900px) {
+  .stage-intro {
+    grid-template-columns: 1fr;
+  }
+  .opening-lead {
+    grid-template-columns: 1fr;
+  }
+  .opening-actions {
+    align-items: flex-start;
+  }
+  .stage {
+    grid-template-columns: 1fr;
+  }
+  .stage-form {
+    order: -1;
+    aspect-ratio: 16 / 10;
+  }
+}
+@media (max-width: 640px) {
+  .opening .shell {
+    width: calc(100% - 32px);
+  }
+  .stage {
+    border-radius: 22px;
+    padding: 20px 20px 24px;
+  }
+  .stage-tabs {
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .stage-tabs button {
+    min-width: 0;
+    font-size: 12px;
+  }
+  /* Long product names wrap inside the pill instead of running out of the panel. */
+  .stage-who {
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    padding-block: 10px;
+    border-radius: 22px;
+  }
+  .stage-who span,
+  .stage-who strong {
+    white-space: normal;
+  }
+  .opening-actions .button {
+    width: 100%;
+  }
+  .stage-who {
+    gap: 10px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
+
+/* ---------- Dark opening (trial): deep night blue, real light, white type ---------- */
+.opening[data-tone='dark'] {
+  --night: #050a1a;
+  background: var(--night);
+  color: #f4f7ff;
+  border-radius: 0 0 clamp(28px, 4vw, 48px) clamp(28px, 4vw, 48px);
+  /* The header sits over the opening, so the opening starts under it. */
+  margin-top: calc(-1 * var(--header-h, 86px));
+  padding-top: calc(clamp(56px, 9vh, 112px) + var(--header-h, 86px));
+}
+.opening[data-tone='dark'] .opening-title {
+  color: #f4f7ff;
+}
+.opening[data-tone='dark'] .full-stop {
+  border-color: #5cc8ff;
+}
+.opening[data-tone='dark'] .opening-lead p {
+  color: #9aa8c7;
+}
+.opening[data-tone='dark'] .opening[data-tone='dark'] .stage {
+  background: #0b1430;
+  box-shadow: inset 0 0 0 1px #ffffff12;
+}
+/* Header over the dark opening: transparent night glass, white logo and links. Dark from the
+   first paint; the script switches it to light once the header leaves the opening. */
+html:has(.opening[data-tone='dark']):not([data-header='light']) .site-header {
+  background: #050a1a99;
+  border-bottom-color: #ffffff12;
+}
+html:has(.opening[data-tone='dark']):not([data-header='light']) .site-header .brand img {
+  mix-blend-mode: normal;
+  filter: brightness(0) invert(1);
+}
+html:has(.opening[data-tone='dark']):not([data-header='light']) .menu-toggle {
+  background: #ffffff14;
+  border-color: #ffffff33;
+  color: #fff;
+}
+@media (min-width: 641px) {
+  html:has(.opening[data-tone='dark']):not([data-header='light'])
+    .site-header
+    nav
+    > a:not(.nav-contact) {
+    color: #e6ebf7;
+  }
+  html:has(.opening[data-tone='dark']):not([data-header='light']) .nav-contact {
+    background: #fff;
+    color: var(--ink);
+  }
+  html:has(.opening[data-tone='dark']):not([data-header='light']) .nav-contact:hover {
+    background: var(--blue);
+    color: #fff;
+  }
+}
+
+/* ---------- Aurora: slow ambient light in the brand blues, behind the opening ---------- */
+.opening {
+  overflow-x: clip;
+}
+.aurora {
+  position: absolute;
+  inset: -10% -10% auto;
+  height: 120vh;
+  max-height: 1100px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  mask-image: linear-gradient(#000 55%, #0000);
+}
+.aurora span {
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  max-width: 900px;
+  max-height: 900px;
+  border-radius: 50%;
+  opacity: 0.9;
+  will-change: transform;
+}
+.aurora span:nth-child(1) {
+  right: -8%;
+  top: -18%;
+  background: radial-gradient(closest-side, #bccfff, #bccfff00);
+  animation: aurora-a 22s ease-in-out infinite alternate;
+}
+.aurora span:nth-child(2) {
+  right: 22%;
+  top: 6%;
+  background: radial-gradient(closest-side, #d8ecff, #d8ecff00);
+  animation: aurora-b 26s ease-in-out infinite alternate;
+}
+.aurora span:nth-child(3) {
+  left: -12%;
+  top: 30%;
+  background: radial-gradient(closest-side, #e3eaff, #e3eaff00);
+  animation: aurora-c 30s ease-in-out infinite alternate;
+}
+@keyframes aurora-a {
+  to {
+    transform: translate(-12vw, 10vh) scale(1.15);
+  }
+}
+@keyframes aurora-b {
+  to {
+    transform: translate(10vw, 14vh) scale(0.9);
+  }
+}
+@keyframes aurora-c {
+  to {
+    transform: translate(14vw, -8vh) scale(1.1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora span {
+    animation: none;
+  }
+}
+.opening[data-tone='dark'] .aurora {
+  display: none;
+}

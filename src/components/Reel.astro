@@ -1,0 +1,232 @@
+---
+// The reel: the first thing on the home page, a twenty-second loop. The ring of the logo and what we
+// do, a wall of real work in perspective (own products, made-to-measure products), what we build
+// (apps, software, automation, AI) over real product photos, and the Blue logo to close, its dot landing in place. Built from the product imagery rather than a video
+// file, so it stays sharp at any size. Choreography in src/scripts/reel.ts; with reduced motion it
+// is one still frame.
+import '../styles/reel.css';
+
+const words = ['escuchamos', 'diseñamos', 'construimos', 'lanzamos'];
+const a = (path: string) => `/assets/${path}`;
+// Rows past the third (the first two reversed) only show in the tall phone frame.
+// Each tile: image, and for device mockups a zoom onto the screen (scale, focus x, focus y).
+type Tile = [string, number?, string?, string?];
+const wall: Tile[][] = [
+  [
+    ['showcase/sygna-chat.webp'],
+    ['showcase/tumesaya-restaurant.webp'],
+    ['siweb/siweb1.webp', 1.9, '50%', '48%'],
+    ['tumesaya/tumesaya3.webp'],
+    ['sygna/sygna4.webp', 2.2, '50%', '42%'],
+    ['adscena/hero-loop-poster.jpg'],
+  ],
+  [
+    ['tumesaya/tumesaya1.webp'],
+    ['adscena/hero-loop-poster.jpg'],
+    ['showcase/sygna-dashboard.webp'],
+    ['siweb/siweb.2.webp', 2.1, '48%', '42%'],
+    ['showcase/tumesaya-app.webp'],
+    ['showcase/sygna-documents.webp'],
+  ],
+  [
+    ['siweb/siweb3.webp', 2, '40%', '40%'],
+    ['tumesaya/tumesaya2.webp'],
+    ['sygna/sygna1.webp', 2, '40%', '42%'],
+    ['showcase/sygna-chat.webp'],
+    ['showcase/tumesaya-restaurant.webp'],
+    ['showcase/sygna-dashboard.webp'],
+  ],
+];
+// What a business owner wants, one stage for all four: their wish on the left, letter by letter,
+// and the product that answers it as a floating 3D card on the right, with its own small motion
+// (chips, tiles flying in, a scan). The kind of work names it (what we build). `ar` is the card's
+// aspect ratio; `fit` frames the image inside it. Chips are illustrative states, never figures.
+const shots = [
+  {
+    word: 'más reservas',
+    kind: 'Apps',
+    line: 'Tus clientes reservan desde el móvil.',
+    src: 'tumesaya/tumesaya1.webp',
+    fit: 'cover',
+    ar: '3 / 2',
+    chips: ['Nueva reserva · Mesa para 4', 'Reserva confirmada'],
+  },
+  {
+    word: 'todo en un solo sitio',
+    kind: 'Software a medida',
+    line: 'Clientes, turnos y facturas en un panel.',
+    src: 'showcase/sygna-dashboard.webp',
+    fit: 'contain',
+    ar: '16 / 9',
+    tiles: ['Clientes', 'Turnos', 'Facturas', 'Gastos'],
+  },
+  {
+    word: 'cero papeleo',
+    kind: 'Automatización',
+    line: 'Tickets y facturas que se procesan solos.',
+    src: 'showcase/sygna-documents.webp',
+    fit: 'cover',
+    ar: '3 / 2',
+    scan: true,
+    chips: ['Ticket leído', 'Gasto guardado'],
+  },
+  {
+    word: 'clientes nuevos',
+    kind: 'Inteligencia artificial',
+    line: 'Pegas tu web y tus anuncios se crean solos.',
+    // Adscena's own phone loop (from adscena.es): the address being typed into the app.
+    src: 'adscena/hero-loop-poster.jpg',
+    video: 'adscena/hero-loop.mp4',
+    fit: 'contain',
+    ar: '1040 / 1360',
+    chips: ['Anuncio listo · Instagram', 'Publicado en Facebook'],
+  },
+];
+const triptych = [
+  ['tumesaya/tumesaya3.webp', 'más ventas'],
+  ['showcase/sygna-dashboard.webp', 'más tiempo'],
+  ['siweb/siweb1.webp', 'menos estrés'],
+];
+---
+
+<figure class="reel" data-reel aria-label="Vídeo: productos propios y productos a medida de Blue">
+  <div class="reel-frame">
+    <!-- 1. Process: the ring of the logo and what we do, one word at a time -->
+    <div class="r-scene r-open" data-r="open">
+      <span class="r-mark" data-r-mark></span>
+      <span class="r-line" data-r-line></span>
+      <span class="r-words">
+        {words.map((word) => (
+          <span data-r-word>{word}</span>
+        ))}
+      </span>
+    </div>
+
+    <!-- 2. The wall of work, in perspective -->
+    <div class="r-scene r-wall" data-r="wall">
+      <div class="r-plane">
+        <div class="r-plane-zoom" data-r-plane>
+          {[...wall, ...wall.slice(0, 2).map((row) => [...row].reverse())].map((row, i) => (
+            <div class:list={['r-row', { 'r-row-tall': i >= wall.length }]} data-r-row>
+              {row.map(([src, zoom = 1, x = '50%', y = '50%']) => (
+                <span class="r-tile">
+                  <img
+                    src={a(src)}
+                    alt=""
+                    decoding="async"
+                    style={`--zoom:${zoom};--focus:${x} ${y}`}
+                  />
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <p class="r-wall-title">
+        <span data-r-title>Productos propios</span>
+        <span data-r-title>Productos a medida</span>
+      </p>
+    </div>
+
+    <!-- 3. What a business owner wants, and the product that answers it, on one stage -->
+    <div class="r-scene r-build" data-r="build">
+      <span class="r-aura" data-r-anim data-r-aura></span>
+      <span class="r-floor" aria-hidden="true"></span>
+      <div class="r-say">
+        {shots.map((shot) => (
+          <div class="r-say-item" data-r-say>
+            <span class="r-kind" data-r-anim data-r-kind>
+              {shot.kind}
+            </span>
+            <p class="r-big" aria-label={shot.word}>
+              {shot.word.split(' ').map((w) => (
+                <span class="r-big-word" aria-hidden="true">
+                  {[...w].map((ch) => (
+                    <span class="r-ch" data-r-anim data-r-ch>
+                      {ch}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </p>
+            <span class="r-line-small" data-r-anim data-r-small>
+              {shot.line}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div class="r-cardpos">
+        {shots.map((shot) => (
+          <div class="r-pcard-wrap" style={`--ar:${shot.ar}`}>
+            <div class="r-pcard-in" data-r-anim data-r-card>
+              <div class="r-pcard" style={`--fit:${shot.fit}`}>
+                {shot.video ? (
+                  <video
+                    data-r-shot-video
+                    src={a(shot.video)}
+                    poster={a(shot.src)}
+                    muted
+                    loop
+                    playsinline
+                    preload="auto"
+                  />
+                ) : (
+                  <img src={a(shot.src)} alt="" decoding="async" />
+                )}
+                {shot.scan && <span class="r-scan" data-r-anim data-r-scan />}
+                <span class="r-shine" data-r-anim data-r-shine />
+              </div>
+              {shot.chips?.map((chip, i) => (
+                <span class:list={['r-chip', `r-chip-${i}`]} data-r-anim data-r-chip>
+                  <i />
+                  {chip}
+                </span>
+              ))}
+              {shot.tiles?.map((tile, i) => (
+                <span class:list={['r-fly', `r-fly-${i}`]} data-r-anim data-r-fly>
+                  {tile}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- 4. The three side by side, out of focus, with their words -->
+    <div class="r-scene r-tri" data-r="tri">
+      {triptych.map(([src, word]) => (
+        <div class="r-tri-col" data-r-tri-col>
+          <img src={a(src)} alt="" decoding="async" />
+          <span data-r-tri-word>{word}</span>
+        </div>
+      ))}
+    </div>
+
+    <!-- 5. The logo: the dot beats, then lands as the dot of ".blue" while the letters appear -->
+    <div class="r-scene r-logo" data-r="logo">
+      <div class="r-logo-box">
+        <img src={a('logo.webp')} alt="" width="1016" height="472" data-r-logo-img />
+        <span class="r-dot" data-r-dot></span>
+      </div>
+    </div>
+
+    <div class="r-grain" aria-hidden="true"></div>
+    <span class="r-progress" aria-hidden="true">
+      <span data-r-progress></span>
+    </span>
+    <button class="r-toggle" type="button" data-r-toggle aria-pressed="false">
+      <span class="r-toggle-pause">Pausar vídeo</span>
+      <span class="r-toggle-play">Reproducir vídeo</span>
+    </button>
+  </div>
+  <figcaption class="sr-only">
+    Escuchamos, diseñamos, construimos y lanzamos: productos propios y productos a medida. Más
+    reservas, todo bajo control, cero papeleo y clientes nuevos, con apps, software a medida,
+    automatización e inteligencia artificial. Más ventas, más tiempo, menos estrés. Blue.
+  </figcaption>
+</figure>
+
+<script>
+  import '../scripts/reel';
+</script>

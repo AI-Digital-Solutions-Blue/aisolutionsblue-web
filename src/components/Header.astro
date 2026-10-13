@@ -6,7 +6,7 @@ const prefix = home ? '' : '/';
 
 <header class="site-header">
   <div class="header-inner shell">
-    <a class="brand" href="/" aria-label="Blue — inicio">
+    <a class="brand" href="/" aria-label="Blue, ir al inicio">
       <img
         src="/assets/logo.webp"
         alt="AI Digital Solutions Blue"
@@ -17,14 +17,15 @@ const prefix = home ? '' : '/';
     </a>
     <nav id="main-navigation" aria-label="Navegación principal">
       <a href={`${prefix}#soluciones`}>Soluciones</a>
-      <a href={`${prefix}#proyectos`}>Productos</a>
-      <a href={`${prefix}#nosotros`}>Así es Blue</a>
+      <a href={`${prefix}#productos`}>Productos</a>
+      <a href={`${prefix}#proceso`}>Cómo trabajamos</a>
+      <a href={`${prefix}#nosotros`}>Nosotros</a>
       <a
         class="nav-contact"
         href="/contacto"
         aria-current={Astro.url.pathname.replace(/\/$/, '') === '/contacto' ? 'page' : undefined}
       >
-        Hablemos <Icon name="diagonal" size={17} />
+        Contáctanos <Icon name="diagonal" size={17} />
       </a>
     </nav>
     <button

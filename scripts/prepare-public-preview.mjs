@@ -26,7 +26,7 @@ const form = match[0]
   .replace('</form>', '</fieldset></form>')
   .replace(
     'Los campos con * son obligatorios. Usaremos tus datos para atender tu consulta.',
-    'El envío del formulario estará disponible próximamente. Mientras tanto, escríbenos a <a href="mailto:marketing@aisolutionsblue.com">marketing@aisolutionsblue.com</a>.',
+    'El envío del formulario estará disponible próximamente. Mientras tanto, escríbenos a <a href="mailto:info@aisolutionsblue.com">info@aisolutionsblue.com</a>.',
   )
   .replace('Déjanos tus datos y te contactaremos.', 'Vista previa del formulario de contacto.')
   .replace('Hablemos de tu proyecto', 'Formulario próximamente');

@@ -1,0 +1,42 @@
+---
+import { process } from '../data/site';
+import Orbits from './Orbits.astro';
+// One drawn icon per step (listen, design, build, launch). Lines draw in as the scroll line arrives.
+const icons = [
+  'M6 9a5 5 0 0 1 5-5h10a5 5 0 0 1 5 5v6a5 5 0 0 1-5 5h-6l-5 4v-4a5 5 0 0 1-4-5zM11 12h10M11 16h6',
+  'M5 7h22v18H5zM5 12h22M10 17h7M10 21h12M22 16l3 3-3 3',
+  'M6 10l10-5 10 5-10 5zM6 16l10 5 10-5M6 22l10 5 10-5',
+  'M16 4c5 3 7 8 6 14l-6 4-6-4c-1-6 1-11 6-14zM16 13a2 2 0 1 0 0 .1M10 18l-4 4 5 1M22 18l4 4-5 1M14 26l2 3 2-3',
+];
+---
+
+<section class="process" id="proceso" aria-labelledby="process-title">
+  <Orbits at="bottom-right" />
+  <div class="shell">
+    <div class="section-intro">
+      <h2 id="process-title" data-reveal>
+        Así trabajamos contigo.
+      </h2>
+      <p>Un proceso claro, rápido y contigo en cada paso.</p>
+    </div>
+    <div class="process-track" data-process>
+      <span class="process-line" aria-hidden="true">
+        <span data-process-fill></span>
+      </span>
+      <ol class="process-steps">
+        {process.map((step, i) => (
+          <li class="process-step">
+            <span class="process-index" aria-hidden="true">
+              {i + 1}
+            </span>
+            <svg class="process-icon" viewBox="0 0 32 32" aria-hidden="true">
+              <path d={icons[i]} pathLength="1" />
+            </svg>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

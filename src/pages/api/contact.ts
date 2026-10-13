@@ -15,7 +15,7 @@ function respond(request: Request, status: number, message: string) {
   const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
   if (request.headers.get('accept')?.includes('text/html')) {
     return new Response(
-      `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Tu consulta · Blue</title><style>body{font:18px/1.7 system-ui,sans-serif;color:#16223b;background:#f8f9fc;max-width:600px;margin:15vh auto;padding:24px}h1{font-size:36px;line-height:1.2}a{color:#3459ef}p{margin:24px 0}</style></head><body><main><h1>${status < 300 ? 'Gracias por escribirnos.' : 'No hemos podido enviar tu consulta.'}</h1><p>${escape(message)}</p><p>También puedes escribir a <a href="mailto:marketing@aisolutionsblue.com">marketing@aisolutionsblue.com</a>.</p><a href="/contacto">Volver a Blue</a></main></body></html>`,
+      `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Tu consulta · Blue</title><style>body{font:18px/1.7 system-ui,sans-serif;color:#16223b;background:#f8f9fc;max-width:600px;margin:15vh auto;padding:24px}h1{font-size:36px;line-height:1.2}a{color:#3459ef}p{margin:24px 0}</style></head><body><main><h1>${status < 300 ? 'Gracias por escribirnos.' : 'No hemos podido enviar tu consulta.'}</h1><p>${escape(message)}</p><p>También puedes escribir a <a href="mailto:info@aisolutionsblue.com">info@aisolutionsblue.com</a>.</p><a href="/contacto">Volver a Blue</a></main></body></html>`,
       { status, headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8' } },
     );
   }

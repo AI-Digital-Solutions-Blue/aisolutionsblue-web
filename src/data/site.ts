@@ -1,121 +1,41 @@
 export const company = {
   name: 'AI Digital Solutions Blue',
   legalName: 'AI Digital Solutions Blue, S.L.',
-  email: 'marketing@aisolutionsblue.com',
+  email: 'info@aisolutionsblue.com',
   phone: '+34 689 23 27 92',
   phoneHref: '+34689232792',
-  address: 'Calle Carvajal, 26, Bajo. 35004 Las Palmas de Gran Canaria (Las Palmas). España.',
+  address: 'Calle Juan Rejón, 67, Planta 3. 35008 Las Palmas de Gran Canaria (Las Palmas). España.',
   mapsUrl:
-    'https://www.google.com/maps/search/?api=1&query=Calle+Carvajal+26+35004+Las+Palmas+de+Gran+Canaria+Espa%C3%B1a',
+    'https://www.google.com/maps/search/?api=1&query=Calle+Juan+Rej%C3%B3n+67+35008+Las+Palmas+de+Gran+Canaria+Espa%C3%B1a',
 };
 
-export const services = [
+// Stage: three chapters, each a problem the owner lives that turns into its solution, and the
+// real product that does it. The field in the stage takes one form per chapter
+// (src/scripts/shapes.ts, same order).
+export const useCases = [
   {
-    number: '01',
-    title: 'Atención y reservas con asistentes de voz',
-    category: 'ATENCIÓN AL CLIENTE',
-    icon: 'voice',
-    text: 'Atiende consultas, orienta a tus clientes y gestiona reservas con un asistente de voz adaptado a tu negocio. También fuera de tu horario.',
-    tags: ['Atención al cliente', 'Reservas', 'Disponibilidad 24/7'],
-    image: '/assets/siweb/siweb.2.webp',
-    alt: 'Gestión de llamadas programadas en Call Center Siweb',
-    projectLabel: 'Ver Call Center Siweb',
-    projectHref: '#siweb',
+    label: 'Atiende',
+    pain: 'Llamadas perdidas.',
+    title: 'Todas atendidas.',
+    who: 'Call Center Siweb',
+    relation: 'Lo hace',
+    href: '/productos/siweb',
   },
   {
-    number: '02',
-    title: 'Documentos y procesos organizados',
-    category: 'AUTOMATIZACIÓN DOCUMENTAL',
-    icon: 'document',
-    text: 'Simplifica la gestión de documentos y conecta tus procesos. Reducimos el trabajo manual para que puedas dedicar tu tiempo a lo que hace crecer tu negocio.',
-    tags: ['Documentos', 'Procesos conectados', 'Ahorro de tiempo'],
-    image: '/assets/sygna/sygna4.webp',
-    alt: 'Perfil y gestión de solicitudes de un empleado en Sygna',
-    projectLabel: 'Ver Sygna',
-    projectHref: '#sygna',
+    label: 'Atrae',
+    pain: 'Sin tiempo para anunciarte.',
+    title: 'Anuncios listos en minutos.',
+    who: 'Adscena',
+    relation: 'Lo hace',
+    href: '/productos/adscena',
   },
   {
-    number: '03',
-    title: 'Información útil para tu actividad comercial',
-    category: 'IA COMERCIAL',
-    icon: 'chart',
-    text: 'Entiende mejor tu actividad, detecta oportunidades y mejora la atención a tus clientes. Soluciones de IA comercial adaptadas a tus objetivos y a tu forma de trabajar.',
-    tags: ['Oportunidades', 'Visión de negocio', 'Atención personalizada'],
-    image: '/assets/siweb/siweb3.webp',
-    alt: 'Selección de productos en la plataforma comercial Siweb',
-    projectLabel: 'Ver la plataforma Siweb',
-    projectHref: '#siweb',
-  },
-];
-
-export const projects = [
-  {
-    id: 'sygna',
-    number: '01',
-    name: 'Sygna',
-    website: 'https://sygna.es/',
-    category: 'GESTIÓN LABORAL',
-    title: 'La gestión de tu equipo, en un solo lugar.',
-    challenge: 'Contratos, turnos y comunicaciones repartidos entre varias herramientas.',
-    text: 'Contratos, turnos y comunicación interna, reunidos en una plataforma de gestión laboral.',
-    tags: ['Recursos humanos', 'Automatización', 'IA'],
-    color: 'blue',
-    images: [
-      '/assets/sygna/sygna3.webp',
-      '/assets/sygna/sygna2.webp',
-      '/assets/sygna/sygna1.webp',
-      '/assets/sygna/sygna4.webp',
-    ],
-    alts: [
-      'Vista de jornada y actividad reciente de Sygna',
-      'Panel de control horario de Sygna',
-      'Acceso a Sygna en un ordenador portátil',
-      'Perfil de empleado y solicitudes en Sygna',
-    ],
-  },
-  {
-    id: 'tumesaya',
-    number: '02',
-    name: 'Tu Mesa Ya!',
-    website: 'https://tumesaya.centraldereservas.ai',
-    category: 'RESTAURACIÓN',
-    title: 'Reservas organizadas. Atención disponible.',
-    challenge: 'Consultas y reservas que llegan mientras el equipo atiende el restaurante.',
-    text: 'Conecta restaurantes y clientes para gestionar reservas, organizar la disponibilidad y automatizar la atención.',
-    tags: ['Reservas', 'Atención 24/7', 'Hostelería'],
-    color: 'yellow',
-    images: [
-      '/assets/tumesaya/tumesaya1.webp',
-      '/assets/tumesaya/tumesaya2.webp',
-      '/assets/tumesaya/tumesaya3.webp',
-    ],
-    alts: [
-      'Restaurantes y opciones de reserva en la aplicación Tu Mesa Ya!',
-      'Gestión de mesas, reservas y perfil de Tu Mesa Ya!',
-      'Carta, acceso y reservas de Tu Mesa Ya!',
-    ],
-  },
-  {
-    id: 'siweb',
-    number: '03',
-    name: 'Call Center Siweb',
-    website: 'https://siweb.es',
-    category: 'ATENCIÓN AL CLIENTE',
-    title: 'Cada llamada, en el lugar adecuado.',
-    challenge: 'Un volumen de consultas que requiere recoger datos y dirigir cada llamada.',
-    text: 'Automatiza la atención telefónica, recoge los datos del cliente y dirige cada consulta al equipo adecuado.',
-    tags: ['Asistentes de voz', 'Call center', 'A medida'],
-    color: 'lavender',
-    images: [
-      '/assets/siweb/siweb.2.webp',
-      '/assets/siweb/siweb1.webp',
-      '/assets/siweb/siweb3.webp',
-    ],
-    alts: [
-      'Gestión de llamadas programadas en Call Center Siweb',
-      'Pantalla de acceso de Call Center Siweb',
-      'Selección de productos en la plataforma Siweb',
-    ],
+    label: 'Organiza',
+    pain: 'Papeles hasta la noche.',
+    title: 'Gestión que se hace sola.',
+    who: 'Sygna',
+    relation: 'Lo hace',
+    href: '/productos/sygna',
   },
 ];
 
@@ -141,3 +61,28 @@ export const faqs = [
       'Depende del alcance, las integraciones y las necesidades de tu negocio. En la primera conversación evaluamos tu caso para poder preparar una propuesta ajustada a tu proyecto.',
   },
 ];
+
+// How a project runs, from first conversation to launch. The order carries meaning.
+export const process = [
+  {
+    title: 'Escuchamos',
+    text: 'Conocemos tu negocio, cómo trabajas y qué te quita tiempo. Sin coste y sin compromiso.',
+  },
+  {
+    title: 'Diseñamos',
+    text: 'Te proponemos una solución concreta, con plazos y precio claros.',
+  },
+  {
+    title: 'Construimos',
+    text: 'La desarrollamos y te enseñamos avances por el camino, para ajustar antes de terminar.',
+  },
+  {
+    title: 'Lanzamos',
+    text: 'La ponemos en marcha con tu equipo y seguimos a tu lado para ajustarla.',
+  },
+];
+
+// Hidden until there is real content. Add entries here and the sections appear on their own.
+export const team: { name: string; role: string; photo: string }[] = [];
+export const testimonial: { quote: string; name: string; role: string; company: string } | null =
+  null;
