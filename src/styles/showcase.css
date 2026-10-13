@@ -210,6 +210,10 @@
   box-shadow: none;
   translate: 0 -50%;
 }
+/* Two classes: the iPhone's own `.iph { position: relative }` can load after this file. */
+.sc-media.sc-phone {
+  position: absolute;
+}
 .sc-phone .iph-screen img {
   width: 100%;
   height: 100%;
