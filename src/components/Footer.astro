@@ -25,7 +25,9 @@ import Icon from './Icon.astro';
         >
           {company.address}
         </a>
-        <a class="footer-phone" href={`tel:${company.phoneHref}`}>{company.phone}</a>
+        <a class="footer-phone" href={`tel:${company.phoneHref}`}>
+          {company.phone}
+        </a>
       </address>
       <div class="footer-social">
         <a

@@ -15,38 +15,42 @@ export interface Product {
   lines: ServiceLine[];
   benefits: { title: string; text: string }[];
   images: { src: string; alt: string; width: number; height: number }[];
+  /** The product's card in the home carousel: its colour, type colour and screen. */
+  card: { bg: string; fg: 'light' | 'dark'; image: string; fit?: 'cover' | 'contain' | 'phone' };
 }
 
 export const serviceLines: Record<
   ServiceLine,
-  { id: ServiceLine; title: string; tech: string; text: string; examples: string[] }
+  { id: ServiceLine; title: string; tech: string; text: string }
 > = {
   agentes: {
     id: 'agentes',
     title: 'Atender a cada cliente',
     tech: 'asistentes de IA',
-    text: 'Un asistente que contesta llamadas y mensajes a cualquier hora, resuelve dudas y gestiona citas y reservas. Y te pasa a ti lo que necesita una persona.',
-    examples: ['Llamadas', 'Mensajes', 'Citas y reservas'],
+    text: 'Un asistente que contesta llamadas y mensajes a cualquier hora y gestiona tus citas.',
   },
   automatizacion: {
     id: 'automatizacion',
     title: 'Quitarte trabajo de encima',
     tech: 'automatización',
-    text: 'Lo que haces a mano una y otra vez, que se haga solo: avisos, recordatorios, documentos y datos que pasan de una herramienta a otra.',
-    examples: ['Recordatorios', 'Documentos', 'Avisos automáticos'],
+    text: 'Avisos, recordatorios y documentos que se hacen solos, sin trabajo a mano.',
   },
   software: {
     id: 'software',
     title: 'Herramientas hechas para ti',
     tech: 'software a medida',
-    text: 'Cuando lo que existe no encaja con tu forma de trabajar, construimos la herramienta que necesitas: tu panel, tu aplicación, tu sistema.',
-    examples: ['Paneles de gestión', 'Aplicaciones', 'Sistemas a medida'],
+    text: 'Tu panel, tu app o tu sistema, hechos a la medida de cómo trabajas.',
   },
 };
 
 export const products: Product[] = [
   {
     slug: 'siweb',
+    card: {
+      bg: 'linear-gradient(150deg, #0d2a73 0%, #1f5bff 120%)',
+      fg: 'light',
+      image: '/assets/siweb/siweb1.webp',
+    },
     name: 'Call Center Siweb',
     relation: 'Caso de cliente',
     website: 'https://siweb.es',
@@ -87,6 +91,11 @@ export const products: Product[] = [
   },
   {
     slug: 'tumesaya',
+    card: {
+      bg: 'linear-gradient(150deg, #ffd84d 0%, #ffbf1f 100%)',
+      fg: 'dark',
+      image: '/assets/tumesaya/tumesaya3.webp',
+    },
     name: 'Tu Mesa Ya!',
     relation: 'Producto de Blue',
     website: 'https://tumesaya.centraldereservas.ai',
@@ -124,6 +133,12 @@ export const products: Product[] = [
   },
   {
     slug: 'sygna',
+    card: {
+      bg: 'linear-gradient(150deg, #eaf0ff 0%, #c9d8ff 100%)',
+      fg: 'dark',
+      image: '/assets/showcase/sygna-dashboard.webp',
+      fit: 'contain',
+    },
     name: 'Sygna',
     relation: 'Producto de Blue',
     website: 'https://sygna.es/',
@@ -164,6 +179,12 @@ export const products: Product[] = [
   },
   {
     slug: 'adscena',
+    card: {
+      bg: 'linear-gradient(150deg, #ff6b7d 0%, #8b5cf6 110%)',
+      fg: 'light',
+      image: '/assets/adscena/screens/09-elegir.jpg',
+      fit: 'phone',
+    },
     name: 'Adscena',
     relation: 'Producto de Blue',
     website: 'https://adscena.es/',

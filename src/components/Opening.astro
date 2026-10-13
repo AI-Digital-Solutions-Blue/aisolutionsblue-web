@@ -1,9 +1,7 @@
 ---
 // Opening of the home page: the reel fills the first screen, then the headline and the call to action.
-// The stage then shows, in three chapters, a problem an owner lives turning into its solution.
 import Icon from './Icon.astro';
 import Reel from './Reel.astro';
-import { useCases } from '../data/site';
 import '../styles/opening.css';
 interface Props {
   /** 'dark' sets the opening on deep night blue with real light; 'light' keeps it on white. */
@@ -47,61 +45,6 @@ const { tone = 'light' } = Astro.props;
           </a>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="shell">
-    <div class="stage-intro">
-      <h2 id="stage-title">Sabemos cómo es tu día.</h2>
-    </div>
-    <div class="stage" data-stage aria-labelledby="stage-title">
-      <canvas class="field field-stage" data-field="stage" aria-hidden="true"></canvas>
-      <div class="stage-copy">
-        <div class="stage-titles">
-          {useCases.map((item, i) => (
-            <div
-              class="stage-chapter"
-              data-stage-chapter
-              aria-hidden={i !== 0 ? 'true' : undefined}
-            >
-              <p class="stage-count">
-                0{i + 1} <span>· {item.label}</span>
-              </p>
-              <!-- The problem is struck out and the solution takes its place. -->
-              <div class="stage-swap">
-                <p class="stage-pain" data-stage-pain>
-                  <span data-stage-strike>{item.pain}</span>
-                </p>
-                <h3 class="stage-title" data-stage-outcome>
-                  {item.title}
-                </h3>
-              </div>
-              <a
-                class="stage-who"
-                data-stage-who
-                href={item.href}
-                tabindex={i !== 0 ? -1 : undefined}
-              >
-                <span>{item.relation}</span>
-                <strong>{item.who}</strong>
-                <Icon name="diagonal" size={16} />
-              </a>
-            </div>
-          ))}
-        </div>
-        <div class="stage-tabs" role="group" aria-label="Elegir ejemplo">
-          {useCases.map((item, i) => (
-            <button type="button" data-stage-tab aria-pressed={i === 0 ? 'true' : 'false'}>
-              <span class="stage-tab-bar" aria-hidden="true">
-                <span />
-              </span>
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
-      <!-- The field takes each chapter's form here; purely visual, the title carries meaning. -->
-      <div class="stage-form" data-stage-form aria-hidden="true"></div>
     </div>
   </div>
 </section>

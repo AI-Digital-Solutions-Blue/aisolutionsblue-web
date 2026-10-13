@@ -9,36 +9,6 @@ export const company = {
     'https://www.google.com/maps/search/?api=1&query=Calle+Juan+Rej%C3%B3n+67+35008+Las+Palmas+de+Gran+Canaria+Espa%C3%B1a',
 };
 
-// Stage: three chapters, each a problem the owner lives that turns into its solution, and the
-// real product that does it. The field in the stage takes one form per chapter
-// (src/scripts/shapes.ts, same order).
-export const useCases = [
-  {
-    label: 'Atiende',
-    pain: 'Llamadas perdidas.',
-    title: 'Todas atendidas.',
-    who: 'Call Center Siweb',
-    relation: 'Lo hace',
-    href: '/productos/siweb',
-  },
-  {
-    label: 'Atrae',
-    pain: 'Sin tiempo para anunciarte.',
-    title: 'Anuncios listos en minutos.',
-    who: 'Adscena',
-    relation: 'Lo hace',
-    href: '/productos/adscena',
-  },
-  {
-    label: 'Organiza',
-    pain: 'Papeles hasta la noche.',
-    title: 'Gestión que se hace sola.',
-    who: 'Sygna',
-    relation: 'Lo hace',
-    href: '/productos/sygna',
-  },
-];
-
 export const faqs = [
   {
     question: '¿La inteligencia artificial encaja en un negocio pequeño?',

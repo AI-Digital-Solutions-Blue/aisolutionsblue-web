@@ -1,0 +1,98 @@
+---
+// The products, as a carousel of large colour cards: each one its product's world, with its screen
+// bleeding off the edge. Swipe, drag or use the arrows; the cards move in depth as they pass
+// (src/scripts/showcase.ts). Without script it is a plain horizontal scroll with snap points.
+import Icon from './Icon.astro';
+import { products } from '../data/products';
+import '../styles/iphone.css';
+import '../styles/showcase.css';
+---
+
+<section class="showcase" id="productos" aria-labelledby="showcase-title" data-showcase>
+  <div class="shell sc-head" data-sc-head>
+    <div class="sc-title">
+      <p class="sc-eyebrow">Productos</p>
+      <h2 id="showcase-title" data-reveal>
+        Productos que ya funcionan.
+      </h2>
+    </div>
+    <p class="sc-lead">
+      Productos propios y proyectos a medida, construidos por Blue y en marcha en negocios reales.
+    </p>
+    <div class="sc-controls">
+      <button class="sc-arrow" type="button" data-sc-prev aria-label="Producto anterior">
+        <Icon name="arrow" size={20} />
+      </button>
+      <button class="sc-arrow" type="button" data-sc-next aria-label="Producto siguiente">
+        <Icon name="arrow" size={20} />
+      </button>
+    </div>
+  </div>
+
+  <ul class="sc-track" data-sc-track>
+    {products.map((product) => (
+      <li
+        class:list={['sc-card', `sc-${product.card.fg}`]}
+        data-sc-card
+        style={`--bg:${product.card.bg}`}
+      >
+        <a class="sc-link" href={`/productos/${product.slug}`} draggable="false">
+          <span class="sc-copy">
+            <span class="sc-tag">{product.relation}</span>
+            <span class="sc-name">{product.name}</span>
+            <span class="sc-headline">{product.headline}</span>
+          </span>
+          <span class="sc-cta">
+            <span class="sc-cta-text">
+              {product.relation === 'Caso de cliente' ? 'Ver el caso' : 'Ver el producto'}
+            </span>
+            <Icon name="arrow" size={18} />
+          </span>
+          {product.card.fit === 'phone' ? (
+            <span class="sc-media sc-phone iph">
+              <span class="iph-body">
+                <span class="iph-bezel">
+                  <span class="iph-screen">
+                    <img
+                      src={product.card.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      draggable="false"
+                    />
+                    <span class="iph-island" />
+                  </span>
+                </span>
+              </span>
+              <i class="iph-btn iph-action" />
+              <i class="iph-btn iph-up" />
+              <i class="iph-btn iph-down" />
+              <i class="iph-btn iph-power" />
+            </span>
+          ) : (
+            <span class:list={['sc-media', { 'sc-contain': product.card.fit === 'contain' }]}>
+              <img
+                src={product.card.image}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+                data-sc-media
+              />
+            </span>
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <div class="shell sc-dots" aria-hidden="true">
+    {products.map(() => (
+      <span data-sc-dot />
+    ))}
+  </div>
+</section>
+
+<script>
+  import '../scripts/showcase';
+</script>

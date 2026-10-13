@@ -5,7 +5,12 @@ import { faqs } from '../data/site';
 
 <section class="qa" id="preguntas" aria-labelledby="faq-title">
   <div class="shell qa-layout">
-    <h2 id="faq-title" data-reveal>Lo que suelen preguntarnos.</h2>
+    <div>
+      <p class="section-eyebrow">Preguntas</p>
+      <h2 id="faq-title" data-reveal>
+        Lo que suelen preguntarnos.
+      </h2>
+    </div>
     <div class="qa-list">
       {faqs.map((item) => (
         <details>

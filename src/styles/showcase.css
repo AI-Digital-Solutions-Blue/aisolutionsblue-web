@@ -1,0 +1,304 @@
+/* Products carousel: large colour cards on a track that starts on the page's left edge and runs
+   past the right one. --sc-pad is the shell's left offset, measured by the script. */
+.showcase {
+  padding-block: clamp(72px, 8vw, 128px);
+  overflow: hidden;
+}
+.sc-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) auto;
+  gap: 24px 56px;
+  align-items: end;
+  margin-bottom: clamp(36px, 4vw, 56px);
+}
+.sc-eyebrow {
+  margin-bottom: 14px;
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 600;
+}
+.sc-title h2 {
+  font-size: clamp(34px, 3.8vw, 56px);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.sc-lead {
+  max-width: 30rem;
+  color: var(--muted);
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.sc-controls {
+  display: flex;
+  gap: 10px;
+}
+.sc-arrow {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s,
+    opacity 0.25s;
+}
+.sc-arrow[data-sc-prev] svg {
+  rotate: 180deg;
+}
+.sc-arrow:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.sc-arrow:disabled {
+  opacity: 0.35;
+}
+
+.sc-track {
+  display: flex;
+  gap: clamp(16px, 1.8vw, 28px);
+  margin: 0;
+  padding: 12px var(--sc-pad, 24px) 28px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--sc-pad, 24px);
+  scrollbar-width: none;
+  cursor: grab;
+  overscroll-behavior-x: contain;
+}
+.sc-track::-webkit-scrollbar {
+  display: none;
+}
+.sc-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+.sc-card {
+  flex: none;
+  width: clamp(300px, 44vw, 720px);
+  aspect-ratio: 1.18;
+  scroll-snap-align: start;
+  perspective: 1400px;
+}
+.sc-link {
+  position: relative;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: clamp(22px, 2.4vw, 34px);
+  background: var(--bg);
+  color: var(--ink);
+  transform-origin: 50% 60%;
+  will-change: transform;
+}
+.sc-light .sc-link {
+  color: #fff;
+}
+/* A soft grid of light inside each card, like the field the product lives in. */
+.sc-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(currentColor 1px, transparent 1px),
+    linear-gradient(90deg, currentColor 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.07;
+  -webkit-mask: radial-gradient(80% 70% at 30% 20%, #000, transparent);
+  mask: radial-gradient(80% 70% at 30% 20%, #000, transparent);
+}
+.sc-copy {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  max-width: 60%;
+  padding: clamp(24px, 3vw, 44px);
+}
+.sc-tag {
+  padding: 6px 12px;
+  border-radius: 100px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  font-size: 13px;
+  font-weight: 600;
+}
+.sc-name {
+  font-family: var(--display);
+  font-size: clamp(30px, 3.4vw, 54px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+}
+.sc-headline {
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.45;
+  opacity: 0.8;
+  text-wrap: pretty;
+}
+.sc-cta {
+  position: absolute;
+  left: clamp(24px, 3vw, 44px);
+  bottom: clamp(24px, 3vw, 40px);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 100px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  backdrop-filter: blur(10px);
+  font-size: 15px;
+  font-weight: 600;
+  transition: gap 0.3s;
+}
+.sc-link:hover .sc-cta {
+  gap: 16px;
+}
+/* The product's screen, bleeding off the card's lower right corner. */
+.sc-media {
+  position: absolute;
+  right: -8%;
+  bottom: -10%;
+  z-index: 1;
+  width: 68%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: clamp(14px, 1.6vw, 22px);
+  background: #fff;
+  box-shadow: 0 30px 70px -20px #0a102266;
+  transition: translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.sc-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scale: 1.08;
+}
+/* A transparent screen floats free; a tall phone sits upright. */
+.sc-contain {
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.sc-contain img {
+  object-fit: contain;
+  filter: drop-shadow(0 30px 40px #0a102240);
+}
+/* A phone: the product's screen inside a real iPhone (src/styles/iphone.css), standing upright. */
+.sc-phone {
+  /* Upright and whole inside the card (src/styles/iphone.css), centred in its height. */
+  top: 50%;
+  right: 7%;
+  bottom: auto;
+  width: 31%;
+  aspect-ratio: auto;
+  overflow: visible;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  translate: 0 -50%;
+}
+.sc-phone .iph-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  scale: 1;
+}
+.sc-link:hover .sc-media:not(.sc-phone) {
+  translate: -2% -3%;
+}
+.sc-link:hover .sc-phone {
+  translate: 0 -52%;
+}
+.sc-link:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 4px;
+}
+
+.sc-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.sc-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 100px;
+  background: var(--line);
+  transition:
+    width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 0.35s;
+}
+.sc-dots span.is-on {
+  width: 28px;
+  background: var(--blue);
+}
+
+@media (max-width: 900px) {
+  .sc-head {
+    grid-template-columns: 1fr auto;
+  }
+  .sc-lead {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+@media (max-width: 640px) {
+  .sc-card {
+    width: 84vw;
+    aspect-ratio: 0.82;
+  }
+  .sc-copy {
+    max-width: none;
+  }
+  .sc-media {
+    width: 92%;
+    right: -14%;
+    bottom: -6%;
+  }
+  .sc-phone {
+    top: auto;
+    bottom: 5%;
+    right: 7%;
+    width: 38%;
+    translate: none;
+  }
+  .sc-controls {
+    display: none;
+  }
+  /* On a phone the call becomes a round arrow in the corner, clear of the screen image. */
+  .sc-cta {
+    left: auto;
+    right: 18px;
+    top: 18px;
+    bottom: auto;
+    padding: 12px;
+  }
+  .sc-cta-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .sc-copy {
+    padding-right: 72px;
+  }
+  .sc-head {
+    grid-template-columns: 1fr;
+  }
+}

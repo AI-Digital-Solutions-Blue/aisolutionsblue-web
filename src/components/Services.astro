@@ -1,6 +1,6 @@
 ---
-// What Blue does, in an owner's words. Every line is shown, not only told: each one has a small
-// looping scene of the work happening (animated by src/scripts/home.ts while it is on screen).
+// What Blue does, in an owner's words: three cards side by side, each shown, not only told, with a
+// small looping scene of the work happening (animated by src/scripts/home.ts while it is on screen).
 import Icon from './Icon.astro';
 import Orbits from './Orbits.astro';
 import { serviceLines, productsForLine } from '../data/products';
@@ -10,113 +10,111 @@ import { serviceLines, productsForLine } from '../data/products';
   <Orbits at="top-right" />
   <div class="shell">
     <div class="section-intro">
-      <h2 id="services-title" data-reveal>Entendemos tu negocio y lo llevamos más lejos.</h2>
+      <div>
+        <p class="section-eyebrow">Soluciones</p>
+        <h2 id="services-title" data-reveal>
+          Lo que hacemos por tu negocio.
+        </h2>
+      </div>
       <p>Escuchamos qué te frena, diseñamos la solución y la construimos a tu medida.</p>
     </div>
     <ol class="svc-list">
-      {
-        Object.values(serviceLines).map((line) => (
-          <li class="svc">
-            <div class="svc-text">
-              <h3>{line.title}</h3>
-              <p>{line.text}</p>
-              <ul class="svc-examples" aria-label={`Ejemplos: ${line.title.toLowerCase()}`}>
-                {line.examples.map((example) => (
-                  <li>{example}</li>
-                ))}
-              </ul>
-              <p class="svc-proof">
-                Ya funciona en{' '}
-                {productsForLine(line.id).map((product, i, all) => (
-                  <>
-                    <a href={`/productos/${product.slug}`}>
-                      {product.name}
-                      <Icon name="diagonal" size={14} />
-                    </a>
-                    {i < all.length - 2 ? ', ' : i === all.length - 2 ? ' y ' : ''}
-                  </>
-                ))}
-              </p>
-            </div>
+      {Object.values(serviceLines).map((line) => (
+        <li class="svc">
+          <div class="svc-text">
+            <h3>{line.title}</h3>
+            <p>{line.text}</p>
+            <p class="svc-proof">
+              Ya funciona en{' '}
+              {productsForLine(line.id).map((product, i, all) => (
+                <>
+                  <a href={`/productos/${product.slug}`}>
+                    {product.name}
+                    <Icon name="diagonal" size={14} />
+                  </a>
+                  {i < all.length - 2 ? ', ' : i === all.length - 2 ? ' y ' : ''}
+                </>
+              ))}
+            </p>
+          </div>
 
-            <div class="vis" data-vis={line.id} aria-hidden="true">
-              {line.id === 'agentes' && (
-                <div class="vis-talk">
-                  <div class="vis-call" data-call>
-                    <span class="vis-call-icon" />
-                    <span class="vis-call-text">
-                      <b>Llamada entrante</b>
-                      <small data-call-state>Atiende el asistente de Blue</small>
-                    </span>
-                    <span class="vis-badge" data-badge>
-                      Atendida
-                    </span>
-                  </div>
-                  <p class="vis-bubble vis-in" data-bubble>
-                    ¿Tenéis hueco mañana?
-                  </p>
-                  <p class="vis-bubble vis-out" data-bubble>
-                    Sí, a las 10:00. ¿Te lo reservo?
-                  </p>
-                  <p class="vis-bubble vis-in" data-bubble>
-                    ¡Perfecto, gracias!
-                  </p>
-                </div>
-              )}
-
-              {line.id === 'automatizacion' && (
-                <div class="vis-flow">
-                  <span class="vis-track">
-                    <span class="vis-track-fill" data-fill />
+          <div class="vis" data-vis={line.id} aria-hidden="true">
+            {line.id === 'agentes' && (
+              <div class="vis-talk">
+                <div class="vis-call" data-call>
+                  <span class="vis-call-icon" />
+                  <span class="vis-call-text">
+                    <b>Llamada entrante</b>
+                    <small data-call-state>Atiende el asistente de Blue</small>
                   </span>
-                  <span class="vis-runner" data-runner />
-                  {['Nueva reserva', 'Recordatorio enviado', 'Cita confirmada'].map((label) => (
-                    <div class="vis-node" data-node>
-                      <span class="vis-node-dot" />
-                      <b>{label}</b>
-                    </div>
-                  ))}
-                  <span class="vis-auto" data-auto>
-                    Sin tocar nada
+                  <span class="vis-badge" data-badge>
+                    Atendida
                   </span>
                 </div>
-              )}
+                <p class="vis-bubble vis-in" data-bubble>
+                  ¿Tenéis hueco mañana?
+                </p>
+                <p class="vis-bubble vis-out" data-bubble>
+                  Sí, a las 10:00. ¿Te lo reservo?
+                </p>
+                <p class="vis-bubble vis-in" data-bubble>
+                  ¡Perfecto, gracias!
+                </p>
+              </div>
+            )}
 
-              {line.id === 'software' && (
-                <div class="vis-dash">
-                  <div class="vis-side">
-                    <span class="vis-logo" />
-                    <i />
-                    <i />
-                    <i />
+            {line.id === 'automatizacion' && (
+              <div class="vis-flow">
+                <span class="vis-track">
+                  <span class="vis-track-fill" data-fill />
+                </span>
+                <span class="vis-runner" data-runner />
+                {['Nueva reserva', 'Recordatorio enviado', 'Cita confirmada'].map((label) => (
+                  <div class="vis-node" data-node>
+                    <span class="vis-node-dot" />
+                    <b>{label}</b>
                   </div>
-                  <div class="vis-main">
-                    <div class="vis-tiles">
-                      <div class="vis-tile">
-                        <small>Reservas</small>
-                        <svg viewBox="0 0 120 40">
-                          <path data-spark d="M2 34 C20 30 30 32 44 24 S70 18 82 14 S104 8 118 4" />
-                        </svg>
-                      </div>
-                      <div class="vis-tile">
-                        <small>Clientes</small>
-                        <svg viewBox="0 0 120 40">
-                          <path data-spark d="M2 36 C18 34 34 28 50 26 S80 16 92 12 S110 6 118 6" />
-                        </svg>
-                      </div>
+                ))}
+                <span class="vis-auto" data-auto>
+                  Sin tocar nada
+                </span>
+              </div>
+            )}
+
+            {line.id === 'software' && (
+              <div class="vis-dash">
+                <div class="vis-side">
+                  <span class="vis-logo" />
+                  <i />
+                  <i />
+                  <i />
+                </div>
+                <div class="vis-main">
+                  <div class="vis-tiles">
+                    <div class="vis-tile">
+                      <small>Reservas</small>
+                      <svg viewBox="0 0 120 40">
+                        <path data-spark d="M2 34 C20 30 30 32 44 24 S70 18 82 14 S104 8 118 4" />
+                      </svg>
                     </div>
-                    <div class="vis-bars">
-                      {[0.45, 0.6, 0.5, 0.72, 0.66, 0.85, 0.95].map((h) => (
-                        <span style={`--h:${h}`} data-bar />
-                      ))}
+                    <div class="vis-tile">
+                      <small>Clientes</small>
+                      <svg viewBox="0 0 120 40">
+                        <path data-spark d="M2 36 C18 34 34 28 50 26 S80 16 92 12 S110 6 118 6" />
+                      </svg>
                     </div>
+                  </div>
+                  <div class="vis-bars">
+                    {[0.45, 0.6, 0.5, 0.72, 0.66, 0.85, 0.95].map((h) => (
+                      <span style={`--h:${h}`} data-bar />
+                    ))}
                   </div>
                 </div>
-              )}
-            </div>
-          </li>
-        ))
-      }
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
     </ol>
   </div>
 </section>

@@ -9,11 +9,7 @@ interface Props {
   /** Section heading; the home page closes with its own line. */
   title?: string;
 }
-const {
-  heading = 'h1',
-  id = 'contacto',
-  title = 'Contáctanos.',
-} = Astro.props;
+const { heading = 'h1', id = 'contacto', title = 'Contáctanos.' } = Astro.props;
 const Heading = heading;
 ---
 

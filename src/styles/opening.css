@@ -1,13 +1,5 @@
 /* Opening — Lyra-like restraint: white ground, ink type, one blue accent, one authored moment. */
 
-/* Intelligence field canvases: decorative, behind content, never intercepting input. */
-.field {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
 .opening > .shell {
   position: relative;
   z-index: 1;
@@ -15,7 +7,7 @@
 
 /* Hero: the reel fills the first screen (Reel.astro); the headline and the call follow. */
 .opening-hero {
-  margin-top: clamp(56px, 8vw, 112px);
+  margin-top: clamp(48px, 6vw, 88px);
 }
 /* Headline on the left; the lead and the calls to action on the right, on the headline's
    baseline, under a fine rule. */
@@ -49,7 +41,7 @@
 .opening {
   position: relative;
   padding-top: 0;
-  padding-bottom: clamp(56px, 8vw, 104px);
+  padding-bottom: clamp(16px, 2vw, 32px);
 }
 .opening-title {
   font-size: clamp(44px, 6vw, 88px);
@@ -99,232 +91,20 @@
   gap: 12px;
 }
 
-/* Stage: the ink chapter where tasks are written out and attributed to a real product. */
-.stage {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
-  gap: clamp(32px, 4vw, 64px);
-  align-items: center;
-  margin-top: clamp(28px, 3vw, 40px);
-  padding: clamp(28px, 4.4vw, 64px);
-  border-radius: 28px;
-  background: var(--ink);
-  color: #eef2fa;
-}
-.stage-copy {
-  position: relative;
-  z-index: 1;
-}
-.stage-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 16px 64px;
-  align-items: end;
-  margin-top: clamp(72px, 9vw, 128px);
-}
-.stage-intro h2 {
-  font-size: clamp(32px, 3.8vw, 54px);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-  font-weight: 600;
-}
-/* The three chapters share one place; only the current one is visible. */
-.stage-titles {
-  display: grid;
-}
-.stage-chapter {
-  grid-area: 1 / 1;
-  display: grid;
-  justify-items: start;
-  align-content: start;
-}
-.stage-count {
-  margin-bottom: clamp(16px, 1.6vw, 22px);
-  color: var(--blue-light);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  font-variant-numeric: tabular-nums;
-}
-.stage-count span {
-  color: #8f9bb6;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-.stage-swap {
-  display: grid;
-  margin-bottom: clamp(28px, 3vw, 40px);
-}
-.stage-pain,
-.stage-title {
-  grid-area: 1 / 1;
-  max-width: 13ch;
-  font-family: var(--display);
-  font-size: clamp(36px, 4.4vw, 64px);
-  line-height: 1.02;
-  letter-spacing: -0.045em;
-  font-weight: 600;
-  text-wrap: balance;
-}
-.stage-title {
-  color: #fff;
-}
-/* The problem, in grey; a blue line strikes each of its lines before it gives way. */
-.stage-pain {
-  color: #6f7c99;
-  visibility: hidden;
-}
-.stage-pain span {
-  --strike: 0%;
-  background: linear-gradient(#5cc8ff, #5cc8ff) no-repeat 0 58% / var(--strike) 0.08em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
-.stage-who {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 0 20px 0 18px;
-  border: 1px solid #ffffff26;
-  border-radius: 100px;
-  font-size: 15px;
-  transition:
-    background 0.2s,
-    border-color 0.2s;
-}
-.stage-who span {
-  color: #8f9bb6;
-}
-.stage-who span,
-.stage-who strong {
-  white-space: nowrap;
-}
-.stage-who strong {
-  font-weight: 600;
-  color: #fff;
-}
-.stage-who svg {
-  color: var(--blue-light);
-  transition: transform 0.2s;
-}
-.stage-who:hover {
-  background: #ffffff0f;
-  border-color: #ffffff40;
-}
-.stage-who:hover svg {
-  transform: translate(3px, -2px);
-}
-.stage-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  max-width: 30rem;
-  margin-top: clamp(40px, 5vw, 72px);
-}
-.stage-tabs button {
-  display: grid;
-  gap: 12px;
-  padding: 0 0 6px;
-  border: 0;
-  background: none;
-  color: #8f9bb6;
-  font-size: 13px;
-  text-align: left;
-  min-height: 44px;
-  align-content: start;
-  transition: color 0.2s;
-}
-.stage-tabs button[aria-pressed='true'],
-.stage-tabs button:hover {
-  color: #fff;
-}
-.stage-tab-bar {
-  display: block;
-  height: 2px;
-  background: #ffffff24;
-  border-radius: 2px;
-  overflow: hidden;
-}
-.stage-tab-bar span {
-  display: block;
-  height: 100%;
-  background: var(--blue-light);
-  transform: scaleX(0);
-  transform-origin: left;
-}
-.stage-tabs button[aria-pressed='true'] .stage-tab-bar span {
-  transform: scaleX(1);
-}
-.stage[data-scroll] .stage-tabs button .stage-tab-bar span {
-  transform: scaleX(var(--progress, 0));
-}
-.stage-tabs button:focus-visible {
-  outline-color: var(--blue-light);
-  outline-offset: 4px;
-}
-/* The field takes each product's form inside this area; it holds no content of its own. */
-.stage-form {
-  position: relative;
-  z-index: 1;
-  aspect-ratio: 4 / 3;
-}
-
 @media (max-width: 900px) {
-  .stage-intro {
-    grid-template-columns: 1fr;
-  }
   .opening-lead {
     grid-template-columns: 1fr;
   }
   .opening-actions {
     align-items: flex-start;
   }
-  .stage {
-    grid-template-columns: 1fr;
-  }
-  .stage-form {
-    order: -1;
-    aspect-ratio: 16 / 10;
-  }
 }
 @media (max-width: 640px) {
   .opening .shell {
     width: calc(100% - 32px);
   }
-  .stage {
-    border-radius: 22px;
-    padding: 20px 20px 24px;
-  }
-  .stage-tabs {
-    gap: 12px;
-    margin-top: 32px;
-  }
-  .stage-tabs button {
-    min-width: 0;
-    font-size: 12px;
-  }
-  /* Long product names wrap inside the pill instead of running out of the panel. */
-  .stage-who {
-    flex-wrap: wrap;
-    gap: 2px 10px;
-    padding-block: 10px;
-    border-radius: 22px;
-  }
-  .stage-who span,
-  .stage-who strong {
-    white-space: normal;
-  }
   .opening-actions .button {
     width: 100%;
-  }
-  .stage-who {
-    gap: 10px;
-    padding: 0 16px;
-    font-size: 14px;
   }
 }
 
@@ -346,10 +126,6 @@
 }
 .opening[data-tone='dark'] .opening-lead p {
   color: #9aa8c7;
-}
-.opening[data-tone='dark'] .opening[data-tone='dark'] .stage {
-  background: #0b1430;
-  box-shadow: inset 0 0 0 1px #ffffff12;
 }
 /* Header over the dark opening: transparent night glass, white logo and links. Dark from the
    first paint; the script switches it to light once the header leaves the opening. */

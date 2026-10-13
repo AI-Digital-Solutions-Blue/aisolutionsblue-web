@@ -1,0 +1,326 @@
+/* Adscena demo: the steps on the left, the phone on the right. The drawn screens follow the phone's
+   width (container units, designed on a 390 px wide screen: 1cqw = 3.9 px), so they scale with it. */
+.ad-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  padding: clamp(28px, 4vw, 64px);
+  border-radius: clamp(24px, 3vw, 40px);
+  background:
+    radial-gradient(60% 70% at 85% 30%, #ff5a6b33 0%, transparent 70%),
+    radial-gradient(60% 70% at 70% 90%, #7861ff33 0%, transparent 70%), #fff7f8;
+  overflow: hidden;
+}
+
+.ad-steps {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ad-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 16px 18px 20px;
+  border-radius: 18px;
+  opacity: 0.45;
+  transition:
+    opacity 0.4s,
+    background 0.4s;
+}
+.ad-step.is-on {
+  opacity: 1;
+  background: #fff;
+  box-shadow: 0 16px 40px -24px #4a1d2a40;
+}
+.ad-step-n {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffe4e7;
+  color: #e63a50;
+  font-family: var(--display);
+  font-weight: 700;
+}
+.ad-step.is-on .ad-step-n {
+  background: #ff5a6b;
+  color: #fff;
+}
+.ad-step-copy {
+  display: grid;
+  gap: 2px;
+}
+.ad-step-copy b {
+  font-family: var(--display);
+  font-size: clamp(17px, 1.4vw, 20px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+.ad-step-copy span {
+  color: #5b6478;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.ad-step-bar {
+  position: absolute;
+  left: 74px;
+  right: 18px;
+  bottom: 8px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: transparent;
+}
+.ad-step.is-on .ad-step-bar {
+  background: #ffe4e7;
+}
+.ad-step-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #ff5a6b, #ff8a3d);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* The phone: an iPhone 15 Pro (src/styles/iphone.css), a little tilted toward the steps. The
+   drawn screens size themselves on the screen's width. */
+.ad-phone {
+  width: clamp(250px, 23vw, 320px);
+  rotate: -3deg;
+}
+.ad-screen {
+  container-type: inline-size;
+}
+.ad-s {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  background: #f9fafc;
+  visibility: hidden;
+}
+.ad-tall {
+  height: auto;
+}
+
+/* Drawn screens, in Adscena's own style. */
+.ad-url,
+.ad-read {
+  padding: 0 6.2cqw;
+  color: #0f172a;
+  font-family: var(--font);
+}
+.ad-status {
+  margin: 4.4cqw 0 0 1.4cqw;
+  font-size: 3.6cqw;
+  font-weight: 600;
+}
+.ad-top {
+  display: flex;
+  align-items: center;
+  gap: 3.6cqw;
+  margin-top: 9cqw;
+  font-size: 4.1cqw;
+  font-weight: 600;
+}
+.ad-back {
+  display: grid;
+  place-items: center;
+  width: 10.8cqw;
+  height: 10.8cqw;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px #e5e7eb;
+  background: #fff;
+}
+.ad-url h3,
+.ad-read h3 {
+  margin-top: 10cqw;
+  font-family: var(--display);
+  font-size: 8.6cqw;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  font-weight: 750;
+}
+.ad-url h3 em {
+  display: block;
+  color: #ff5a6b;
+  font-style: normal;
+}
+.ad-sub {
+  margin-top: 3cqw;
+  color: #5b6478;
+  font-size: 4.1cqw;
+  line-height: 1.45;
+}
+.ad-label {
+  margin-top: 9cqw;
+  color: #334155;
+  font-size: 3.6cqw;
+  font-weight: 500;
+}
+.ad-input {
+  display: flex;
+  align-items: center;
+  height: 14.4cqw;
+  margin-top: 2.4cqw;
+  padding: 0 4.6cqw;
+  border-radius: 4cqw;
+  background: #fff;
+  box-shadow: inset 0 0 0 1.5px #e5e7eb;
+  font-size: 4.3cqw;
+  font-weight: 500;
+}
+.ad-caret {
+  width: 0.5cqw;
+  height: 5.4cqw;
+  margin-left: 0.4cqw;
+  background: #ff5a6b;
+  animation: ad-caret 1s steps(1) infinite;
+}
+@keyframes ad-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.ad-cta {
+  display: grid;
+  place-items: center;
+  height: 14.4cqw;
+  margin-top: 10cqw;
+  border-radius: 100px;
+  background: #ff5a6b;
+  box-shadow: 0 4cqw 8cqw -3cqw #ff5a6b99;
+  color: #fff;
+  font-size: 4.4cqw;
+  font-weight: 650;
+}
+.ad-read {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+.ad-read .ad-status {
+  position: absolute;
+  top: 0;
+  left: 6.2cqw;
+}
+.ad-iso {
+  position: relative;
+  width: 22cqw;
+  height: 22cqw;
+}
+.ad-iso::before,
+.ad-iso::after {
+  content: '';
+  position: absolute;
+  width: 15cqw;
+  height: 15cqw;
+  border-radius: 4.4cqw;
+}
+.ad-iso::before {
+  left: 0;
+  top: 0;
+  background: linear-gradient(135deg, #ff8a3d, #ff5a6b);
+}
+.ad-iso::after {
+  right: 0;
+  bottom: 0;
+  background: #7861ffd9;
+}
+.ad-read h3 {
+  margin-top: 7cqw;
+  font-size: 6.4cqw;
+}
+.ad-checks {
+  display: grid;
+  gap: 3.2cqw;
+  margin: 8cqw 0 0;
+  padding: 0;
+  list-style: none;
+  justify-items: start;
+  color: #5b6478;
+  font-size: 3.9cqw;
+}
+.ad-checks li {
+  display: flex;
+  align-items: center;
+  gap: 2.6cqw;
+}
+.ad-checks i {
+  position: relative;
+  width: 5cqw;
+  height: 5cqw;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #cbd5e1;
+}
+.ad-checks li.is-done {
+  color: #0f172a;
+}
+.ad-checks li.is-done i {
+  background: #22c55e;
+  box-shadow: none;
+}
+.ad-checks li.is-done i::after {
+  content: '';
+  position: absolute;
+  left: 1.7cqw;
+  top: 0.9cqw;
+  width: 1.3cqw;
+  height: 2.4cqw;
+  border: solid #fff;
+  border-width: 0 0.6cqw 0.6cqw 0;
+  rotate: 45deg;
+}
+.ad-progress {
+  width: 62cqw;
+  height: 1.2cqw;
+  margin-top: 9cqw;
+  overflow: hidden;
+  border-radius: 1cqw;
+  background: #e5e7eb;
+}
+.ad-progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #ff5a6b, #ff8a3d);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* A finger's touch on the screen. */
+.ad-tap {
+  position: absolute;
+  z-index: 6;
+  width: 14cqw;
+  height: 14cqw;
+  margin: -7cqw 0 0 -7cqw;
+  border-radius: 50%;
+  background: #0f172a33;
+  box-shadow: 0 0 0 1.5px #ffffffcc;
+  opacity: 0;
+}
+
+@media (max-width: 800px) {
+  .ad-demo {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .ad-steps {
+    order: 2;
+    width: 100%;
+  }
+  .ad-step:not(.is-on) .ad-step-copy span {
+    display: none;
+  }
+}

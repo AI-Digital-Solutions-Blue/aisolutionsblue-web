@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import Icon from '../../components/Icon.astro';
+import AdscenaDemo from '../../components/AdscenaDemo.astro';
 import { products, serviceLines, type Product } from '../../data/products';
 import '../../styles/product.css';
 
@@ -56,22 +57,30 @@ const others = products.filter((item) => item.slug !== product.slug);
       </div>
     </section>
 
-    <section class="pp-gallery" aria-label={`Capturas de ${product.name}`}>
-      <div class="shell pp-gallery-grid">
-        {product.images.map((image, i) => (
-          <figure class:list={['pp-shot', { 'pp-shot-wide': i === 0 }]}>
-            <img
-              src={image.src}
-              alt={image.alt}
-              width={image.width}
-              height={image.height}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-            />
-          </figure>
-        ))}
-      </div>
-    </section>
+    {product.slug === 'adscena' ? (
+      <section class="pp-gallery" aria-label="Adscena, paso a paso">
+        <div class="shell">
+          <AdscenaDemo />
+        </div>
+      </section>
+    ) : (
+      <section class="pp-gallery" aria-label={`Capturas de ${product.name}`}>
+        <div class="shell pp-gallery-grid">
+          {product.images.map((image, i) => (
+            <figure class:list={['pp-shot', { 'pp-shot-wide': i === 0 }]}>
+              <img
+                src={image.src}
+                alt={image.alt}
+                width={image.width}
+                height={image.height}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
 
     <section class="pp-details" aria-labelledby="pp-details-title">
       <div class="shell pp-details-grid">

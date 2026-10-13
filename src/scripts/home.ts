@@ -27,32 +27,6 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
     });
   });
 
-  // Product captures: the main screen settles into place, the detail drifts at its own depth.
-  gsap.utils.toArray<HTMLElement>('[data-product-media]').forEach((media) => {
-    const main = media.querySelector('.product-frame-main');
-    const detail = media.querySelector('[data-product-detail]');
-    gsap.fromTo(
-      main,
-      { scale: 0.93, opacity: 0.6 },
-      {
-        scale: 1,
-        opacity: 1,
-        ease: 'none',
-        scrollTrigger: { trigger: media, start: 'top bottom', end: 'center 60%', scrub: 0.6 },
-      },
-    );
-    if (detail)
-      gsap.fromTo(
-        detail,
-        { yPercent: 18 },
-        {
-          yPercent: -14,
-          ease: 'none',
-          scrollTrigger: { trigger: media, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
-        },
-      );
-  });
-
   // Process: the line fills with the scroll and each step lights up as the line reaches it.
   const track = document.querySelector<HTMLElement>('[data-process]');
   const fill = track?.querySelector<HTMLElement>('[data-process-fill]');
@@ -189,28 +163,6 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
 
     loopWhileVisible(scene, tl);
   });
-});
-
-// About: the product screens start stacked like a hand of cards and fan out with the scroll.
-mm.add('(prefers-reduced-motion: no-preference) and (min-width: 641px)', () => {
-  const cards = gsap.utils.toArray<HTMLElement>('[data-fan-card]');
-  const fan = document.querySelector('[data-fan]');
-  if (!fan || !cards.length) return;
-  gsap.fromTo(
-    cards,
-    {
-      x: (i: number) => (1.5 - i) * 0.9 * cards[0].offsetWidth,
-      rotation: (i: number) => (i - 1.5) * 7,
-      y: (i: number) => Math.abs(i - 1.5) * 18,
-    },
-    {
-      x: 0,
-      rotation: 0,
-      y: 0,
-      ease: 'none',
-      scrollTrigger: { trigger: fan, start: 'top 90%', end: 'center 55%', scrub: 0.6 },
-    },
-  );
 });
 
 // Section headings get a little parallax as they pass: chapters, not paragraphs.

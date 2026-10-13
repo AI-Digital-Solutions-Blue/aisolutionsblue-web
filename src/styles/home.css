@@ -1,11 +1,10 @@
 /* Home sections below the opening. Palette A, Manrope display, DM Sans text. */
 
 .services,
-.products,
 .process,
 .about,
 .qa {
-  padding-block: clamp(88px, 11vw, 168px);
+  padding-block: clamp(72px, 8vw, 128px);
 }
 
 .section-intro {
@@ -13,18 +12,25 @@
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   gap: 24px 64px;
   align-items: end;
-  margin-bottom: clamp(48px, 6vw, 88px);
+  margin-bottom: clamp(36px, 4vw, 56px);
 }
+/* One scale for every section title; only the opening headline is larger. */
 .section-intro h2,
 .about h2,
 .qa h2 {
-  font-size: clamp(38px, 5vw, 72px);
+  font-size: clamp(34px, 3.8vw, 56px);
   line-height: 1.04;
   letter-spacing: -0.04em;
   font-weight: 600;
   text-wrap: balance;
 }
-.section-intro p {
+.section-eyebrow {
+  margin-bottom: 14px;
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 600;
+}
+.section-intro p:not(.section-eyebrow) {
   max-width: 34rem;
   color: var(--muted);
   font-size: clamp(17px, 1.35vw, 19px);
@@ -34,26 +40,26 @@
 
 /* Services: editorial rows, not cards. */
 .svc-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
   margin: 0;
   padding: 0;
   list-style: none;
-  border-bottom: 1px solid var(--line);
 }
+/* A card: the scene on top, then the line in a few words and the products that prove it. */
 .svc {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 32px clamp(40px, 6vw, 96px);
-  align-items: center;
-  padding-block: clamp(40px, 5vw, 72px);
-  border-top: 1px solid var(--line);
+  align-content: start;
+  gap: 24px;
 }
-.svc:nth-child(even) .vis {
+.svc .vis {
   order: -1;
 }
 .svc h3 {
-  font-size: clamp(30px, 3.4vw, 50px);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
+  font-size: clamp(24px, 2.1vw, 32px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
   font-weight: 600;
   transition: color 0.3s;
 }
@@ -61,25 +67,11 @@
   color: var(--blue);
 }
 .svc-text > p:first-of-type {
-  margin-top: 18px;
-  font-size: clamp(17px, 1.3vw, 19px);
-  line-height: 1.6;
-  text-wrap: pretty;
-}
-.svc-examples {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 20px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.svc-examples li {
-  padding: 5px 13px;
-  border-radius: 100px;
-  background: var(--mist);
+  margin-top: 12px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: clamp(16px, 1.15vw, 18px);
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 .svc-proof {
   margin-top: 20px;
@@ -349,131 +341,6 @@
   transform-origin: bottom;
 }
 
-/* Products: one chapter each, large captures with a detail at its own depth. */
-.products {
-  padding-bottom: clamp(40px, 5vw, 80px);
-}
-.product {
-  padding-block: clamp(48px, 7vw, 112px);
-}
-.product-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: clamp(40px, 6vw, 104px);
-  align-items: center;
-}
-.product-flip .product-media {
-  order: 2;
-}
-.product-media {
-  position: relative;
-  padding-bottom: 8%;
-}
-.product-frame {
-  overflow: hidden;
-  border-radius: 30px;
-  background: var(--mist);
-}
-.product-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.product-frame-main {
-  aspect-ratio: 4 / 3;
-  box-shadow: 0 50px 90px -50px #0a102266;
-}
-/* A phone mockup (Adscena) stays whole on its white ground instead of being cropped. */
-#adscena .product-frame-main {
-  background: #fff;
-}
-#adscena .product-frame-main img {
-  object-fit: contain;
-}
-.product-frame-detail {
-  position: absolute;
-  right: -5%;
-  bottom: 0;
-  width: 44%;
-  aspect-ratio: 4 / 3;
-  border: 6px solid #fff;
-  border-radius: 24px;
-  box-shadow: 0 30px 60px -30px #0a102280;
-}
-.product-flip .product-frame-detail {
-  right: auto;
-  left: -5%;
-}
-.product-name {
-  font-size: clamp(36px, 4vw, 58px);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-weight: 600;
-}
-.product-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 14px;
-  margin-top: 18px;
-  color: var(--muted);
-  font-size: 14px;
-}
-.product-relation {
-  padding: 4px 12px;
-  border-radius: 100px;
-  background: var(--mist);
-  color: var(--ink);
-  font-weight: 600;
-}
-.product-relation.is-client {
-  background: #e6ecff;
-  color: var(--blue-deep);
-}
-.product-headline {
-  margin-top: 28px;
-  font-family: var(--display);
-  font-size: clamp(21px, 1.8vw, 26px);
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-  font-weight: 600;
-  text-wrap: balance;
-}
-.product-summary {
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 17px;
-  line-height: 1.6;
-  text-wrap: pretty;
-}
-.product-benefits {
-  display: grid;
-  gap: 12px;
-  margin: 28px 0 0;
-  padding: 0;
-  list-style: none;
-  font-size: 16px;
-  line-height: 1.5;
-}
-.product-benefits li {
-  display: flex;
-  gap: 12px;
-}
-.product-benefits svg {
-  margin-top: 3px;
-  color: var(--blue);
-}
-.product-benefits strong {
-  font-weight: 600;
-}
-.product-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px 28px;
-  margin-top: 36px;
-}
-
 /* Process: a line that fills with the scroll and lights each step as it arrives. */
 .process {
   /* A floating rounded panel with the orbits at its edge. */
@@ -625,31 +492,6 @@
   height: 34px;
   width: auto;
 }
-.about-fan {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(12px, 2vw, 24px);
-  margin-top: clamp(56px, 7vw, 104px);
-}
-.about-fan figure {
-  margin: 0;
-  transform-origin: 50% 120%;
-}
-.about-fan img {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: 28px;
-  background: var(--mist);
-  box-shadow: 0 30px 60px -36px #0a102266;
-}
-.about-fan figcaption {
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 600;
-}
 .team {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -737,15 +579,10 @@
 
 @media (max-width: 900px) {
   .section-intro,
-  .svc,
-  .product-layout,
+  .svc-list,
   .about-layout,
   .qa-layout {
     grid-template-columns: 1fr;
-  }
-  .product-flip .product-media,
-  .svc:nth-child(even) .vis {
-    order: 0;
   }
   .process-line {
     top: 22px;
@@ -783,17 +620,9 @@
   .process-step p {
     grid-column: 2;
   }
-  .product-frame-detail {
-    right: -2%;
-  }
-  .product-flip .product-frame-detail {
-    left: auto;
-    right: -2%;
-  }
 }
 @media (max-width: 640px) {
   .services,
-  .products,
   .process,
   .about,
   .qa {
@@ -803,19 +632,10 @@
     margin-bottom: 36px;
   }
   .services > .shell,
-  .products > .shell,
   .process > .shell,
   .about > .shell,
-  .qa > .shell,
-  .product > .shell {
+  .qa > .shell {
     width: calc(100% - 32px);
-  }
-  .product-frame-detail {
-    border-width: 4px;
-    border-radius: 12px;
-  }
-  .about-fan {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

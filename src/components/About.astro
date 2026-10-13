@@ -1,15 +1,17 @@
 ---
 import { team, testimonial } from '../data/site';
-import { products } from '../data/products';
 // The team and the testimonial render only once real content exists in src/data/site.ts.
 ---
 
 <section class="about" id="nosotros" aria-labelledby="about-title">
   <div class="shell">
     <div class="about-layout">
-      <h2 id="about-title" data-reveal>
-        Una empresa nueva, con productos reales.
-      </h2>
+      <div>
+        <p class="section-eyebrow">Nosotros</p>
+        <h2 id="about-title" data-reveal>
+          Una empresa nueva, con productos reales.
+        </h2>
+      </div>
       <div class="about-copy">
         <p>
           Somos un equipo de Las Palmas de Gran Canaria que diseña y desarrolla soluciones de
@@ -40,23 +42,6 @@ import { products } from '../data/products';
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- The products, fanned out: what this team has already built. -->
-    <div class="about-fan" data-fan aria-hidden="true">
-      {products.map((product, i) => (
-        <figure style={`--i:${i}`} data-fan-card data-slug={product.slug}>
-          <img
-            src={product.images[0].src}
-            alt=""
-            width={product.images[0].width}
-            height={product.images[0].height}
-            loading="lazy"
-            decoding="async"
-          />
-          <figcaption>{product.name}</figcaption>
-        </figure>
-      ))}
     </div>
 
     {team.length > 0 && (

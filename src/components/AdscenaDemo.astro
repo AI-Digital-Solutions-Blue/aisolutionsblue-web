@@ -1,0 +1,102 @@
+---
+// Adscena, shown working: a short loop inside a phone, from pasting the business's web to the
+// campaign sent to Meta. The first two screens are drawn here (the address being typed and read);
+// the rest are the product's own screens, exported from its Figma. Steps beside the phone follow
+// the loop. Choreography in src/scripts/adscenaDemo.ts; with reduced motion it rests on the ad.
+import '../styles/iphone.css';
+import '../styles/adscena-demo.css';
+
+const screen = (name: string) => `/assets/adscena/screens/${name}.jpg`;
+const steps = [
+  ['Pega tu web', 'Adscena lee tu negocio: nombre, fotos y tono.'],
+  ['Elige tu anuncio', 'Te propone ideas con imagen, titular y texto.'],
+  ['Conecta Facebook', 'Tus anuncios salen con el nombre de tu página.'],
+  ['Público y presupuesto', 'Radio, edad e importe, propuestos para tu zona.'],
+  ['Enviada a Meta', 'Tu campaña, publicada en minutos.'],
+];
+---
+
+<div class="ad-demo" data-ad-demo>
+  <ol class="ad-steps">
+    {steps.map(([title, text], i) => (
+      <li class="ad-step" data-ad-step>
+        <span class="ad-step-n">{i + 1}</span>
+        <span class="ad-step-copy">
+          <b>{title}</b>
+          <span>{text}</span>
+        </span>
+        <span class="ad-step-bar" aria-hidden="true">
+          <span data-ad-step-bar />
+        </span>
+      </li>
+    ))}
+  </ol>
+
+  <div class="ad-phone iph" aria-hidden="true">
+    <div class="iph-body">
+      <div class="iph-bezel">
+        <div class="ad-screen iph-screen">
+          <!-- 1. Paste the web -->
+          <div class="ad-s ad-url" data-ad-s>
+            <p class="ad-status">9:41</p>
+            <p class="ad-top">
+              <span class="ad-back">←</span> Tu negocio
+            </p>
+            <h3>
+              Empecemos por <em>tu negocio</em>
+            </h3>
+            <p class="ad-sub">Pega la web de tu negocio y Adscena la lee: nombre, fotos y tono.</p>
+            <p class="ad-label">La web de tu negocio</p>
+            <p class="ad-input">
+              <span data-ad-typed></span>
+              <i class="ad-caret"></i>
+            </p>
+            <p class="ad-cta" data-ad-cta>
+              Continuar →
+            </p>
+          </div>
+
+          <!-- 2. Reading it -->
+          <div class="ad-s ad-read" data-ad-s>
+            <p class="ad-status">9:41</p>
+            <span class="ad-iso"></span>
+            <h3>Leyendo estudioalma.es</h3>
+            <p class="ad-sub">Tarda menos de un minuto.</p>
+            <ul class="ad-checks">
+              {['Nombre y descripción', 'Fotos del negocio', 'Tono con el que hablas'].map(
+                (item) => (
+                  <li data-ad-check>
+                    <i />
+                    {item}
+                  </li>
+                ),
+              )}
+            </ul>
+            <span class="ad-progress">
+              <span data-ad-progress></span>
+            </span>
+          </div>
+
+          <!-- 3–8. The product's own screens -->
+          <img class="ad-s" data-ad-s src={screen('08-creando')} alt="" loading="lazy" />
+          <img class="ad-s" data-ad-s src={screen('09-elegir')} alt="" loading="lazy" />
+          <img class="ad-s" data-ad-s src={screen('11-conecta')} alt="" loading="lazy" />
+          <img class="ad-s" data-ad-s src={screen('11b-conectando')} alt="" loading="lazy" />
+          <img class="ad-s ad-tall" data-ad-s src={screen('13-publico')} alt="" loading="lazy" />
+          <img class="ad-s" data-ad-s src={screen('20-enviada')} alt="" loading="lazy" />
+
+          <span class="ad-tap" data-ad-tap></span>
+          <span class="iph-island"></span>
+        </div>
+      </div>
+    </div>
+    <i class="iph-btn iph-action"></i>
+    <i class="iph-btn iph-up"></i>
+    <i class="iph-btn iph-down"></i>
+    <i class="iph-btn iph-power"></i>
+  </div>
+</div>
+
+<script>
+  import '../scripts/adscenaDemo';
+</script>

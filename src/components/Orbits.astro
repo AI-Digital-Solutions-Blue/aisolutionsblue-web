@@ -11,8 +11,12 @@ const { at = 'top-right', tone = 'light' } = Astro.props;
 ---
 
 <div class:list={['orbits', `orbits-${at}`, `orbits-${tone}`]} aria-hidden="true">
-  <span class="orbit orbit-1"><i></i></span>
-  <span class="orbit orbit-2"><i></i></span>
+  <span class="orbit orbit-1">
+    <i></i>
+  </span>
+  <span class="orbit orbit-2">
+    <i></i>
+  </span>
   <span class="orbit orbit-3"></span>
 </div>
 

@@ -1,0 +1,93 @@
+/* iPhone 15 Pro, black titanium, built to its real proportions so it stays sharp at any size.
+   Every measure follows the phone's width (container units on .iph: 1cqw = 1% of it):
+   titanium band 1.5%, black border 2.8%, outer corner 17%, glass corner 12.8% of the screen.
+   Markup:
+   <span class="iph"><span class="iph-body"><span class="iph-bezel"><span class="iph-screen">
+     …screen… <span class="iph-island"></span>
+   </span></span></span><i class="iph-btn iph-action"></i><i class="iph-btn iph-up"></i>
+   <i class="iph-btn iph-down"></i><i class="iph-btn iph-power"></i></span> */
+.iph {
+  position: relative;
+  display: block;
+  container-type: inline-size;
+}
+.iph-body {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 1.5cqw;
+  border-radius: 17cqw;
+  /* Brushed titanium: dark, with light catching the rounded edges. */
+  background:
+    linear-gradient(90deg, #6d7078 0%, #2a2c31 3%, #1d1e22 50%, #2a2c31 97%, #6d7078 100%), #1d1e22;
+  box-shadow:
+    inset 0 0 0 0.25cqw #0b0b0d,
+    inset 0 0.5cqw 0.6cqw -0.2cqw #9a9da566,
+    inset 0 -0.5cqw 0.6cqw -0.2cqw #00000099,
+    0 1.4cqw 3cqw #0f0a2a38,
+    0 14cqw 26cqw -10cqw #0f0a2a8c;
+}
+.iph-bezel {
+  display: block;
+  padding: 2.8cqw;
+  border-radius: 15.5cqw;
+  background: #030304;
+  box-shadow: inset 0 0 0 0.3cqw #16161a;
+}
+.iph-screen {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 390 / 844;
+  border-radius: 12.8cqw;
+  background: #f9fafc;
+  isolation: isolate;
+}
+/* A faint reflection across the glass. */
+.iph-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  background: linear-gradient(118deg, #ffffff1f 0%, #ffffff08 28%, transparent 42%);
+  pointer-events: none;
+}
+.iph-island {
+  position: absolute;
+  left: 50%;
+  top: 1.3%;
+  z-index: 7;
+  width: 32%;
+  height: 4.3%;
+  translate: -50% 0;
+  border-radius: 100px;
+  background: #000;
+  box-shadow: inset 0 0 0 1px #111;
+}
+.iph-btn {
+  position: absolute;
+  z-index: 0;
+  width: 1.1cqw;
+  border-radius: 0.6cqw;
+  background: linear-gradient(90deg, #17181b, #4b4d54 60%, #2a2b30);
+}
+.iph-action {
+  left: -0.7cqw;
+  top: 17%;
+  height: 5.5%;
+}
+.iph-up {
+  left: -0.7cqw;
+  top: 26%;
+  height: 9%;
+}
+.iph-down {
+  left: -0.7cqw;
+  top: 37%;
+  height: 9%;
+}
+.iph-power {
+  right: -0.7cqw;
+  top: 29%;
+  height: 14%;
+}
