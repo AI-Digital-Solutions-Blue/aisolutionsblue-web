@@ -40,6 +40,28 @@ function setup() {
     );
 
   let timeline: gsap.core.Timeline | null = null;
+  let holding = false;
+  let wallReady = false;
+  const wallImages = $$<HTMLImageElement>('[data-r="wall"] img');
+  Promise.race([
+    Promise.all(
+      wallImages.map((img) =>
+        img.complete
+          ? null
+          : new Promise((done) => {
+              img.addEventListener('load', done, { once: true });
+              img.addEventListener('error', done, { once: true });
+            }),
+      ),
+    ),
+    new Promise((done) => setTimeout(done, 4000)),
+  ]).then(() => {
+    wallReady = true;
+    if (holding) {
+      holding = false;
+      sync();
+    }
+  });
   let portrait = false;
   let userPaused = false;
   let visible = false;
@@ -351,6 +373,18 @@ function setup() {
     hide(tri, L + 0.9);
     hide(logo, 21);
 
+    // Online, the wall's photos may still be arriving when the ring opens onto it: the reel holds
+    // on the ring until they are in (at most a few seconds), so the wall never shows empty tiles.
+    tl.call(
+      () => {
+        if (wallReady) return;
+        holding = true;
+        tl.pause();
+      },
+      [],
+      2.0,
+    );
+
     timeline = tl;
     sync();
   }
@@ -365,7 +399,7 @@ function setup() {
 
   function sync() {
     if (!timeline) return;
-    const play = visible && !userPaused && !document.hidden;
+    const play = visible && !userPaused && !document.hidden && !holding;
     if (play) timeline.play();
     else timeline.pause();
     // Videos inside the reel follow its pause.
