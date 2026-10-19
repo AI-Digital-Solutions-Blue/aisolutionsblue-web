@@ -17,7 +17,8 @@ import '../styles/showcase.css';
       </h2>
     </div>
     <p class="sc-lead">
-      Productos propios y proyectos a medida, construidos por Blue y en marcha en negocios reales.
+      Herramientas listas para usar en tu negocio. Y si lo que necesitas no existe, lo construimos a
+      medida.
     </p>
     <div class="sc-controls">
       <button class="sc-arrow" type="button" data-sc-prev aria-label="Producto anterior">
@@ -38,14 +39,12 @@ import '../styles/showcase.css';
       >
         <a class="sc-link" href={`/productos/${product.slug}`} draggable="false">
           <span class="sc-copy">
-            <span class="sc-tag">{product.relation}</span>
+            {product.relation && <span class="sc-tag">{product.relation}</span>}
             <span class="sc-name">{product.name}</span>
             <span class="sc-headline">{product.headline}</span>
           </span>
           <span class="sc-cta">
-            <span class="sc-cta-text">
-              {product.relation === 'Caso de cliente' ? 'Ver el caso' : 'Ver el producto'}
-            </span>
+            <span class="sc-cta-text">Ver el producto</span>
             <Icon name="arrow" size={18} />
           </span>
           {product.card.fit === 'phone' ? (

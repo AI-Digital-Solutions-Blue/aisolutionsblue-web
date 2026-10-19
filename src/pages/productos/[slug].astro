@@ -14,12 +14,13 @@ export function getStaticPaths() {
 }
 
 const { product } = Astro.props as { product: Product };
-const isCase = product.relation === 'Caso de cliente';
+// Only Blue's own products say so; the allied ones show no ownership.
+const isOwn = product.relation === 'Producto de Blue';
 const others = products.filter((item) => item.slug !== product.slug);
 ---
 
 <Layout
-  title={`${product.name} · ${isCase ? 'Caso de cliente' : 'Producto'} de Blue`}
+  title={`${product.name} · ${isOwn ? 'Producto de Blue' : 'Blue'}`}
   description={`${product.headline} ${product.summary}`}
 >
   <Header />
@@ -31,7 +32,7 @@ const others = products.filter((item) => item.slug !== product.slug);
         </a>
         <h1 id="pp-title">{product.name}</h1>
         <p class="pp-meta">
-          <span class:list={['pp-relation', { 'is-client': isCase }]}>{product.relation}</span>
+          {isOwn && <span class="pp-relation">{product.relation}</span>}
           <span>{product.sector}</span>
         </p>
         <div class="pp-lead">
@@ -85,11 +86,11 @@ const others = products.filter((item) => item.slug !== product.slug);
     <section class="pp-details" aria-labelledby="pp-details-title">
       <div class="shell pp-details-grid">
         <div>
-          <h2 id="pp-details-title">{isCase ? 'El reto' : 'El problema que resuelve'}</h2>
+          <h2 id="pp-details-title">El problema que resuelve</h2>
           <p class="pp-challenge">{product.challenge}</p>
         </div>
         <div>
-          <h2>{isCase ? 'Lo que construimos' : 'Qué hace'}</h2>
+          <h2>Qué hace</h2>
           <ul class="pp-benefits">
             {product.benefits.map((benefit) => (
               <li>
@@ -101,7 +102,7 @@ const others = products.filter((item) => item.slug !== product.slug);
             ))}
           </ul>
           <p class="pp-lines">
-            Construido con{' '}
+            {isOwn ? 'Construido con' : 'Un ejemplo de'}{' '}
             {product.lines.map((line, i) => (
               <>
                 <a href={`/#soluciones`}>{serviceLines[line].tech}</a>

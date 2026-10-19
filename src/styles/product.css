@@ -44,10 +44,6 @@
   color: var(--ink);
   font-weight: 600;
 }
-.pp-relation.is-client {
-  background: #e6ecff;
-  color: var(--blue-deep);
-}
 .pp-lead {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

@@ -25,7 +25,7 @@ import { serviceLines, productsForLine } from '../data/products';
             <h3>{line.title}</h3>
             <p>{line.text}</p>
             <p class="svc-proof">
-              Ya funciona en{' '}
+              Lo puedes ver en{' '}
               {productsForLine(line.id).map((product, i, all) => (
                 <>
                   <a href={`/productos/${product.slug}`}>

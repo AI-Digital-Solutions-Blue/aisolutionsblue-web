@@ -1,4 +1,5 @@
-// Products and client cases shown on the home page and on /productos/[slug].
+// Products shown on the home page and on /productos/[slug]. Only Adscena is Blue's own product;
+// the others come from an allied company and carry no ownership label (`relation` is left out).
 // Only confirmed facts: no figures, testimonials or results that the team has not provided.
 
 export type ServiceLine = 'agentes' | 'automatizacion' | 'software';
@@ -6,7 +7,7 @@ export type ServiceLine = 'agentes' | 'automatizacion' | 'software';
 export interface Product {
   slug: string;
   name: string;
-  relation: 'Producto de Blue' | 'Caso de cliente';
+  relation?: 'Producto de Blue';
   website: string;
   sector: string;
   headline: string;
@@ -52,7 +53,6 @@ export const products: Product[] = [
       image: '/assets/siweb/siweb1.webp',
     },
     name: 'Call Center Siweb',
-    relation: 'Caso de cliente',
     website: 'https://siweb.es',
     sector: 'Atención al cliente',
     headline: 'Cada llamada, en el lugar adecuado.',
@@ -97,7 +97,6 @@ export const products: Product[] = [
       image: '/assets/tumesaya/tumesaya3.webp',
     },
     name: 'Tu Mesa Ya!',
-    relation: 'Producto de Blue',
     website: 'https://tumesaya.centraldereservas.ai',
     sector: 'Restauración',
     headline: 'Tú atiendes la mesa. La IA, la llamada.',
@@ -140,7 +139,6 @@ export const products: Product[] = [
       fit: 'contain',
     },
     name: 'Sygna',
-    relation: 'Producto de Blue',
     website: 'https://sygna.es/',
     sector: 'Gestión laboral',
     headline: 'La gestión de tu equipo, en un solo lugar.',
