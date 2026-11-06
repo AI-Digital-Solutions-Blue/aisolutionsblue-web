@@ -1,3 +1,10 @@
+import {
+  cleanAttribution,
+  cleanMetaId,
+  describeAttribution,
+  type Attribution,
+} from './attribution';
+
 export const CONTACT_RECIPIENTS = [
   'alejandro.guerra@aisolutionsblue.com',
   'cristian.urien@aisolutionsblue.com',
@@ -28,6 +35,13 @@ export interface ContactData {
   interest: string;
   message: string;
   requestId: string;
+  /** Campaign and click identifiers of the visit (UTM, gclid, fbclid). */
+  attribution: Attribution;
+  /** The visitor accepted advertising cookies: their lead may be reported to Meta and Google. */
+  adsConsent: boolean;
+  /** Meta browser identifiers, only sent with advertising consent. */
+  fbp: string;
+  fbc: string;
 }
 type Validation = { ok: true; data: ContactData } | { ok: false; message: string };
 export function validateContact(form: URLSearchParams): Validation {
@@ -61,7 +75,22 @@ export function validateContact(form: URLSearchParams): Validation {
   )
     ? suppliedId
     : crypto.randomUUID();
-  return { ok: true, data: { name, email, phone, interest, message, requestId } };
+  const adsConsent = get('consent_ads') === 'yes';
+  return {
+    ok: true,
+    data: {
+      name,
+      email,
+      phone,
+      interest,
+      message,
+      requestId,
+      attribution: cleanAttribution((key) => form.get(key)),
+      adsConsent,
+      fbp: adsConsent ? cleanMetaId(get('fbp')) : '',
+      fbc: adsConsent ? cleanMetaId(get('fbc')) : '',
+    },
+  };
 }
 
 export function contactEmail(data: ContactData) {
@@ -81,8 +110,16 @@ export function contactEmail(data: ContactData) {
       data.message,
       '',
       'El visitante ha aceptado la política de privacidad y los términos y condiciones.',
+      ...origin(data.attribution),
     ].join('\n'),
   };
+}
+
+function origin(attribution: Attribution) {
+  const lines = describeAttribution(attribution);
+  return lines.length
+    ? ['', 'Origen de la visita:', ...lines]
+    : ['', 'Origen de la visita: directo'];
 }
 
 // Bounded, process-local limiter for the standalone Node deployment. Use a shared store if scaling to multiple replicas.

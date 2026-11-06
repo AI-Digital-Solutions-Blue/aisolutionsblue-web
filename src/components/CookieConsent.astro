@@ -1,0 +1,173 @@
+---
+// Cookie consent (RGPD/LSSI): accepting and rejecting are equally easy, nothing measures before a
+// choice, and the choice can be changed from the footer at any time. Logic in src/scripts/tracking.ts.
+---
+
+<div
+  class="consent"
+  data-consent
+  role="dialog"
+  aria-labelledby="consent-title"
+  aria-describedby="consent-text"
+  hidden
+>
+  <p class="consent-title" id="consent-title">
+    Tú decides sobre las cookies
+  </p>
+  <p class="consent-text" id="consent-text">
+    Usamos cookies de Google y de Meta para saber cómo llegas a nuestra web y medir nuestros
+    anuncios. Solo las activamos si aceptas, y puedes cambiar tu elección cuando quieras desde
+    «Configurar cookies», al pie de la página. Más información en la{' '}
+    <a href="/cookies">política de cookies</a>.
+  </p>
+
+  <div class="consent-panel" data-consent-panel id="consent-panel" hidden>
+    <label class="consent-option">
+      <input type="checkbox" checked disabled />
+      <span>
+        <b>Necesarias</b>
+        Guardan tu elección sobre las cookies. Siempre activas.
+      </span>
+    </label>
+    <label class="consent-option">
+      <input type="checkbox" data-consent-analytics />
+      <span>
+        <b>Medición</b>
+        Google Analytics: cuántas personas visitan la web y desde dónde llegan.
+      </span>
+    </label>
+    <label class="consent-option">
+      <input type="checkbox" data-consent-ads />
+      <span>
+        <b>Publicidad</b>
+        Meta y Google Ads: saber qué anuncios funcionan y mostrar anuncios más útiles.
+      </span>
+    </label>
+    <button type="button" class="consent-button consent-save" data-consent-save>
+      Guardar mi elección
+    </button>
+  </div>
+
+  <div class="consent-actions">
+    <button type="button" class="consent-button" data-consent-reject>
+      Rechazar
+    </button>
+    <button
+      type="button"
+      class="consent-link"
+      data-consent-configure
+      aria-controls="consent-panel"
+      aria-expanded="false"
+    >
+      Configurar
+    </button>
+    <button type="button" class="consent-button" data-consent-accept>
+      Aceptar
+    </button>
+  </div>
+</div>
+
+<style>
+  .consent {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 200;
+    width: min(440px, calc(100vw - 32px));
+    padding: 22px 22px 18px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow:
+      0 0 0 1px #dfe6f1,
+      0 24px 60px -20px #0a102266;
+    color: var(--ink);
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  .consent-title {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .consent-text {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .consent-text a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .consent-panel {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .consent-panel[hidden] {
+    display: none;
+  }
+  .consent-option {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+    align-items: start;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .consent-option input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--blue);
+  }
+  .consent-option b {
+    display: block;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  /* Rejecting and accepting look and weigh the same. */
+  .consent-actions {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-top: 18px;
+  }
+  .consent-button {
+    min-height: 46px;
+    padding: 0 18px;
+    border: 1px solid var(--ink);
+    border-radius: 100px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .consent-button:hover {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .consent-save {
+    justify-self: start;
+  }
+  .consent-link {
+    min-height: 46px;
+    padding: 0 6px;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 14px;
+    text-decoration: underline;
+  }
+  .consent-button:focus-visible,
+  .consent-link:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 2px;
+  }
+</style>

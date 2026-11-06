@@ -2,6 +2,8 @@
 import '@fontsource-variable/manrope';
 import '@fontsource-variable/dm-sans';
 import '../styles/global.css';
+import CookieConsent from '../components/CookieConsent.astro';
+import { hasTracking } from '../lib/tracking-config';
 interface Props {
   title?: string;
   description?: string;
@@ -88,7 +90,10 @@ const schema = {
     </noscript>
     <slot />
     <script>
+      // Measurement first: the contact form reads the visit's campaign parameters from it.
+      import '../scripts/tracking';
       import '../scripts/site';
     </script>
+    {hasTracking && <CookieConsent />}
   </body>
 </html>

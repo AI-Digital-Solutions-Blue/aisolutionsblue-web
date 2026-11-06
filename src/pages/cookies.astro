@@ -2,41 +2,183 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { hasTracking } from '../lib/tracking-config';
+
+// What each cookie is for, who sets it and how long it lasts. Analytics and advertising cookies
+// are only installed after the visitor accepts them in the banner.
+const cookies = [
+  {
+    name: 'blue_consent',
+    owner: 'AI Digital Solutions Blue',
+    purpose: 'Guarda tu elección sobre las cookies.',
+    type: 'Necesaria',
+    duration: '6 meses',
+  },
+  {
+    name: '_ga, _ga_*',
+    owner: 'Google (Google Analytics)',
+    purpose: 'Distinguir visitas y medir cómo se usa la web y desde dónde llegan.',
+    type: 'Medición',
+    duration: 'Hasta 2 años',
+  },
+  {
+    name: '_gcl_au, _gcl_aw',
+    owner: 'Google (Google Ads)',
+    purpose: 'Saber si una visita o un contacto llega desde un anuncio de Google.',
+    type: 'Publicidad',
+    duration: '90 días',
+  },
+  {
+    name: '_fbp, _fbc',
+    owner: 'Meta (Facebook e Instagram)',
+    purpose:
+      'Saber si una visita o un contacto llega desde un anuncio de Meta y medir sus anuncios.',
+    type: 'Publicidad',
+    duration: '90 días',
+  },
+];
 ---
 
 <Layout
   title="Cookies · Blue"
-  description="Información sobre cookies y servicios externos en AI Digital Solutions Blue."
+  description="Qué cookies usa AI Digital Solutions Blue, para qué sirven y cómo cambiar tu elección."
 >
   <Header />
   <main id="main" class="legal-main shell">
     <div class="legal-content">
       <a class="text-link" href="/">
-        ← Volver a Blue
+        {' '}
+        ← Volver a Blue{' '}
       </a>
-      <h1>Información sobre cookies</h1>
+      <h1>Política de cookies</h1>
       <p>
-        Esta versión del sitio de AI Digital Solutions Blue no instala cookies de analítica ni
-        publicidad y no incorpora reproductores o calendarios de terceros dentro de la página.
+        Las cookies son pequeños archivos que una web guarda en tu navegador. En aisolutionsblue.com
+        usamos una cookie necesaria para recordar tu elección y, solo si las aceptas, cookies de
+        Google y de Meta para medir las visitas y nuestros anuncios.
       </p>
-      <h2>Enlaces a otros servicios</h2>
+
+      <h2>Tu elección</h2>
       <p>
-        Si eliges agendar una reunión, accederás al sitio de Calendly. Los enlaces a nuestras redes
-        sociales también abren sitios externos. Estos servicios aplican sus propias políticas de
-        privacidad y cookies.
+        Al entrar por primera vez te preguntamos si aceptas las cookies de medición y de publicidad.
+        Rechazarlas es igual de fácil que aceptarlas, y hasta que eliges no se carga ninguna
+        herramienta de Google ni de Meta. Si no aceptas, la web funciona igual.
       </p>
-      <h2>Formulario de contacto</h2>
+      {hasTracking ? (
+        <p>
+          Puedes cambiar o retirar tu consentimiento en cualquier momento:{' '}
+          <button type="button" class="legal-consent" data-consent-open>
+            Configurar cookies
+          </button>
+          . También tienes este botón al pie de todas las páginas.
+        </p>
+      ) : (
+        <p>
+          Puedes cambiar o retirar tu consentimiento en cualquier momento desde «Configurar
+          cookies», al pie de la página, cuando esté disponible.
+        </p>
+      )}
+
+      <h2>Cookies que usamos</h2>
+      <div class="cookie-table-wrap">
+        <table class="cookie-table">
+          <thead>
+            <tr>
+              <th scope="col">Cookie</th>
+              <th scope="col">De quién</th>
+              <th scope="col">Para qué</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Duración</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cookies.map((cookie) => (
+              <tr>
+                <td>
+                  <code>{cookie.name}</code>
+                </td>
+                <td>{cookie.owner}</td>
+                <td>{cookie.purpose}</td>
+                <td>{cookie.type}</td>
+                <td>{cookie.duration}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Cómo llegaste a la web</h2>
       <p>
-        El formulario utiliza los datos que facilitas para tramitar tu consulta. Puedes consultar la
-        información sobre el tratamiento de tus datos en nuestra{' '}
-        <a href="/privacy-policy">política de privacidad</a>.
+        Si nos escribes desde el formulario, junto a tu consulta nos llega cómo llegaste a la web:
+        la campaña o el anuncio (los parámetros «utm» del enlace) y, si vienes de un anuncio, el
+        identificador del clic de Google o de Meta. Lo usamos para saber qué anuncios funcionan. Si
+        aceptaste las cookies de publicidad, también informamos a Meta de que se ha enviado una
+        consulta, con tu email y tu teléfono cifrados de forma irreversible.
       </p>
+
+      <h2>Terceros</h2>
+      <p>
+        Google y Meta tratan estos datos según sus propias políticas, y pueden transferirlos fuera
+        del Espacio Económico Europeo con las garantías previstas en la normativa:
+      </p>
+      <ul>
+        <li>
+          <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">
+            Política de privacidad de Google
+          </a>
+        </li>
+        <li>
+          <a href="https://www.facebook.com/privacy/policy/" rel="noopener" target="_blank">
+            Política de privacidad de Meta
+          </a>
+        </li>
+      </ul>
+
+      <h2>Cómo borrar las cookies</h2>
+      <p>
+        Además de cambiar tu elección aquí, puedes borrar o bloquear las cookies desde los ajustes
+        de tu navegador. Si las borras, te volveremos a preguntar en tu próxima visita.
+      </p>
+
       <h2>Contacto</h2>
       <p>
-        Para cualquier consulta, escribe a{' '}
-        <a href="mailto:info@aisolutionsblue.com">info@aisolutionsblue.com</a>.
+        Para cualquier consulta sobre cookies o tus datos, escribe a{' '}
+        <a href="mailto:info@aisolutionsblue.com">info@aisolutionsblue.com</a>. Tienes más
+        información en nuestra <a href="/privacy-policy">política de privacidad</a>.
       </p>
     </div>
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .cookie-table-wrap {
+    overflow-x: auto;
+    margin: 16px 0 8px;
+  }
+  .cookie-table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .cookie-table th,
+  .cookie-table td {
+    padding: 12px 14px 12px 0;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .cookie-table th {
+    font-weight: 600;
+  }
+  .legal-consent {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--blue);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>

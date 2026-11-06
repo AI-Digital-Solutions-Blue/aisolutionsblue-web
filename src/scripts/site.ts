@@ -104,6 +104,9 @@ if (form) {
         if (typeof value === 'string') data.append(key, value);
       });
       data.set('requestId', requestId);
+      // Campaign parameters of the visit and, with consent, the ids Meta needs to match the lead.
+      for (const [key, value] of Object.entries(window.blueTracking?.formFields() ?? {}))
+        data.set(key, value);
       const response = await fetch('/api/contact', {
         method: 'POST',
         body: data,
@@ -112,6 +115,7 @@ if (form) {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || 'No hemos podido enviar tu consulta.');
+      window.blueTracking?.lead(requestId, data.get('interest') || '');
       status.dataset.state = 'success';
       status.textContent =
         '¡Gracias! Hemos recibido tu consulta. Nuestro equipo se pondrá en contacto contigo.';

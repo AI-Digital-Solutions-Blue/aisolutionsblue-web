@@ -1,6 +1,7 @@
 ---
 import { company } from '../data/site';
 import Icon from './Icon.astro';
+import { hasTracking } from '../lib/tracking-config';
 ---
 
 <footer class="site-footer">
@@ -64,6 +65,11 @@ import Icon from './Icon.astro';
         <a href="/privacy-policy">Privacidad</a>
         <a href="/terms-and-conditions">Aviso legal</a>
         <a href="/cookies">Cookies</a>
+        {hasTracking && (
+          <button type="button" class="footer-consent" data-consent-open>
+            Configurar cookies
+          </button>
+        )}
         <a href="/cancel-policy">Cancelaciones</a>
         <a href="/return-policy">Reembolsos</a>
       </nav>

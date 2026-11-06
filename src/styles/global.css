@@ -1460,9 +1460,18 @@ select:user-invalid {
   align-items: center;
   min-height: 32px;
 }
-.footer-bottom a:hover {
+.footer-bottom a:hover,
+.footer-consent:hover {
   color: var(--blue);
   text-decoration: underline;
+}
+.footer-consent {
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
 }
 .back-top {
   white-space: nowrap;
