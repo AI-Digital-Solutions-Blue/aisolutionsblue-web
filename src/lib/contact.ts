@@ -57,7 +57,8 @@ export function validateContact(form: URLSearchParams): Validation {
     return { ok: false, message: 'Revisa tu dirección de email.' };
   if (phone.length > 30 || (phone && !/^[+\d\s().-]{6,30}$/.test(phone)))
     return { ok: false, message: 'Revisa el teléfono o deja el campo vacío.' };
-  if (!CONTACT_INTERESTS.includes(interest))
+  // Optional since the short form: when sent, it must be one of the listed options.
+  if (interest && !CONTACT_INTERESTS.includes(interest))
     return { ok: false, message: 'Selecciona en qué podemos ayudarte.' };
   if (message.length < 10 || message.length > 3000 || message.includes('\0'))
     return {
@@ -82,7 +83,7 @@ export function validateContact(form: URLSearchParams): Validation {
       name,
       email,
       phone,
-      interest,
+      interest: interest || 'Sin indicar',
       message,
       requestId,
       attribution: cleanAttribution((key) => form.get(key)),

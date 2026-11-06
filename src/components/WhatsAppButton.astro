@@ -1,0 +1,66 @@
+---
+// Floating WhatsApp shortcut on every page. Clicks are measured (with consent) in tracking.ts.
+import Icon from './Icon.astro';
+import { company } from '../data/site';
+---
+
+<a
+  class="wa-float"
+  href={company.whatsappUrl}
+  target="_blank"
+  rel="noopener"
+  aria-label="Escríbenos por WhatsApp (se abre en una pestaña nueva)"
+>
+  <Icon name="whatsapp" size={26} />
+  <span class="wa-float-label">WhatsApp</span>
+</a>
+
+<style>
+  .wa-float {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 150;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 56px;
+    padding: 0 18px 0 15px;
+    border-radius: 100px;
+    background: #1f9d55;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 14px 34px -14px #0a1022aa;
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease;
+  }
+  .wa-float:hover {
+    background: #17803f;
+    transform: translateY(-2px);
+  }
+  .wa-float:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
+  }
+  @media (max-width: 700px) {
+    .wa-float {
+      width: 56px;
+      padding: 0;
+      justify-content: center;
+    }
+    .wa-float-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wa-float {
+      transition: none;
+    }
+  }
+</style>

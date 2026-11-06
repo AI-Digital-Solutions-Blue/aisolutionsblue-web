@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import process from 'node:process';
 import { contactEmail, createRateLimiter, parseSender, validateContact } from '../../lib/contact';
 import { sendLead } from '../../lib/meta-capi';
+import { tracking } from '../../lib/tracking-config';
 
 export const prerender = false;
 const allowRequest = createRateLimiter();
@@ -117,7 +118,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         'No se ha podido confirmar el envío. Inténtalo de nuevo en unos minutos.',
       );
     // The lead is also reported to Meta from the server, only with advertising consent.
-    const pixelId = (import.meta.env.PUBLIC_META_PIXEL_ID || '').trim();
+    const pixelId = tracking.metaPixelId;
     const token = process.env.META_CAPI_TOKEN || import.meta.env.META_CAPI_TOKEN;
     if (validation.data.adsConsent && pixelId && token)
       await sendLead(validation.data, {

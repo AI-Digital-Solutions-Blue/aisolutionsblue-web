@@ -1,7 +1,6 @@
 ---
 import Icon from './Icon.astro';
 import { company } from '../data/site';
-import { CONTACT_INTERESTS } from '../lib/contact';
 interface Props {
   /** h1 on /contacto, h2 when the form closes the home page. */
   heading?: 'h1' | 'h2';
@@ -26,6 +25,27 @@ const Heading = heading;
         <li>Sin tecnicismos: hablamos de tu negocio.</li>
         <li>Te respondemos lo antes posible.</li>
       </ul>
+      <div class="quick-contact">
+        <a
+          class="quick-channel quick-whatsapp"
+          href={company.whatsappUrl}
+          target="_blank"
+          rel="noopener"
+        >
+          <Icon name="whatsapp" size={22} />
+          <span>
+            <b>Escríbenos por WhatsApp</b>
+            {company.phone}
+          </span>
+        </a>
+        <a class="quick-channel" href={`mailto:${company.email}`}>
+          <Icon name="mail" size={22} />
+          <span>
+            <b>Mándanos un email</b>
+            {company.email}
+          </span>
+        </a>
+      </div>
     </div>
     <form
       class="contact-form"
@@ -34,7 +54,7 @@ const Heading = heading;
       aria-labelledby="contact-title"
       data-contact-form
     >
-      <p class="form-title">Cuéntanos un poco de tu empresa.</p>
+      <p class="form-title">O déjanos tus datos y te llamamos.</p>
       <div class="form-grid">
         <div class="form-field">
           <label for="name">
@@ -77,28 +97,15 @@ const Heading = heading;
             maxlength="30"
           />
         </div>
-        <div class="form-field">
-          <label for="interest">
-            ¿En qué podemos ayudarte? <span aria-hidden="true">*</span>
-          </label>
-          <select id="interest" name="interest" required>
-            <option value="" disabled selected>
-              Selecciona una opción
-            </option>
-            {CONTACT_INTERESTS.map((option) => (
-              <option value={option}>{option}</option>
-            ))}
-          </select>
-        </div>
       </div>
       <div class="form-field">
         <label for="message">
-          ¿Qué tarea te quita más tiempo? <span aria-hidden="true">*</span>
+          ¿Qué necesitas? <span aria-hidden="true">*</span>
         </label>
         <textarea
           id="message"
           name="message"
-          rows="4"
+          rows="3"
           required
           minlength="10"
           maxlength="3000"
@@ -133,7 +140,6 @@ const Heading = heading;
       <div class="form-status" tabindex="-1" role="status" aria-live="polite" hidden></div>
     </form>
     <div class="direct-contact">
-      <a href={`mailto:${company.email}`}>{company.email}</a>
       <span>Desde Las Palmas de Gran Canaria.</span>
     </div>
   </div>

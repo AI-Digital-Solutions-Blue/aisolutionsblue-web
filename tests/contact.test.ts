@@ -112,3 +112,11 @@ test('interpreta el remitente con y sin nombre, y rechaza valores invalidos', ()
   });
   for (const value of ['', 'sin-arroba', 'Blue <sin-arroba>']) assert.equal(parseSender(value), null);
 });
+
+test('el formulario corto puede llegar sin interés y se marca como sin indicar', () => {
+  const form = valid();
+  form.delete('interest');
+  const result = validateContact(form);
+  assert.ok(result.ok);
+  assert.equal(result.data.interest, 'Sin indicar');
+});
