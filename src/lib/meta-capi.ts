@@ -4,7 +4,7 @@
 import { createHash } from 'node:crypto';
 import type { ContactData } from './contact';
 
-const GRAPH_VERSION = 'v21.0';
+const GRAPH_VERSION = 'v27.0';
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
 
 export interface LeadContext {

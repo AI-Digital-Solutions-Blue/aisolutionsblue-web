@@ -5,7 +5,7 @@ import { CONTACT_RECIPIENTS } from './contact';
 import type { Email } from './brevo';
 import type { MetaLeadInfo, NewContact } from './contacts-store';
 
-const GRAPH_VERSION = 'v21.0';
+const GRAPH_VERSION = 'v27.0';
 
 /** Checks X-Hub-Signature-256 ("sha256=<hex>") against the raw body and the App Secret. */
 export function validSignature(rawBody: string, header: string | null, appSecret: string) {
