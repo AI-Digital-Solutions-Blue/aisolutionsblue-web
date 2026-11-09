@@ -3,7 +3,6 @@ import '@fontsource-variable/manrope';
 import '@fontsource-variable/dm-sans';
 import '../styles/global.css';
 import CookieConsent from '../components/CookieConsent.astro';
-import WhatsAppButton from '../components/WhatsAppButton.astro';
 import { hasTracking } from '../lib/tracking-config';
 interface Props {
   title?: string;
@@ -95,7 +94,6 @@ const schema = {
       import '../scripts/tracking';
       import '../scripts/site';
     </script>
-    <WhatsAppButton />
     {hasTracking && <CookieConsent />}
   </body>
 </html>

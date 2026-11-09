@@ -4,8 +4,6 @@ export const company = {
   email: 'info@aisolutionsblue.com',
   phone: '+34 689 23 27 92',
   phoneHref: '+34689232792',
-  /** WhatsApp chat with a prefilled first message. */
-  whatsappUrl: `https://wa.me/34689232792?text=${encodeURIComponent('Hola, vengo de la web de Blue y me gustaría contaros mi caso.')}`,
   address: 'Calle Juan Rejón, 67, Planta 3. 35008 Las Palmas de Gran Canaria (Las Palmas). España.',
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=Calle+Juan+Rej%C3%B3n+67+35008+Las+Palmas+de+Gran+Canaria+Espa%C3%B1a',

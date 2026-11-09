@@ -1249,9 +1249,6 @@ h2 {
   flex: none;
   color: var(--blue);
 }
-.quick-whatsapp svg {
-  color: #1f9d55;
-}
 .quick-channel:hover {
   border-color: var(--blue);
 }
