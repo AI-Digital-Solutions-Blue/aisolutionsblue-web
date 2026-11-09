@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import process from 'node:process';
-import { contactEmail, createRateLimiter, parseSender, validateContact } from '../../lib/contact';
+import { brevoConfig, sendEmail } from '../../lib/brevo';
+import { contactEmail, createRateLimiter, validateContact } from '../../lib/contact';
+import { insertContact, storeConfig } from '../../lib/contacts-store';
 import { sendLead } from '../../lib/meta-capi';
 import { tracking } from '../../lib/tracking-config';
 
@@ -67,51 +69,32 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (form.get('website')) return respond(request, 200, 'Solicitud recibida.');
   const validation = validateContact(form);
   if (!validation.ok) return respond(request, 400, validation.message);
-  const apiKey = process.env.BREVO_API_KEY || import.meta.env.BREVO_API_KEY;
-  const from = process.env.CONTACT_FROM || import.meta.env.CONTACT_FROM;
-  const sender = from ? parseSender(from) : null;
-  if (!apiKey || !sender)
-    return respond(request, 503, 'El formulario no está disponible en este momento.');
+  const mail = brevoConfig();
+  if (!mail) return respond(request, 503, 'El formulario no está disponible en este momento.');
   if (!allowRequest(clientAddress || 'unknown'))
     return respond(
       request,
       429,
       'Has enviado varias consultas. Espera unos minutos antes de intentarlo de nuevo.',
     );
-  const message = contactEmail(validation.data);
+  const data = validation.data;
+  // The portal keeps every contact; a failure there must not lose the email, so it never throws.
+  const store = storeConfig();
+  if (store)
+    await insertContact(store, {
+      source: 'web',
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      interest: data.interest,
+      message: data.message,
+      request_id: data.requestId,
+      attribution: data.attribution,
+    }).catch(() => false);
+  const message = contactEmail(data);
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-    let response: Response;
-    try {
-      response = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: {
-          'api-key': apiKey,
-          'content-type': 'application/json',
-          accept: 'application/json',
-        },
-        signal: controller.signal,
-        body: JSON.stringify({
-          sender,
-          to: message.to.map((email) => ({ email })),
-          replyTo: { email: message.replyTo },
-          subject: message.subject,
-          textContent: message.text,
-          headers: { 'X-Blue-Request-Id': validation.data.requestId },
-        }),
-      });
-    } finally {
-      clearTimeout(timeout);
-    }
-    if (!response.ok)
-      return respond(
-        request,
-        502,
-        'No se ha podido confirmar el envío. Inténtalo de nuevo en unos minutos.',
-      );
-    const result = (await response.json().catch(() => null)) as { messageId?: string } | null;
-    if (!result?.messageId)
+    const sent = await sendEmail(mail, { ...message, reference: data.requestId });
+    if (!sent)
       return respond(
         request,
         502,
@@ -120,8 +103,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     // The lead is also reported to Meta from the server, only with advertising consent.
     const pixelId = tracking.metaPixelId;
     const token = process.env.META_CAPI_TOKEN || import.meta.env.META_CAPI_TOKEN;
-    if (validation.data.adsConsent && pixelId && token)
-      await sendLead(validation.data, {
+    if (data.adsConsent && pixelId && token)
+      await sendLead(data, {
         pixelId,
         token,
         ip: clientAddress,

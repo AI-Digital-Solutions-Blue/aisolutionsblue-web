@@ -110,7 +110,8 @@ test('interpreta el remitente con y sin nombre, y rechaza valores invalidos', ()
   assert.deepEqual(parseSender('  marketing@aisolutionsblue.com  '), {
     email: 'marketing@aisolutionsblue.com',
   });
-  for (const value of ['', 'sin-arroba', 'Blue <sin-arroba>']) assert.equal(parseSender(value), null);
+  for (const value of ['', 'sin-arroba', 'Blue <sin-arroba>'])
+    assert.equal(parseSender(value), null);
 });
 
 test('el formulario corto puede llegar sin interés y se marca como sin indicar', () => {
