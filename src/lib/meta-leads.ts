@@ -107,14 +107,13 @@ const clean = (value: string, max: number) =>
     .slice(0, max);
 // Meta returns option keys like "software_a_medida": they read better with spaces.
 const readable = (value: string) => clean(value.replace(/_/g, ' '), 500);
-const STANDARD = new Set([
-  'full_name',
-  'first_name',
-  'last_name',
-  'email',
-  'phone_number',
-  'phone',
-]);
+// Standard questions arrive with English keys (full_name) or, in forms built in Spanish, with
+// localized ones (nombre_y_apellidos, número_de_teléfono, correo_electrónico).
+const NAME = /^(full_name|name|nombre(_y_apellidos|_completo)?)$/i;
+const FIRST = /^(first_name|nombre)$/i;
+const LAST = /^(last_name|apellidos?)$/i;
+const EMAIL = /^(email|correo(_electr[oó]nico)?|e-?mail)$/i;
+const PHONE = /^(phone(_number)?|tel[eé]fono|n[uú]mero_de_tel[eé]fono|m[oó]vil)$/i;
 
 /** Turns a Graph lead into a portal contact, marked as coming from Meta's instant form. */
 export function leadToContact(lead: GraphLead, notice: LeadNotice): NewContact {
@@ -123,11 +122,11 @@ export function leadToContact(lead: GraphLead, notice: LeadNotice): NewContact {
     if (!field?.name || !Array.isArray(field.values)) continue;
     answers[clean(field.name, 100)] = clean(field.values.join(', '), 1000);
   }
-  const name =
-    answers.full_name ||
-    [answers.first_name, answers.last_name].filter(Boolean).join(' ') ||
-    'Sin nombre';
-  const custom = Object.entries(answers).filter(([key]) => !STANDARD.has(key));
+  const pick = (pattern: RegExp) =>
+    Object.entries(answers).find(([key]) => pattern.test(key))?.[1] || '';
+  const name = pick(NAME) || [pick(FIRST), pick(LAST)].filter(Boolean).join(' ') || 'Sin nombre';
+  const standard = [NAME, FIRST, LAST, EMAIL, PHONE];
+  const custom = Object.entries(answers).filter(([key]) => !standard.some((p) => p.test(key)));
   const meta: MetaLeadInfo = {
     form_id: lead.form_id || notice.form_id,
     page_id: notice.page_id,
@@ -150,8 +149,8 @@ export function leadToContact(lead: GraphLead, notice: LeadNotice): NewContact {
     source: 'meta_form',
     ...(created && !Number.isNaN(created.getTime()) ? { created_at: created.toISOString() } : {}),
     name: clean(name, 100),
-    email: answers.email || null,
-    phone: answers.phone_number || answers.phone || null,
+    email: pick(EMAIL) || null,
+    phone: pick(PHONE) || null,
     interest: custom[0] ? readable(custom[0][1]) : null,
     message:
       custom.length > 1

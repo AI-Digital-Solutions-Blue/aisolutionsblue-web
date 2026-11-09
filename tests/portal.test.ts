@@ -140,3 +140,23 @@ test('guarda cada contacto una sola vez y lista con filtros', async () => {
   assert.match(calls[2].url, /source=eq\.meta_form/);
   assert.match(calls[2].url, /status=eq\.nuevo/);
 });
+
+test('entiende los campos de un formulario creado en español', () => {
+  const contact = leadToContact(
+    {
+      id: '555',
+      field_data: [
+        { name: 'nombre_y_apellidos', values: ['Luis Mena'] },
+        { name: 'número_de_teléfono', values: ['+34611222333'] },
+        { name: 'correo_electrónico', values: ['luis@example.com'] },
+        { name: '¿qué_necesitas?', values: ['automatizar_tareas'] },
+      ],
+    },
+    { leadgen_id: '555' },
+  );
+  assert.equal(contact.name, 'Luis Mena');
+  assert.equal(contact.phone, '+34611222333');
+  assert.equal(contact.email, 'luis@example.com');
+  assert.equal(contact.interest, 'automatizar tareas');
+  assert.equal(contact.message, null);
+});
