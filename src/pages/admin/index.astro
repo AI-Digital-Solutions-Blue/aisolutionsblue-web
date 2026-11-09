@@ -25,6 +25,16 @@ const errors: Record<string, string> = {
   save: 'No se ha podido guardar el cambio. Inténtalo de nuevo.',
 };
 const error = errors[Astro.url.searchParams.get('error') || ''] || '';
+const metaState = Astro.url.searchParams.get('meta') || '';
+const metaDetail = (Astro.url.searchParams.get('detalle') || '').slice(0, 200);
+const metaNotice =
+  metaState === 'ok'
+    ? metaDetail || 'Página conectada.'
+    : metaState === 'off'
+      ? 'Faltan las claves de Meta en Vercel.'
+      : metaState === 'error'
+        ? `Meta respondió: ${metaDetail}`
+        : '';
 const sourceParam = Astro.url.searchParams.get('origen') || '';
 const statusParam = Astro.url.searchParams.get('estado') || '';
 const filter = {
@@ -116,6 +126,19 @@ const link = (params: Record<string, string>) => {
       h1 {
         font-size: 24px;
         margin: 0;
+      }
+      .header-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .notice {
+        background: #effaf3;
+        border: 1px solid #bfe8cd;
+        color: #135c2e;
+        padding: 10px 14px;
+        border-radius: 10px;
+        margin-bottom: 16px;
       }
       .muted {
         color: var(--muted);
@@ -288,13 +311,25 @@ const link = (params: Record<string, string>) => {
               {contacts.length} {contacts.length === 1 ? 'contacto' : 'contactos'}
             </span>
           </div>
-          <form method="post" action="/api/admin/login">
-            <input type="hidden" name="action" value="logout" />
-            <button class="ghost" type="submit">
-              Salir
-            </button>
-          </form>
+          <div class="header-actions">
+            <form method="post" action="/api/admin/meta-page">
+              <button
+                class="ghost"
+                type="submit"
+                title="Hace que los contactos del formulario de Meta lleguen a este portal"
+              >
+                Conectar página de Meta
+              </button>
+            </form>
+            <form method="post" action="/api/admin/login">
+              <input type="hidden" name="action" value="logout" />
+              <button class="ghost" type="submit">
+                Salir
+              </button>
+            </form>
+          </div>
         </header>
+        {metaNotice && <p class={metaState === 'ok' ? 'notice' : 'error'}>{metaNotice}</p>}
         {error && <p class="error">{error}</p>}
         {loadError && <p class="error">{loadError}</p>}
         <nav class="filters" aria-label="Origen">

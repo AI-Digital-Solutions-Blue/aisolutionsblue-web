@@ -195,3 +195,51 @@ export function metaLeadEmail(contact: NewContact): Email {
     reference: contact.meta_leadgen_id || undefined,
   };
 }
+
+/** Facebook Page of Blue («AI Digital Solutions Blue»), whose instant-form leads the portal receives. */
+export const BLUE_PAGE_ID = '1278352498701006';
+
+/**
+ * Subscribes the Page to the app's "leadgen" webhook, so Meta announces every new lead.
+ * The system-user token reads the Page's own token first; neither leaves the server.
+ */
+export async function subscribePage(
+  systemToken: string,
+  appSecret: string,
+  pageId = BLUE_PAGE_ID,
+  fetcher: typeof fetch = fetch,
+): Promise<{ ok: boolean; message: string }> {
+  const proof = (token: string) => createHmac('sha256', appSecret).update(token).digest('hex');
+  const base = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}`;
+  try {
+    const pageResponse = await fetcher(
+      `${base}?${new URLSearchParams({ fields: 'access_token,name', access_token: systemToken, appsecret_proof: proof(systemToken) })}`,
+      { signal: AbortSignal.timeout(8000) },
+    );
+    const page = (await pageResponse.json().catch(() => ({}))) as {
+      access_token?: string;
+      error?: { message?: string };
+    };
+    if (!pageResponse.ok || !page.access_token)
+      return { ok: false, message: page.error?.message || 'No se pudo leer la página.' };
+    const subscribe = await fetcher(`${base}/subscribed_apps`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        subscribed_fields: 'leadgen',
+        access_token: page.access_token,
+        appsecret_proof: proof(page.access_token),
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const result = (await subscribe.json().catch(() => ({}))) as {
+      success?: boolean;
+      error?: { message?: string };
+    };
+    return result.success
+      ? { ok: true, message: 'Página conectada: los contactos de Meta llegarán al portal.' }
+      : { ok: false, message: result.error?.message || 'Meta no aceptó la suscripción.' };
+  } catch {
+    return { ok: false, message: 'No se pudo contactar con Meta.' };
+  }
+}
