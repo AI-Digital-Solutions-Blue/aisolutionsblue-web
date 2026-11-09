@@ -3,6 +3,8 @@
 // While a value is missing its tag never loads, and with no tag at all the cookie banner is hidden.
 //   Meta pixel  «aisolutionsblue.com – web», portfolio AIsolutionsblue (1449498430569551)
 //   GA4         property «AI Digital Solutions Blue – web» (561100015), stream aisolutionsblue.com
+//   Google Ads  account «AI Digital Solutions Blue» (500-126-1845): conversions «Envío de formulario»
+//               (principal) and «Clic en WhatsApp» (Contacto)
 //   PUBLIC_META_PIXEL_ID          Meta pixel, e.g. 1234567890123456
 //   PUBLIC_GA4_ID                 Google Analytics 4, e.g. G-XXXXXXXXXX
 //   PUBLIC_GADS_ID                Google Ads account tag, e.g. AW-123456789
@@ -14,9 +16,9 @@ const value = (raw: string | undefined, fallback = '') => (raw ?? fallback).trim
 export const tracking = {
   metaPixelId: value(import.meta.env.PUBLIC_META_PIXEL_ID, '1639021901290433'),
   ga4Id: value(import.meta.env.PUBLIC_GA4_ID, 'G-Y4TPKG7P83'),
-  adsId: value(import.meta.env.PUBLIC_GADS_ID),
-  adsLeadLabel: value(import.meta.env.PUBLIC_GADS_LEAD_LABEL),
-  adsWhatsappLabel: value(import.meta.env.PUBLIC_GADS_WHATSAPP_LABEL),
+  adsId: value(import.meta.env.PUBLIC_GADS_ID, 'AW-18560703927'),
+  adsLeadLabel: value(import.meta.env.PUBLIC_GADS_LEAD_LABEL, 'ayZCCPTEgLUdELe7t5JF'),
+  adsWhatsappLabel: value(import.meta.env.PUBLIC_GADS_WHATSAPP_LABEL, 'mXIPCPfEgLUdELe7t5JF'),
 };
 
 /** True when at least one tag is configured, so there is something to ask consent for. */
