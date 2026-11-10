@@ -7,7 +7,7 @@ import {
   parseGa4,
   summarizeContacts,
 } from '../src/lib/funnel';
-import { batchRunReports, rowsOf } from '../src/lib/ga4';
+import { batchRunReports, ga4Config, rowsOf } from '../src/lib/ga4';
 import { generateKeyPairSync } from 'node:crypto';
 
 test('asigna cada contacto a su canal', () => {
@@ -166,9 +166,12 @@ test('se autentica con la cuenta de servicio y pide los informes', async () => {
   const reports = await batchRunReports(
     {
       propertyId: '123',
-      account: {
-        client_email: 'portal@proyecto.iam.gserviceaccount.com',
-        private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }).toString(),
+      auth: {
+        kind: 'key',
+        account: {
+          client_email: 'portal@proyecto.iam.gserviceaccount.com',
+          private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }).toString(),
+        },
       },
       fetch: fetcher,
     },
@@ -179,4 +182,36 @@ test('se autentica con la cuenta de servicio y pide los informes', async () => {
   assert.equal(assertion.split('.').length, 3);
   assert.match(calls[1].url, /properties\/123:batchRunReports/);
   assert.equal((calls[1].init.headers as Record<string, string>).authorization, 'Bearer tok');
+});
+
+test('sin clave: cambia el token de Vercel por uno de la cuenta de servicio', async () => {
+  const config = ga4Config(new Headers({ 'x-vercel-oidc-token': 'vercel.jwt.token' }));
+  assert.equal(config?.auth.kind, 'oidc');
+  assert.equal(config?.propertyId, '561100015');
+  const calls: { url: string; init: RequestInit }[] = [];
+  const fetcher = (async (url: string, init: RequestInit) => {
+    calls.push({ url, init });
+    if (url.includes('sts.googleapis.com'))
+      return new Response(JSON.stringify({ access_token: 'federado', expires_in: 3600 }));
+    if (url.includes('iamcredentials'))
+      return new Response(
+        JSON.stringify({
+          accessToken: 'lector',
+          expireTime: new Date(Date.now() + 3600_000).toISOString(),
+        }),
+      );
+    return new Response(JSON.stringify({ reports: [report([], ['totalUsers'], [[9]])] }));
+  }) as unknown as typeof fetch;
+  const reports = await batchRunReports({ ...config!, fetch: fetcher }, ga4Requests(7, null));
+  assert.equal(rowsOf(reports[0])[0].totalUsers, 9);
+  const sts = JSON.parse(String(calls[0].init.body));
+  assert.equal(sts.subjectToken, 'vercel.jwt.token');
+  assert.match(sts.audience, /workloadIdentityPools\/vercel\/providers\/vercel$/);
+  assert.match(calls[1].url, /portal-embudo%40blue-portal-embudo\.iam\.gserviceaccount\.com:generateAccessToken/);
+  assert.equal((calls[1].init.headers as Record<string, string>).authorization, 'Bearer federado');
+  assert.equal((calls[2].init.headers as Record<string, string>).authorization, 'Bearer lector');
+});
+
+test('sin token de Vercel ni clave, no hay conexión', () => {
+  assert.equal(ga4Config(new Headers()), null);
 });

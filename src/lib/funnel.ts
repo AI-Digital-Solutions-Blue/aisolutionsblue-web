@@ -278,7 +278,7 @@ export async function loadFunnel(
   const data: FunnelData = {
     web: web.status === 'fulfilled' ? web.value : null,
     webError: !ga4
-      ? 'Falta conectar Google Analytics (GA4_SERVICE_ACCOUNT en Vercel).'
+      ? 'Falta conectar Google Analytics (acceso sin clave desde Vercel).'
       : web.status === 'rejected'
         ? `Google Analytics no respondió: ${String(web.reason?.message || web.reason).slice(0, 200)}`
         : '',

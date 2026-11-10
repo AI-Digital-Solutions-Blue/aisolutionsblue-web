@@ -24,7 +24,7 @@ const daysParam = Number(Astro.url.searchParams.get('dias') || 30);
 const days: RangeDays = isRange(daysParam) ? daysParam : 30;
 const channelParam = Astro.url.searchParams.get('canal') || '';
 const channel: Channel | null = isChannel(channelParam) ? channelParam : null;
-const data = await loadFunnel(days, channel, ga4Config(), storeConfig());
+const data = await loadFunnel(days, channel, ga4Config(Astro.request.headers), storeConfig());
 // Local preview only: sample visit numbers to review the layout without Google Analytics.
 if (import.meta.env.DEV && Astro.url.searchParams.has('demo') && !data.web) {
   data.webError = '';
