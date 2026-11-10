@@ -207,7 +207,10 @@ test('sin clave: cambia el token de Vercel por uno de la cuenta de servicio', as
   const sts = JSON.parse(String(calls[0].init.body));
   assert.equal(sts.subjectToken, 'vercel.jwt.token');
   assert.match(sts.audience, /workloadIdentityPools\/vercel\/providers\/vercel$/);
-  assert.match(calls[1].url, /portal-embudo%40blue-portal-embudo\.iam\.gserviceaccount\.com:generateAccessToken/);
+  assert.match(
+    calls[1].url,
+    /portal-embudo%40blue-portal-embudo\.iam\.gserviceaccount\.com:generateAccessToken/,
+  );
   assert.equal((calls[1].init.headers as Record<string, string>).authorization, 'Bearer federado');
   assert.equal((calls[2].init.headers as Record<string, string>).authorization, 'Bearer lector');
 });

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import { leadNotices, leadToContact, metaLeadEmail, validSignature } from '../src/lib/meta-leads';
 import { checkPassword, sessionValue, validSession } from '../src/lib/admin-auth';
-import { insertContact, listContacts } from '../src/lib/contacts-store';
+import { deleteContact, insertContact, listContacts } from '../src/lib/contacts-store';
 
 const SECRET = 'app-secret-de-prueba';
 const sign = (body: string) => `sha256=${createHmac('sha256', SECRET).update(body).digest('hex')}`;
@@ -159,4 +159,19 @@ test('entiende los campos de un formulario creado en español', () => {
   assert.equal(contact.email, 'luis@example.com');
   assert.equal(contact.interest, 'automatizar tareas');
   assert.equal(contact.message, null);
+});
+
+test('elimina un contacto por su id', async () => {
+  const calls: { url: string; init: RequestInit }[] = [];
+  const replies = [[{ id: 'a' }], []];
+  const fetcher = (async (url: string, init: RequestInit) => {
+    calls.push({ url, init });
+    return new Response(JSON.stringify(replies.shift()), { status: 200 });
+  }) as unknown as typeof fetch;
+  const config = { url: 'https://x.supabase.co', key: 'sb_secret_x', fetch: fetcher };
+  const id = '3f2b8c1e-0000-4000-8000-000000000001';
+  assert.equal(await deleteContact(config, id), true);
+  assert.equal(await deleteContact(config, id), false);
+  assert.equal(calls[0].init.method, 'DELETE');
+  assert.match(calls[0].url, /contacts\?id=eq\.3f2b8c1e-0000-4000-8000-000000000001/);
 });

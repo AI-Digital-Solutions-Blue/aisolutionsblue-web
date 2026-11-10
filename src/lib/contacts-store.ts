@@ -163,6 +163,15 @@ export async function updateContact(
   });
 }
 
+/** Deletes one contact for good (test leads, spam). Returns true when a row was removed. */
+export async function deleteContact(config: StoreConfig, id: string) {
+  const response = await call(config, `contacts?id=eq.${encodeURIComponent(id)}&select=id`, {
+    method: 'DELETE',
+    headers: { prefer: 'return=representation' },
+  });
+  return ((await response.json()) as unknown[]).length > 0;
+}
+
 export const isStatus = (value: string): value is ContactStatus =>
   (CONTACT_STATUSES as readonly string[]).includes(value);
 export const isSource = (value: string): value is ContactSource =>

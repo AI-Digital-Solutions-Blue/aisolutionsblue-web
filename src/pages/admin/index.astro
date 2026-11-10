@@ -1,6 +1,10 @@
 ---
 // Private contacts portal: every contact from the web form and from Meta's instant form.
 // Not linked anywhere and not indexed; protected by the team password.
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/dm-sans';
+import '../../styles/admin.css';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 import { describeAttribution } from '../../lib/attribution';
 import { adminPassword, isAdmin, NO_INDEX } from '../../lib/admin-auth';
 import {
@@ -8,27 +12,33 @@ import {
   isSource,
   isStatus,
   listContacts,
-  SOURCE_LABELS,
   STATUS_LABELS,
   storeConfig,
+  type ContactStatus,
   type StoredContact,
 } from '../../lib/contacts-store';
-
-import '../../styles/admin.css';
 
 export const prerender = false;
 for (const [name, value] of Object.entries(NO_INDEX)) Astro.response.headers.set(name, value);
 
 const signedIn = isAdmin(Astro.cookies);
+const params = Astro.url.searchParams;
 const errors: Record<string, string> = {
   password: 'La contraseña no es correcta.',
   wait: 'Demasiados intentos. Espera unos minutos.',
   off: 'El portal no tiene contraseña configurada todavía.',
   save: 'No se ha podido guardar el cambio. Inténtalo de nuevo.',
+  delete: 'No se ha podido eliminar el contacto. Inténtalo de nuevo.',
 };
-const error = errors[Astro.url.searchParams.get('error') || ''] || '';
-const metaState = Astro.url.searchParams.get('meta') || '';
-const metaDetail = (Astro.url.searchParams.get('detalle') || '').slice(0, 200);
+const error = errors[params.get('error') || ''] || '';
+const done =
+  params.get('hecho') === 'eliminado'
+    ? 'Contacto eliminado.'
+    : params.get('hecho') === 'guardado'
+      ? 'Cambios guardados.'
+      : '';
+const metaState = params.get('meta') || '';
+const metaDetail = (params.get('detalle') || '').slice(0, 200);
 const metaNotice =
   metaState === 'ok'
     ? metaDetail || 'Página conectada.'
@@ -37,30 +47,40 @@ const metaNotice =
       : metaState === 'error'
         ? `Meta respondió: ${metaDetail}`
         : '';
-const sourceParam = Astro.url.searchParams.get('origen') || '';
-const statusParam = Astro.url.searchParams.get('estado') || '';
-const filter = {
-  ...(isSource(sourceParam) ? { source: sourceParam } : {}),
-  ...(isStatus(statusParam) ? { status: statusParam } : {}),
-};
-const back = Astro.url.search;
+const sourceParam = params.get('origen') || '';
+const statusParam = params.get('estado') || '';
+const source = isSource(sourceParam) ? sourceParam : undefined;
+const status = isStatus(statusParam) ? statusParam : undefined;
+
+// Where forms come back to: the same filters, without one-off messages.
+const backParams = new URLSearchParams();
+if (source) backParams.set('origen', source);
+if (status) backParams.set('estado', status);
+const back = backParams.size ? `?${backParams}` : '';
 
 const store = storeConfig();
-let contacts: StoredContact[] = [];
+let all: StoredContact[] = [];
 let loadError = '';
 if (signedIn) {
   if (!store) loadError = 'Falta conectar la base de datos (SUPABASE_URL y SUPABASE_SECRET_KEY).';
   else
     try {
-      contacts = await listContacts(store, filter);
+      all = await listContacts(store, source ? { source } : {});
     } catch {
       loadError = 'No se han podido cargar los contactos. Recarga la página en un momento.';
     }
 }
+const counts = Object.fromEntries(
+  CONTACT_STATUSES.map((s) => [s, all.filter((c) => c.status === s).length]),
+) as Record<ContactStatus, number>;
+const contacts = status ? all.filter((c) => c.status === status) : all;
 
 const when = new Intl.DateTimeFormat('es-ES', {
-  dateStyle: 'medium',
-  timeStyle: 'short',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
   timeZone: 'Atlantic/Canary',
 });
 const origin = (contact: StoredContact) => {
@@ -70,250 +90,596 @@ const origin = (contact: StoredContact) => {
       m.campaign_name && `Campaña: ${m.campaign_name}`,
       m.adset_name && `Conjunto: ${m.adset_name}`,
       m.ad_name && `Anuncio: ${m.ad_name}`,
-      m.form_id && `Formulario: ${m.form_id}`,
       m.platform && `Plataforma: ${m.platform}`,
+      !m.campaign_name && m.form_id && `Formulario: ${m.form_id}`,
     ].filter(Boolean) as string[];
   }
   const lines = describeAttribution(contact.attribution || {});
   return lines.length ? lines : ['Visita directa'];
 };
-const link = (params: Record<string, string>) => {
-  const query = new URLSearchParams(params).toString();
-  return query ? `/admin?${query}` : '/admin';
+const initials = (name: string) =>
+  name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || '')
+    .join('') || '?';
+const hue = (text: string) => [...text].reduce((sum, ch) => (sum * 31 + ch.charCodeAt(0)) % 360, 7);
+const link = (next: { origen?: string; estado?: string }) => {
+  const query = new URLSearchParams();
+  const o = 'origen' in next ? next.origen : source;
+  const e = 'estado' in next ? next.estado : status;
+  if (o) query.set('origen', o);
+  if (e) query.set('estado', e);
+  const text = query.toString();
+  return text ? `/admin?${text}` : '/admin';
+};
+const icons = {
+  phone: 'M5 3h4l2 5-3 2a15 15 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2C9 21 3 15 3 5a2 2 0 0 1 2-2Z',
+  mail: 'M3 5h18v14H3zM3 5l9 7 9-7',
+  web: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18',
+  meta: 'M4 15.5C4 10 6.5 6 9 6c3 0 5 6.5 7 9.5 1 1.5 2 2.5 3 2.5 1.6 0 2-2 2-4 0-4-2-8-4.5-8C13 6 11 12 8.5 15.5 7.5 17 6.5 18 5.5 18 4.5 18 4 17 4 15.5Z',
+  trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6',
+  pin: 'M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11ZM12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
 };
 ---
 
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>Contactos · Blue</title>
-    <style>
-      .contact {
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 18px;
-        margin-bottom: 12px;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 280px;
-        gap: 20px;
-      }
-      .contact h2 {
-        font-size: 18px;
-        margin: 0 0 4px;
-      }
-      .tag {
-        display: inline-block;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 2px 8px;
-        border-radius: 999px;
-        background: #eef2ff;
-        color: var(--blue);
-      }
-      .tag.meta_form {
-        background: #e7f0ff;
-        color: var(--meta);
-      }
-      .tag.status {
-        background: #f0f1f5;
-        color: var(--muted);
-      }
-      .tag.status.nuevo {
-        background: #fff4d6;
-        color: #8a5a00;
-      }
-      .reach {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px 16px;
-        margin: 8px 0;
-      }
-      .reach a {
-        color: var(--blue);
-      }
-      .message {
-        white-space: pre-wrap;
-        margin: 8px 0;
-      }
-      .origin {
-        font-size: 13px;
-        color: var(--muted);
-        margin: 8px 0 0;
-        padding: 0;
-        list-style: none;
-      }
-      .side form {
-        display: grid;
-        gap: 8px;
-      }
-      .side select,
-      .side textarea {
-        width: 100%;
-        padding: 8px 10px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #fff;
-      }
-      .empty {
-        text-align: center;
-        padding: 48px 16px;
-        color: var(--muted);
-      }
-      @media (max-width: 760px) {
-        .contact {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    {!signedIn ? (
-      <form class="login" method="post" action="/api/admin/login">
-        <h1>Contactos de Blue</h1>
-        {error && <p class="error">{error}</p>}
+{!signedIn ? (
+  <html lang="es">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="robots" content="noindex, nofollow" />
+      <link rel="icon" href="/assets/aisolutionsblue-favicon.ico" />
+      <title>Entrar · Portal Blue</title>
+    </head>
+    <body class="login-page">
+      <form class="login card" method="post" action="/api/admin/login">
+        <img src="/assets/logo.webp" alt="Blue" width="72" height="34" />
+        <h1>Portal de Blue</h1>
+        <p>Contactos y resultados de la web.</p>
+        {error && <div class="alert alert-error">{error}</div>}
         {!adminPassword() && !error && (
-          <p class="muted">El portal no tiene contraseña configurada todavía.</p>
+          <div class="alert alert-error">El portal no tiene contraseña configurada todavía.</div>
         )}
         <label for="password">Contraseña del equipo</label>
         <input
+          class="field"
           id="password"
           name="password"
           type="password"
           autocomplete="current-password"
           required
+          autofocus
         />
-        <button type="submit">Entrar</button>
+        <button class="btn btn-primary" type="submit">
+          Entrar
+        </button>
       </form>
-    ) : (
-      <main>
-        <nav class="tabs" aria-label="Secciones del portal">
-          <a href="/admin" aria-current="page">
-            Contactos
-          </a>
-          <a href="/admin/embudo">Embudo</a>
-        </nav>
-        <header>
-          <div>
-            <h1>Contactos</h1>
-            <span class="muted">
-              {contacts.length} {contacts.length === 1 ? 'contacto' : 'contactos'}
-            </span>
-          </div>
-          <div class="header-actions">
-            <form method="post" action="/api/admin/meta-page">
-              <button
-                class="ghost"
-                type="submit"
-                title="Hace que los contactos del formulario de Meta lleguen a este portal"
-              >
-                Conectar página de Meta
-              </button>
-            </form>
-            <form method="post" action="/api/admin/login">
-              <input type="hidden" name="action" value="logout" />
-              <button class="ghost" type="submit">
-                Salir
-              </button>
-            </form>
-          </div>
-        </header>
-        {metaNotice && <p class={metaState === 'ok' ? 'notice' : 'error'}>{metaNotice}</p>}
-        {error && <p class="error">{error}</p>}
-        {loadError && <p class="error">{loadError}</p>}
-        <nav class="filters" aria-label="Origen">
-          <a
-            href={link({ ...(filter.status ? { estado: filter.status } : {}) })}
-            aria-current={!filter.source ? 'page' : undefined}
-          >
-            Todos los orígenes
-          </a>
-          {(['web', 'meta_form'] as const).map((source) => (
-            <a
-              href={link({ origen: source, ...(filter.status ? { estado: filter.status } : {}) })}
-              aria-current={filter.source === source ? 'page' : undefined}
-            >
-              {source === 'web' ? 'Web' : 'Meta'}
-            </a>
-          ))}
-        </nav>
-        <nav class="filters" aria-label="Estado">
-          <a
-            href={link({ ...(filter.source ? { origen: filter.source } : {}) })}
-            aria-current={!filter.status ? 'page' : undefined}
-          >
-            Todos los estados
-          </a>
-          {CONTACT_STATUSES.map((status) => (
-            <a
-              href={link({ estado: status, ...(filter.source ? { origen: filter.source } : {}) })}
-              aria-current={filter.status === status ? 'page' : undefined}
-            >
-              {STATUS_LABELS[status]}
-            </a>
-          ))}
-        </nav>
-        {!loadError && contacts.length === 0 && (
-          <p class="empty">Todavía no hay contactos con estos filtros.</p>
-        )}
-        {contacts.map((contact) => (
-          <article class="contact" id={`c-${contact.id}`}>
-            <div>
-              <span class={`tag ${contact.source}`}>{SOURCE_LABELS[contact.source]}</span>{' '}
-              <span class={`tag status ${contact.status}`}>{STATUS_LABELS[contact.status]}</span>
-              <h2>{contact.name}</h2>
-              <span class="muted">{when.format(new Date(contact.created_at))}</span>
+    </body>
+  </html>
+) : (
+  <AdminLayout
+    title="Contactos"
+    section="contactos"
+    subtitle={`${all.length} ${all.length === 1 ? 'contacto' : 'contactos'}${source ? (source === 'web' ? ' de la web' : ' de Meta') : ''} · los más recientes primero`}
+  >
+    <form slot="actions" method="post" action="/api/admin/meta-page">
+      <button
+        class="btn btn-secondary"
+        type="submit"
+        title="Hace que los contactos del formulario de Meta lleguen a este portal"
+      >
+        Conectar página de Meta
+      </button>
+    </form>
+
+    {done && (
+      <div class="alert alert-ok" role="status">
+        {done}
+      </div>
+    )}
+    {metaNotice && (
+      <div class={`alert ${metaState === 'ok' ? 'alert-ok' : 'alert-error'}`}>{metaNotice}</div>
+    )}
+    {error && <div class="alert alert-error">{error}</div>}
+    {loadError && <div class="alert alert-error">{loadError}</div>}
+
+    <nav class="stats" aria-label="Filtrar por estado">
+      <a
+        class="stat"
+        href={link({ estado: undefined })}
+        aria-current={!status ? 'page' : undefined}
+      >
+        <span>Todos</span>
+        <strong class="tnum">{all.length}</strong>
+      </a>
+      {CONTACT_STATUSES.map((s) => (
+        <a
+          class={`stat ${s}`}
+          href={link({ estado: s })}
+          aria-current={status === s ? 'page' : undefined}
+        >
+          <span>
+            <i />
+            {STATUS_LABELS[s]}
+          </span>
+          <strong class="tnum">{counts[s]}</strong>
+        </a>
+      ))}
+    </nav>
+
+    <div class="toolbar">
+      <nav class="segmented" aria-label="Filtrar por origen">
+        <a href={link({ origen: undefined })} aria-current={!source ? 'page' : undefined}>
+          Todos los orígenes
+        </a>
+        <a href={link({ origen: 'web' })} aria-current={source === 'web' ? 'page' : undefined}>
+          Web
+        </a>
+        <a
+          href={link({ origen: 'meta_form' })}
+          aria-current={source === 'meta_form' ? 'page' : undefined}
+        >
+          Meta
+        </a>
+      </nav>
+    </div>
+
+    {!loadError && contacts.length === 0 && (
+      <div class="card empty">
+        <strong>No hay contactos aquí</strong>
+        <span>Cuando llegue uno con estos filtros, aparecerá en esta lista.</span>
+      </div>
+    )}
+
+    <div class="leads">
+      {contacts.map((contact) => (
+        <article class="card lead" id={`c-${contact.id}`}>
+          <div class="lead-main">
+            <div class="lead-top">
+              <span class="avatar" style={`--h:${hue(contact.name)}`} aria-hidden="true">
+                {initials(contact.name)}
+              </span>
+              <div class="who">
+                <h2>{contact.name}</h2>
+                <div class="meta-line">
+                  <span class={`origin-tag ${contact.source}`}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                      <path d={contact.source === 'meta_form' ? icons.meta : icons.web} />
+                    </svg>
+                    {contact.source === 'meta_form' ? 'Formulario de Meta' : 'Formulario web'}
+                  </span>
+                  <span class="dot" aria-hidden="true" />
+                  <time datetime={contact.created_at}>
+                    {when.format(new Date(contact.created_at))}
+                  </time>
+                </div>
+              </div>
+              <span class={`pill ${contact.status}`}>{STATUS_LABELS[contact.status]}</span>
+            </div>
+
+            {(contact.phone || contact.email) && (
               <div class="reach">
                 {contact.phone && (
-                  <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`}>{contact.phone}</a>
+                  <a class="chip" href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`}>
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                      <path d={icons.phone} />
+                    </svg>
+                    {contact.phone}
+                  </a>
                 )}
-                {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
+                {contact.email && (
+                  <a class="chip" href={`mailto:${contact.email}`}>
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                      <path d={icons.mail} />
+                    </svg>
+                    {contact.email}
+                  </a>
+                )}
               </div>
-              {contact.interest && (
-                <div>
-                  <b>Necesita:</b> {contact.interest}
-                </div>
-              )}
-              {contact.message && <p class="message">{contact.message}</p>}
-              <ul class="origin">
+            )}
+
+            {contact.interest && (
+              <div class="need">
+                <span>Necesita</span>
+                {contact.interest}
+              </div>
+            )}
+            {contact.message && <blockquote class="message">{contact.message}</blockquote>}
+
+            <div class="origin">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                <path d={icons.pin} />
+              </svg>
+              <ul>
                 {origin(contact).map((line) => (
                   <li>{line}</li>
                 ))}
               </ul>
             </div>
-            <div class="side">
+          </div>
+
+          <div class="lead-side">
+            <form class="lead-form" method="post" action="/api/admin/contact">
+              <input type="hidden" name="id" value={contact.id} />
+              <input type="hidden" name="back" value={back} />
+              <label for={`s-${contact.id}`}>Estado</label>
+              <select class="field" id={`s-${contact.id}`} name="status">
+                {CONTACT_STATUSES.map((s) => (
+                  <option value={s} selected={contact.status === s}>
+                    {STATUS_LABELS[s]}
+                  </option>
+                ))}
+              </select>
+              <label for={`n-${contact.id}`}>Notas</label>
+              <textarea
+                class="field"
+                id={`n-${contact.id}`}
+                name="notes"
+                rows="3"
+                maxlength="4000"
+                placeholder="Qué habéis hablado, próximos pasos…"
+                set:text={contact.notes || ''}
+              ></textarea>
+              <button class="btn btn-primary" type="submit">
+                Guardar
+              </button>
+            </form>
+            <details class="delete">
+              <summary class="btn btn-quiet danger">
+                <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                  <path d={icons.trash} />
+                </svg>
+                Eliminar contacto
+              </summary>
               <form method="post" action="/api/admin/contact">
                 <input type="hidden" name="id" value={contact.id} />
                 <input type="hidden" name="back" value={back} />
-                <label class="muted" for={`s-${contact.id}`}>
-                  Estado
-                </label>
-                <select id={`s-${contact.id}`} name="status">
-                  {CONTACT_STATUSES.map((status) => (
-                    <option value={status} selected={contact.status === status}>
-                      {STATUS_LABELS[status]}
-                    </option>
-                  ))}
-                </select>
-                <label class="muted" for={`n-${contact.id}`}>
-                  Notas
-                </label>
-                <textarea
-                  id={`n-${contact.id}`}
-                  name="notes"
-                  rows="3"
-                  maxlength="4000"
-                  set:text={contact.notes || ''}
-                ></textarea>
-                <button type="submit">Guardar</button>
+                <input type="hidden" name="action" value="delete" />
+                <p>
+                  Se borrará <b>{contact.name}</b> para siempre. No se puede deshacer.
+                </p>
+                <button class="btn btn-danger" type="submit">
+                  Sí, eliminar
+                </button>
               </form>
-            </div>
-          </article>
-        ))}
-      </main>
-    )}
-  </body>
-</html>
+            </details>
+          </div>
+        </article>
+      ))}
+    </div>
+  </AdminLayout>
+)}
+
+<style is:global>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .stat {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s,
+      transform 0.15s;
+  }
+  .stat:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+  }
+  .stat span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .stat i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--faint);
+  }
+  .stat.nuevo i {
+    background: var(--amber);
+  }
+  .stat.contactado i {
+    background: var(--blue);
+  }
+  .stat.en_conversacion i {
+    background: var(--violet);
+  }
+  .stat.cliente i {
+    background: var(--green);
+  }
+  .stat strong {
+    font: 700 24px/1.1 var(--display);
+    letter-spacing: -0.02em;
+  }
+  .stat[aria-current] {
+    border-color: var(--blue);
+    box-shadow:
+      0 0 0 3px rgb(47 91 255 / 12%),
+      var(--shadow);
+  }
+  .empty {
+    display: grid;
+    gap: 4px;
+    text-align: center;
+    padding: 56px 16px;
+    color: var(--muted);
+  }
+  .empty strong {
+    color: var(--ink);
+    font-family: var(--display);
+  }
+  .leads {
+    display: grid;
+    gap: 14px;
+  }
+  .lead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    scroll-margin-top: 80px;
+    transition: box-shadow 0.2s;
+  }
+  .lead:hover {
+    box-shadow: var(--shadow-hover);
+  }
+  .lead:target {
+    border-color: var(--blue);
+  }
+  .lead-main {
+    padding: 22px 24px;
+    min-width: 0;
+  }
+  .lead-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .avatar {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    font: 700 15px/1 var(--display);
+    color: hsl(var(--h) 55% 34%);
+    background: hsl(var(--h) 80% 94%);
+  }
+  .who {
+    min-width: 0;
+    flex: 1;
+  }
+  .who h2 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+  .meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin-top: 3px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .origin-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .origin-tag svg,
+  .chip svg,
+  .origin svg,
+  .delete svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+  .origin-tag.meta_form svg {
+    color: var(--meta);
+  }
+  .origin-tag.web svg {
+    color: var(--blue);
+  }
+  .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--faint);
+  }
+  .reach {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    padding: 7px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ink-2);
+    overflow-wrap: anywhere;
+    transition:
+      border-color 0.15s,
+      color 0.15s,
+      background 0.15s;
+  }
+  .chip svg {
+    color: var(--blue);
+  }
+  .chip:hover {
+    border-color: var(--blue);
+    color: var(--blue-deep);
+    background: var(--blue-soft);
+  }
+  .need {
+    margin-top: 16px;
+    font-size: 14.5px;
+  }
+  .need span {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 2px;
+  }
+  .message {
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink-2);
+    font-size: 14.5px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .origin {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .origin svg {
+    margin-top: 2px;
+    color: var(--faint);
+  }
+  .origin ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .lead-side {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 22px 24px;
+    border-left: 1px solid var(--line-2);
+    background: #fafbfd;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .lead-form {
+    display: grid;
+    gap: 6px;
+  }
+  .lead-form label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .lead-form label:not(:first-of-type) {
+    margin-top: 6px;
+  }
+  .lead-form select {
+    appearance: none;
+    padding-right: 34px;
+    background: #fff
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23667089' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      no-repeat right 12px center;
+    cursor: pointer;
+  }
+  .lead-form textarea {
+    resize: vertical;
+    min-height: 76px;
+  }
+  .lead-form .btn {
+    margin-top: 8px;
+  }
+  .delete summary {
+    list-style: none;
+    justify-self: start;
+    width: fit-content;
+  }
+  .delete summary::-webkit-details-marker {
+    display: none;
+  }
+  .delete[open] summary {
+    color: var(--red);
+  }
+  .delete form {
+    margin-top: 8px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--red-soft);
+    border: 1px solid #f6cdc8;
+  }
+  .delete p {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: #7d1d14;
+  }
+  .delete .btn {
+    width: 100%;
+    height: 34px;
+  }
+  @media (max-width: 1100px) {
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+  }
+  @media (max-width: 760px) {
+    .lead {
+      grid-template-columns: 1fr;
+    }
+    .lead-main,
+    .lead-side {
+      padding: 18px;
+    }
+    .lead-side {
+      border-left: 0;
+      border-top: 1px solid var(--line-2);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+    .stat {
+      padding: 12px 14px;
+    }
+    .stat strong {
+      font-size: 21px;
+    }
+  }
+</style>
