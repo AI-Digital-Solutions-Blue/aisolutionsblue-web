@@ -628,12 +628,15 @@ const icons = {
     list-style: none;
     justify-self: start;
     width: fit-content;
+    color: #e5776d;
+  }
+  .delete summary:hover,
+  .delete[open] summary {
+    color: var(--red);
+    background: var(--red-soft);
   }
   .delete summary::-webkit-details-marker {
     display: none;
-  }
-  .delete[open] summary {
-    color: var(--red);
   }
   .delete form {
     margin-top: 8px;
