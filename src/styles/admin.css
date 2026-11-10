@@ -1,0 +1,135 @@
+/* Shared styles of the private portal (/admin). */
+:root {
+  color-scheme: light;
+  --ink: #0a1022;
+  --muted: #5b6478;
+  --line: #e3e6ee;
+  --bg: #f6f7fb;
+  --card: #fff;
+  --blue: #2f5bff;
+  --meta: #0866ff;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font:
+    15px/1.5 system-ui,
+    -apple-system,
+    sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+h1 {
+  font-size: 24px;
+  margin: 0;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.notice {
+  background: #effaf3;
+  border: 1px solid #bfe8cd;
+  color: #135c2e;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.muted {
+  color: var(--muted);
+}
+.error {
+  background: #fff1f0;
+  border: 1px solid #ffc9c4;
+  color: #9b1c12;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+button,
+select,
+input,
+textarea {
+  font: inherit;
+}
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+}
+button.ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+.login {
+  max-width: 360px;
+  margin: 15vh auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+  display: grid;
+  gap: 12px;
+}
+.login input {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.filters a {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 14px;
+}
+.filters a[aria-current] {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.tabs a {
+  padding: 8px 14px;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-weight: 500;
+}
+.tabs a[aria-current] {
+  color: var(--ink);
+  border-bottom-color: var(--blue);
+}

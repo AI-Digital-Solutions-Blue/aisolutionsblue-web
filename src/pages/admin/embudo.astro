@@ -1,0 +1,462 @@
+---
+// Funnel of the private portal: what visitors do on the web (Google Analytics) and what happens to
+// the contacts afterwards (the portal's statuses). Same password as the contacts page.
+import '../../styles/admin.css';
+import { isAdmin, NO_INDEX } from '../../lib/admin-auth';
+import { storeConfig } from '../../lib/contacts-store';
+import { ga4Config } from '../../lib/ga4';
+import {
+  CHANNEL_LABELS,
+  CHANNELS,
+  isChannel,
+  isRange,
+  loadFunnel,
+  type Channel,
+  type RangeDays,
+  RANGES,
+} from '../../lib/funnel';
+
+export const prerender = false;
+for (const [name, value] of Object.entries(NO_INDEX)) Astro.response.headers.set(name, value);
+if (!isAdmin(Astro.cookies)) return Astro.redirect('/admin', 303);
+
+const daysParam = Number(Astro.url.searchParams.get('dias') || 30);
+const days: RangeDays = isRange(daysParam) ? daysParam : 30;
+const channelParam = Astro.url.searchParams.get('canal') || '';
+const channel: Channel | null = isChannel(channelParam) ? channelParam : null;
+const data = await loadFunnel(days, channel, ga4Config(), storeConfig());
+// Local preview only: sample visit numbers to review the layout without Google Analytics.
+if (import.meta.env.DEV && Astro.url.searchParams.has('demo') && !data.web) {
+  data.webError = '';
+  data.web = {
+    visitors: 1240,
+    sessions: 1510,
+    engagementRate: 0.58,
+    avgEngagementSeconds: 74,
+    pagesPerSession: 2.3,
+    steps: [
+      { key: 'visit', label: 'Visitan la web', people: 1240 },
+      { key: 'view', label: 'Ven el formulario de contacto', people: 410 },
+      { key: 'start', label: 'Empiezan a rellenarlo', people: 62 },
+      { key: 'lead', label: 'Lo envían', people: 19 },
+    ],
+    pages: [
+      { path: '/', views: 1620, avgSeconds: 58 },
+      { path: '/contacto', views: 430, avgSeconds: 41 },
+      { path: '/productos/adscena', views: 210, avgSeconds: 66 },
+    ],
+    devices: [
+      { device: 'Móvil', people: 890 },
+      { device: 'Ordenador', people: 330 },
+      { device: 'Tableta', people: 20 },
+    ],
+    visitorsByChannel: { google_ads: 380, meta: 610, organico: 90, directo: 140, otros: 20 },
+  };
+}
+
+const fmt = new Intl.NumberFormat('es-ES');
+const pct = (part: number, whole: number) =>
+  whole > 0
+    ? `${new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 }).format((part / whole) * 100)} %`
+    : '—';
+const width = (part: number, whole: number) =>
+  `--w:${whole > 0 ? Math.max(2, Math.min(100, (part / whole) * 100)) : 0}%`;
+const duration = (seconds: number) => {
+  const s = Math.round(seconds);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
+const link = (params: { dias?: number; canal?: Channel | null }) => {
+  const query = new URLSearchParams();
+  const d = params.dias ?? days;
+  const c = params.canal === undefined ? channel : params.canal;
+  if (d !== 30) query.set('dias', String(d));
+  if (c) query.set('canal', c);
+  const text = query.toString();
+  return text ? `/admin/embudo?${text}` : '/admin/embudo';
+};
+const web = data.web;
+const contacts = data.contacts;
+const deviceTotal = web?.devices.reduce((sum, d) => sum + d.people, 0) || 0;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Embudo · Blue</title>
+    <style>
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .kpi,
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 18px;
+      }
+      .kpi span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .kpi strong {
+        font-size: 26px;
+        letter-spacing: -0.01em;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .panel h2 {
+        font-size: 16px;
+        margin: 0 0 4px;
+      }
+      .panel > p {
+        margin: 0 0 14px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .steps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+      }
+      .step-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 14px;
+      }
+      .step-head b {
+        font-variant-numeric: tabular-nums;
+      }
+      .bar {
+        height: 10px;
+        border-radius: 999px;
+        background: #eef0f5;
+        margin: 6px 0 2px;
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        width: var(--w);
+        background: var(--blue);
+        border-radius: inherit;
+      }
+      .steps.after .bar i {
+        background: #18a058;
+      }
+      .rate {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        font-variant-numeric: tabular-nums;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 8px 6px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 13px;
+      }
+      td.num,
+      th.num {
+        text-align: right;
+      }
+      td.path {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .note {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .split {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 12px;
+      }
+      @media (max-width: 860px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 520px) {
+        .kpis {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .kpi strong {
+          font-size: 22px;
+        }
+        td.path {
+          max-width: 150px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav class="tabs" aria-label="Secciones del portal">
+        <a href="/admin">Contactos</a>
+        <a href="/admin/embudo" aria-current="page">
+          Embudo
+        </a>
+      </nav>
+      <header>
+        <div>
+          <h1>Embudo</h1>
+          <span class="muted">
+            Últimos {days} días{channel ? ` · ${CHANNEL_LABELS[channel]}` : ' · todos los canales'}
+          </span>
+        </div>
+        <form method="post" action="/api/admin/login">
+          <input type="hidden" name="action" value="logout" />
+          <button class="ghost" type="submit">
+            Salir
+          </button>
+        </form>
+      </header>
+
+      <nav class="filters" aria-label="Periodo">
+        {RANGES.map((d) => (
+          <a href={link({ dias: d })} aria-current={d === days ? 'page' : undefined}>
+            {d} días
+          </a>
+        ))}
+      </nav>
+      <nav class="filters" aria-label="Canal">
+        <a href={link({ canal: null })} aria-current={!channel ? 'page' : undefined}>
+          Todos los canales
+        </a>
+        {CHANNELS.map((c) => (
+          <a href={link({ canal: c })} aria-current={c === channel ? 'page' : undefined}>
+            {CHANNEL_LABELS[c]}
+          </a>
+        ))}
+      </nav>
+
+      {data.webError && <p class="error">{data.webError}</p>}
+      {data.contactsError && <p class="error">{data.contactsError}</p>}
+
+      {web && (
+        <section class="kpis" aria-label="Resumen de visitas">
+          <div class="kpi">
+            <span>Visitantes</span>
+            <strong>{fmt.format(web.visitors)}</strong>
+          </div>
+          <div class="kpi">
+            <span>Visitas</span>
+            <strong>{fmt.format(web.sessions)}</strong>
+          </div>
+          <div class="kpi">
+            <span>Tiempo medio de atención</span>
+            <strong>{duration(web.avgEngagementSeconds)}</strong>
+          </div>
+          <div class="kpi">
+            <span>Páginas por visita</span>
+            <strong>
+              {web.pagesPerSession.toLocaleString('es-ES', { maximumFractionDigits: 1 })}
+            </strong>
+          </div>
+          <div class="kpi">
+            <span>Visitas con interés</span>
+            <strong>{pct(web.engagementRate, 1)}</strong>
+          </div>
+        </section>
+      )}
+
+      <div class="grid">
+        <section class="panel">
+          <h2>En la web</h2>
+          <p>Personas que dan cada paso. Solo cuenta a quien acepta las cookies de análisis.</p>
+          {web ? (
+            <ol class="steps">
+              {web.steps.map((step, i) => (
+                <li>
+                  <div class="step-head">
+                    <span>{step.label}</span>
+                    <b>{fmt.format(step.people)}</b>
+                  </div>
+                  <div class="bar">
+                    <i style={width(step.people, web.steps[0].people)} />
+                  </div>
+                  {i > 0 && (
+                    <span class="rate">
+                      {pct(step.people, web.steps[i - 1].people)} del paso anterior
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p class="muted">Sin datos de Google Analytics.</p>
+          )}
+        </section>
+
+        <section class="panel">
+          <h2>Después del contacto</h2>
+          <p>Todos los contactos del periodo, según el estado que marcáis en el portal.</p>
+          {contacts ? (
+            <>
+              <ol class="steps after">
+                {contacts.steps.map((step, i) => (
+                  <li>
+                    <div class="step-head">
+                      <span>{step.label}</span>
+                      <b>{fmt.format(step.people)}</b>
+                    </div>
+                    <div class="bar">
+                      <i style={width(step.people, contacts.steps[0].people)} />
+                    </div>
+                    {i > 0 && (
+                      <span class="rate">
+                        {pct(step.people, contacts.steps[i - 1].people)} del paso anterior
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+              <div class="split">
+                <span>Formulario de la web: {fmt.format(contacts.web)}</span>
+                <span>Formulario de Meta: {fmt.format(contacts.metaForm)}</span>
+                <span>Descartados: {fmt.format(contacts.discarded)}</span>
+              </div>
+            </>
+          ) : (
+            <p class="muted">Sin datos de contactos.</p>
+          )}
+        </section>
+      </div>
+
+      <section class="panel" style="margin-bottom:16px">
+        <h2>Por canal</h2>
+        <p>De dónde vienen las visitas, los contactos y los clientes.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Canal</th>
+                <th class="num">Visitantes</th>
+                <th class="num">Contactos</th>
+                <th class="num">Clientes</th>
+                <th class="num">Contactos por cada 100 visitantes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CHANNELS.map((c) => {
+                const visitors = web?.visitorsByChannel[c] ?? 0;
+                const row = contacts?.byChannel[c] ?? { contacts: 0, clients: 0 };
+                return (
+                  <tr>
+                    <td>
+                      <a href={link({ canal: c })}>{CHANNEL_LABELS[c]}</a>
+                    </td>
+                    <td class="num">{web ? fmt.format(visitors) : '—'}</td>
+                    <td class="num">{fmt.format(row.contacts)}</td>
+                    <td class="num">{fmt.format(row.clients)}</td>
+                    <td class="num">
+                      {web && visitors > 0
+                        ? ((row.contacts / visitors) * 100).toLocaleString('es-ES', {
+                            maximumFractionDigits: 1,
+                          })
+                        : '—'}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p class="note">
+          Los visitantes solo incluyen a quien acepta cookies; los contactos son todos. Por eso la
+          última columna es orientativa.
+        </p>
+      </section>
+
+      {web && (
+        <div class="grid">
+          <section class="panel">
+            <h2>Páginas más vistas</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Página</th>
+                    <th class="num">Vistas</th>
+                    <th class="num">Atención media</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {web.pages.map((page) => (
+                    <tr>
+                      <td class="path" title={page.path}>
+                        {page.path}
+                      </td>
+                      <td class="num">{fmt.format(page.views)}</td>
+                      <td class="num">{duration(page.avgSeconds)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <section class="panel">
+            <h2>Dispositivos</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Dispositivo</th>
+                    <th class="num">Visitantes</th>
+                    <th class="num">Parte</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {web.devices.map((d) => (
+                    <tr>
+                      <td>{d.device}</td>
+                      <td class="num">{fmt.format(d.people)}</td>
+                      <td class="num">{pct(d.people, deviceTotal)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      )}
+      <p class="note">
+        Los datos de Google Analytics pueden tardar unas horas en aparecer. Esta página se actualiza
+        cada 10 minutos.
+      </p>
+    </main>
+  </body>
+</html>

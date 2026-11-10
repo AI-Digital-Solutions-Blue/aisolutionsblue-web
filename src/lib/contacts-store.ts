@@ -137,6 +137,20 @@ export async function listContacts(config: StoreConfig, filter: ContactFilter = 
   return (await response.json()) as StoredContact[];
 }
 
+/** Lightweight rows for the funnel: contacts created since a date, with origin and status. */
+export type FunnelContact = Pick<StoredContact, 'source' | 'status' | 'attribution' | 'created_at'>;
+
+export async function listContactsSince(config: StoreConfig, since: Date, limit = 5000) {
+  const query = new URLSearchParams({
+    select: 'source,status,attribution,created_at',
+    created_at: `gte.${since.toISOString()}`,
+    order: 'created_at.desc',
+    limit: String(limit),
+  });
+  const response = await call(config, `contacts?${query}`);
+  return (await response.json()) as FunnelContact[];
+}
+
 export async function updateContact(
   config: StoreConfig,
   id: string,

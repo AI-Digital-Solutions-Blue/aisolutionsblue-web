@@ -191,6 +191,38 @@ function contact(channel: 'whatsapp' | 'email') {
     });
 }
 
+/**
+ * Funnel steps of the contact form, for analytics only: the form came into view, and the visitor
+ * started filling it in. Each is sent once per page; if consent arrives later, the next one counts.
+ */
+function trackContactForms() {
+  const send = (name: string) => {
+    if (!readConsent()?.analytics || !window.gtag) return false;
+    window.gtag('event', name, { form_location: location.pathname });
+    return true;
+  };
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-contact-form]')) {
+    let viewed = false;
+    let started = false;
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (viewed || !entries.some((entry) => entry.isIntersecting)) return;
+          viewed = send('contact_form_view');
+          if (viewed) observer.disconnect();
+        },
+        { threshold: 0.4 },
+      );
+      observer.observe(form);
+    }
+    form.addEventListener('focusin', () => {
+      if (!started) started = send('contact_form_start');
+    });
+  }
+}
+
+trackContactForms();
+
 document.addEventListener('click', (event) => {
   const link = event.target instanceof Element ? event.target.closest('a') : null;
   if (!link) return;
