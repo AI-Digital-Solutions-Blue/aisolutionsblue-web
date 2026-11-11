@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { isAdmin } from '../../../lib/admin-auth';
 import { deleteSpend, parseSpend, saveSpend } from '../../../lib/ad-spend';
 import { isUuid, storeConfig } from '../../../lib/contacts-store';
+import { refreshMetaSpend } from '../../../lib/meta-ads';
 
 export const prerender = false;
 
@@ -15,6 +16,11 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const target = /^\?[\w=&-]{0,100}$/.test(back) ? `/admin/inversion${back}` : '/admin/inversion';
   const join = target.includes('?') ? '&' : '?';
   if (!store || !form) return redirect(`${target}${join}error=db`, 303);
+
+  if (form.get('action') === 'sync') {
+    const result = await refreshMetaSpend(store, true);
+    return redirect(`${target}${join}${result?.ok ? 'hecho=sincronizado' : 'error=sync'}`, 303);
+  }
 
   if (form.get('action') === 'delete') {
     const id = String(form.get('id') || '');

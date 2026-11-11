@@ -46,6 +46,7 @@ export const SPEND_ERRORS = {
   save: 'No se ha podido guardar. Inténtalo de nuevo.',
   delete: 'No se ha podido eliminar. Inténtalo de nuevo.',
   db: 'Falta conectar la base de datos.',
+  sync: 'No se ha podido actualizar el gasto de Meta. Mira el aviso de arriba.',
 } as const;
 export type SpendError = keyof typeof SPEND_ERRORS;
 

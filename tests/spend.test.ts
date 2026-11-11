@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { AUTO_NOTE, syncMetaSpend, TODAY_NOTE, toSpendLines } from '../src/lib/meta-ads';
 import {
   listSpend,
   parseSpend,
@@ -98,4 +99,76 @@ test('guarda sobrescribiendo el mismo anuncio y periodo, y lista desde una fecha
   assert.match((calls[0].init.headers as Record<string, string>).prefer, /merge-duplicates/);
   await listSpend(config, '2026-10-13');
   assert.match(calls[1].url, /date_to=gte\.2026-10-13/);
+});
+
+test('convierte las estadísticas de Meta en líneas por anuncio y día', () => {
+  const lines = toSpendLines(
+    [
+      { campaign_name: 'Web', ad_name: 'D3-AUTO', spend: '7.93', date_start: '2026-11-09' },
+      { campaign_name: 'Web', ad_name: 'D3-AUTO', spend: '7.94', date_start: '2026-11-10' },
+      { campaign_name: 'Web', ad_name: 'D3', spend: '0', date_start: '2026-11-10' },
+      { campaign_name: 'Form', ad_name: 'D3-AUTO', spend: '9.53', date_start: '2026-11-11' },
+    ],
+    '2026-11-11',
+  );
+  assert.equal(lines.length, 3);
+  assert.deepEqual(
+    lines.map((l) => [l.ad, l.date_from, l.amount, l.notes]),
+    [
+      ['D3-AUTO', '2026-11-09', 7.93, AUTO_NOTE],
+      ['D3-AUTO', '2026-11-10', 7.94, AUTO_NOTE],
+      ['D3-AUTO', '2026-11-11', 9.53, TODAY_NOTE],
+    ],
+  );
+});
+
+test('sincroniza con Meta y quita las líneas de Meta que ya no cuadran', async () => {
+  const calls: { url: string; init?: RequestInit }[] = [];
+  const fetcher = (async (url: string, init?: RequestInit) => {
+    calls.push({ url, init });
+    if (url.startsWith('https://graph.facebook.com'))
+      return new Response(
+        JSON.stringify({
+          data: [
+            { campaign_name: 'Web', ad_name: 'D3-AUTO', spend: '7.93', date_start: '2026-11-09' },
+          ],
+        }),
+      );
+    if (init?.method === 'POST' || init?.method === 'DELETE')
+      return new Response(null, { status: 204 });
+    return new Response(
+      JSON.stringify([
+        {
+          id: 'keep',
+          campaign: 'Web',
+          ad: 'D3-AUTO',
+          date_from: '2026-11-09',
+          date_to: '2026-11-09',
+        },
+        {
+          id: 'old-manual',
+          campaign: 'Web',
+          ad: 'D3-AUTO',
+          date_from: '2026-11-09',
+          date_to: '2026-11-10',
+        },
+      ]),
+    );
+  }) as unknown as typeof fetch;
+  const result = await syncMetaSpend(
+    { token: 'tok', appSecret: 'secret', accountId: '123', fetch: fetcher },
+    { url: 'https://x.supabase.co', key: 'sb_secret_x', fetch: fetcher },
+    7,
+    new Date('2026-11-11T12:00:00Z'),
+  );
+  assert.deepEqual(result, { saved: 1, removed: 1, since: '2026-11-05', until: '2026-11-11' });
+  const insights = new URL(calls[0].url);
+  assert.equal(insights.pathname, '/v27.0/act_123/insights');
+  assert.equal(insights.searchParams.get('level'), 'ad');
+  assert.equal(insights.searchParams.get('time_increment'), '1');
+  assert.ok(insights.searchParams.get('appsecret_proof'));
+  assert.match(calls[1].url, /on_conflict=platform,campaign,ad,date_from,date_to/);
+  assert.match(calls[2].url, /platform=eq\.meta/);
+  assert.match(calls[3].url, /id=in\.\(old-manual\)/);
+  assert.equal(calls[3].init?.method, 'DELETE');
 });

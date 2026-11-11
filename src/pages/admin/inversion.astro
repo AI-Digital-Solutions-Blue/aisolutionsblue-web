@@ -14,6 +14,7 @@ import {
 } from '../../lib/ad-spend';
 import { listContactsSince, storeConfig, type FunnelContact } from '../../lib/contacts-store';
 import { channelOfContact } from '../../lib/funnel';
+import { metaAdsConfig, refreshMetaSpend } from '../../lib/meta-ads';
 
 export const prerender = false;
 for (const [name, value] of Object.entries(NO_INDEX)) Astro.response.headers.set(name, value);
@@ -38,9 +39,18 @@ const done =
     ? 'Gasto guardado.'
     : params.get('hecho') === 'eliminado'
       ? 'Línea eliminada.'
-      : '';
+      : params.get('hecho') === 'sincronizado'
+        ? 'Gasto de Meta actualizado.'
+        : '';
+const ago = (at: number) => {
+  const minutes = Math.max(0, Math.round((Date.now() - at) / 60000));
+  return minutes < 1 ? 'ahora mismo' : minutes === 1 ? 'hace 1 minuto' : `hace ${minutes} minutos`;
+};
 
 const store = storeConfig();
+// Meta's spend arrives on its own: refreshed on visit (at most every 30 minutes) or on demand.
+const metaConnected = Boolean(metaAdsConfig());
+const metaSync = await refreshMetaSpend(store).catch(() => null);
 let rows: AdSpend[] = [];
 let contacts: FunnelContact[] = [];
 let loadError = '';
@@ -318,6 +328,47 @@ const icons = {
 </AdminLayout>
 
 <style is:global>
+  .sync {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 12px 10px 16px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+  .sync-text {
+    flex: 1;
+    min-width: 200px;
+  }
+  .sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--faint);
+    flex-shrink: 0;
+  }
+  .sync.ok .sync-dot {
+    background: var(--green);
+    box-shadow: 0 0 0 4px var(--green-soft);
+  }
+  .sync.bad {
+    background: var(--red-soft);
+    border-color: #f6cdc8;
+    color: #9b2318;
+  }
+  .sync.bad .sync-dot {
+    background: var(--red);
+  }
+  .sync-btn {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
   .kpis {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));

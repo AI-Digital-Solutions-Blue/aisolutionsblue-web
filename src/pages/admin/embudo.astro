@@ -5,6 +5,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 import { isAdmin, NO_INDEX } from '../../lib/admin-auth';
 import { storeConfig } from '../../lib/contacts-store';
 import { listSpend, summarizeSpend } from '../../lib/ad-spend';
+import { refreshMetaSpend } from '../../lib/meta-ads';
 import { ga4Config } from '../../lib/ga4';
 import {
   CHANNEL_LABELS,
@@ -28,6 +29,7 @@ const channel: Channel | null = isChannel(channelParam) ? channelParam : null;
 const data = await loadFunnel(days, channel, ga4Config(Astro.request.headers), storeConfig());
 // Ad spend of the same days (lines whose period ends inside the range), for cost per contact.
 const spendStore = storeConfig();
+await refreshMetaSpend(spendStore).catch(() => null);
 const spendSince = new Intl.DateTimeFormat('en-CA', { timeZone: 'Atlantic/Canary' }).format(
   new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000),
 );
