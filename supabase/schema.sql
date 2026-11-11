@@ -31,3 +31,26 @@ create index if not exists contacts_created_at_idx on public.contacts (created_a
 
 alter table public.contacts enable row level security;
 revoke all on table public.contacts from anon, authenticated;
+
+-- Inversión en anuncios: lo gastado por plataforma, campaña y anuncio en un periodo (uno o
+-- varios días). Volver a guardar el mismo anuncio y periodo actualiza la cifra (por ejemplo,
+-- el día en curso al cerrarse).
+create table if not exists public.ad_spend (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz,
+  platform text not null check (platform in ('meta', 'google')),
+  campaign text not null,
+  ad text not null default '',
+  date_from date not null,
+  date_to date not null,
+  amount numeric(12, 2) not null check (amount >= 0),
+  notes text,
+  check (date_to >= date_from),
+  unique (platform, campaign, ad, date_from, date_to)
+);
+
+create index if not exists ad_spend_date_to_idx on public.ad_spend (date_to desc);
+
+alter table public.ad_spend enable row level security;
+revoke all on table public.ad_spend from anon, authenticated;

@@ -4,6 +4,7 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { isAdmin, NO_INDEX } from '../../lib/admin-auth';
 import { storeConfig } from '../../lib/contacts-store';
+import { listSpend, summarizeSpend } from '../../lib/ad-spend';
 import { ga4Config } from '../../lib/ga4';
 import {
   CHANNEL_LABELS,
@@ -25,6 +26,20 @@ const days: RangeDays = isRange(daysParam) ? daysParam : 30;
 const channelParam = Astro.url.searchParams.get('canal') || '';
 const channel: Channel | null = isChannel(channelParam) ? channelParam : null;
 const data = await loadFunnel(days, channel, ga4Config(Astro.request.headers), storeConfig());
+// Ad spend of the same days (lines whose period ends inside the range), for cost per contact.
+const spendStore = storeConfig();
+const spendSince = new Intl.DateTimeFormat('en-CA', { timeZone: 'Atlantic/Canary' }).format(
+  new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000),
+);
+const spend = spendStore
+  ? await listSpend(spendStore, spendSince)
+      .then(summarizeSpend)
+      .catch(() => null)
+  : null;
+const spentBy: Partial<Record<Channel, number>> = spend
+  ? { meta: spend.byPlatform.meta, google_ads: spend.byPlatform.google }
+  : {};
+const money = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' });
 // Local preview only: sample visit numbers to review the layout without Google Analytics.
 if (import.meta.env.DEV && Astro.url.searchParams.has('demo') && !data.web) {
   data.webError = '';
@@ -251,6 +266,8 @@ const deviceTotal = web?.devices.reduce((sum, d) => sum + d.people, 0) || 0;
             <th class="num">Contactos</th>
             <th class="num">Clientes</th>
             <th class="num">Contactos / 100 visitantes</th>
+            <th class="num">Inversión</th>
+            <th class="num">Coste por contacto</th>
           </tr>
         </thead>
         <tbody>
@@ -275,6 +292,12 @@ const deviceTotal = web?.devices.reduce((sum, d) => sum + d.people, 0) || 0;
                       })
                     : '—'}
                 </td>
+                <td class="num">{spentBy[c] !== undefined ? money.format(spentBy[c]!) : '—'}</td>
+                <td class="num">
+                  {spentBy[c] !== undefined && row.contacts > 0
+                    ? money.format(spentBy[c]! / row.contacts)
+                    : '—'}
+                </td>
               </tr>
             );
           })}
@@ -282,8 +305,8 @@ const deviceTotal = web?.devices.reduce((sum, d) => sum + d.people, 0) || 0;
       </table>
     </div>
     <p class="note">
-      Los visitantes solo incluyen a quien acepta cookies; los contactos son todos. Por eso la
-      última columna es orientativa.
+      Los visitantes solo incluyen a quien acepta cookies; los contactos son todos. Por eso los
+      contactos por cada 100 visitantes son orientativos. La inversión sale de la pestaña Inversión.
     </p>
   </section>
 

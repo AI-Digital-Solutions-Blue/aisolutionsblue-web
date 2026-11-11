@@ -7,7 +7,7 @@ import '../styles/admin.css';
 
 interface Props {
   title: string;
-  section: 'contactos' | 'embudo';
+  section: 'contactos' | 'embudo' | 'inversion';
   subtitle?: string;
 }
 const { title, section, subtitle } = Astro.props;
@@ -24,6 +24,12 @@ const nav = [
     href: '/admin/embudo',
     label: 'Embudo',
     icon: 'M3 4h18l-7 8.5V19l-4 2v-8.5Z',
+  },
+  {
+    key: 'inversion',
+    href: '/admin/inversion',
+    label: 'Inversión',
+    icon: 'M18 7a7 7 0 1 0 0 10M4 10h10M4 14h10',
   },
 ] as const;
 ---

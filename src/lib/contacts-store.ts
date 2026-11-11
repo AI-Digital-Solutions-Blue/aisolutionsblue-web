@@ -84,7 +84,7 @@ function headers(config: StoreConfig, extra: Record<string, string> = {}) {
   return out;
 }
 
-async function call(config: StoreConfig, path: string, init: RequestInit = {}) {
+export async function call(config: StoreConfig, path: string, init: RequestInit = {}) {
   const response = await (config.fetch || fetch)(`${config.url}/rest/v1/${path}`, {
     ...init,
     headers: headers(config, (init.headers as Record<string, string>) || {}),

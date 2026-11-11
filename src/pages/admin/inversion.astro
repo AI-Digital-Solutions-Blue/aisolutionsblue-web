@@ -1,0 +1,555 @@
+---
+// Ad spend of the portal: what each campaign and ad cost, and what each contact cost.
+// Lines are typed in from Meta's Ads Manager and Google Ads; same password as the rest.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { isAdmin, NO_INDEX } from '../../lib/admin-auth';
+import {
+  euros,
+  listSpend,
+  PLATFORM_LABELS,
+  PLATFORMS,
+  SPEND_ERRORS,
+  summarizeSpend,
+  type AdSpend,
+} from '../../lib/ad-spend';
+import { listContactsSince, storeConfig, type FunnelContact } from '../../lib/contacts-store';
+import { channelOfContact } from '../../lib/funnel';
+
+export const prerender = false;
+for (const [name, value] of Object.entries(NO_INDEX)) Astro.response.headers.set(name, value);
+if (!isAdmin(Astro.cookies)) return Astro.redirect('/admin', 303);
+
+const RANGES = [7, 30, 90, 0] as const;
+const daysParam = Number(Astro.url.searchParams.get('dias') ?? 30);
+const days = (RANGES as readonly number[]).includes(daysParam) ? daysParam : 30;
+const back = days === 30 ? '' : `?dias=${days}`;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const canaryDay = (date: Date) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'Atlantic/Canary' }).format(date);
+const today = canaryDay(new Date());
+const since = days ? canaryDay(new Date(Date.now() - (days - 1) * DAY_MS)) : '';
+
+const params = Astro.url.searchParams;
+const errorCode = params.get('error') || '';
+const error = errorCode in SPEND_ERRORS ? SPEND_ERRORS[errorCode as keyof typeof SPEND_ERRORS] : '';
+const done =
+  params.get('hecho') === 'guardado'
+    ? 'Gasto guardado.'
+    : params.get('hecho') === 'eliminado'
+      ? 'Línea eliminada.'
+      : '';
+
+const store = storeConfig();
+let rows: AdSpend[] = [];
+let contacts: FunnelContact[] = [];
+let loadError = '';
+if (!store) loadError = SPEND_ERRORS.db;
+else {
+  const [spend, leads] = await Promise.allSettled([
+    listSpend(store, since || undefined),
+    listContactsSince(store, since ? new Date(`${since}T00:00:00Z`) : new Date(0)),
+  ]);
+  if (spend.status === 'fulfilled') rows = spend.value;
+  else
+    loadError =
+      'No se ha podido leer la inversión. Si es la primera vez, falta crear la tabla ad_spend en Supabase.';
+  if (leads.status === 'fulfilled') contacts = leads.value;
+}
+const summary = summarizeSpend(rows);
+const valid = contacts.filter((c) => c.status !== 'descartado');
+const leadsBy = {
+  meta: valid.filter((c) => channelOfContact(c) === 'meta').length,
+  google: valid.filter((c) => channelOfContact(c) === 'google_ads').length,
+};
+const paidLeads = leadsBy.meta + leadsBy.google;
+
+const count = (n: number) => `${n} ${n === 1 ? 'contacto' : 'contactos'}`;
+const money = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' });
+const perLead = (spent: number, leads: number) => (leads > 0 ? money.format(spent / leads) : '—');
+const shortDate = new Intl.DateTimeFormat('es-ES', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+const period = (from: string, to: string) => {
+  const a = shortDate.format(new Date(`${from}T00:00:00Z`));
+  const b = shortDate.format(new Date(`${to}T00:00:00Z`));
+  return from === to ? a : `${a} – ${b}`;
+};
+const campaignNames = [...new Set(rows.map((r) => r.campaign))];
+const adNames = [...new Set(rows.map((r) => r.ad).filter(Boolean))];
+const rangeLabel = (d: number) => (d ? `${d} días` : 'Todo');
+const icons = {
+  euro: 'M18 7a7 7 0 1 0 0 10M4 10h10M4 14h10',
+  meta: 'M4 15.5C4 10 6.5 6 9 6c3 0 5 6.5 7 9.5 1 1.5 2 2.5 3 2.5 1.6 0 2-2 2-4 0-4-2-8-4.5-8C13 6 11 12 8.5 15.5 7.5 17 6.5 18 5.5 18 4.5 18 4 17 4 15.5Z',
+  google:
+    'M21 12.2c0-.7-.1-1.3-.2-1.9H12v3.6h5a4.3 4.3 0 0 1-1.9 2.8v2.3h3A9 9 0 0 0 21 12.2ZM12 21a9 9 0 0 0 6.1-2.2l-3-2.3a5.6 5.6 0 0 1-8.3-2.9H3.7v2.4A9 9 0 0 0 12 21ZM6.8 13.6a5.4 5.4 0 0 1 0-3.4V7.8H3.7a9 9 0 0 0 0 8.2ZM12 6.6c1.4 0 2.6.5 3.6 1.4l2.6-2.6A9 9 0 0 0 3.7 7.8l3.1 2.4A5.4 5.4 0 0 1 12 6.6Z',
+  person: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z',
+  target:
+    'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
+  trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6',
+};
+---
+
+<AdminLayout
+  title="Inversión"
+  section="inversion"
+  subtitle={
+    summary.from
+      ? `Gasto en anuncios · ${period(summary.from, summary.to)}`
+      : 'Gasto en anuncios por campaña y anuncio'
+  }
+>
+  <div class="toolbar">
+    <nav class="segmented" aria-label="Periodo">
+      {RANGES.map((d) => (
+        <a
+          href={d === 30 ? '/admin/inversion' : `/admin/inversion?dias=${d}`}
+          aria-current={d === days ? 'page' : undefined}
+        >
+          {rangeLabel(d)}
+        </a>
+      ))}
+    </nav>
+  </div>
+
+  {done && (
+    <div class="alert alert-ok" role="status">
+      {done}
+    </div>
+  )}
+  {error && <div class="alert alert-error">{error}</div>}
+  {loadError && <div class="alert alert-error">{loadError}</div>}
+
+  <section class="kpis" aria-label="Resumen de la inversión">
+    {[
+      { label: 'Inversión total', value: money.format(summary.total), icon: icons.euro },
+      {
+        label: 'Meta',
+        value: money.format(summary.byPlatform.meta),
+        icon: icons.meta,
+        sub: `${count(leadsBy.meta)} · ${perLead(summary.byPlatform.meta, leadsBy.meta)} cada uno`,
+      },
+      {
+        label: 'Google Ads',
+        value: money.format(summary.byPlatform.google),
+        icon: icons.google,
+        sub: `${count(leadsBy.google)} · ${perLead(summary.byPlatform.google, leadsBy.google)} cada uno`,
+      },
+      {
+        label: 'Contactos de anuncios',
+        value: String(paidLeads),
+        icon: icons.person,
+        sub: 'Sin contar los descartados',
+      },
+      {
+        label: 'Coste por contacto',
+        value: perLead(summary.total, paidLeads),
+        icon: icons.target,
+        sub: paidLeads ? 'Inversión ÷ contactos de anuncios' : 'Aún sin contactos de anuncios',
+      },
+    ].map((kpi) => (
+      <div class="card kpi">
+        <span class="kpi-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path d={kpi.icon} />
+          </svg>
+        </span>
+        <span class="kpi-label">{kpi.label}</span>
+        <strong>{kpi.value}</strong>
+        {kpi.sub && <span class="kpi-sub">{kpi.sub}</span>}
+      </div>
+    ))}
+  </section>
+
+  <div class="spend-layout">
+    <div class="campaigns">
+      {summary.campaigns.length === 0 && !loadError && (
+        <div class="card empty">
+          <strong>Todavía no hay gastos en este periodo</strong>
+          <span>
+            Regístralos con el formulario: plataforma, campaña, anuncio, fechas e importe.
+          </span>
+        </div>
+      )}
+      {summary.campaigns.map((group) => (
+        <section class="card panel">
+          <div class="campaign-head">
+            <div>
+              <span class={`platform ${group.platform}`}>{PLATFORM_LABELS[group.platform]}</span>
+              <h2>{group.campaign}</h2>
+            </div>
+            <strong class="tnum">{money.format(group.total)}</strong>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Anuncio</th>
+                  <th>Periodo</th>
+                  <th class="num">Importe</th>
+                  <th class="num">
+                    <span class="sr-only">Acciones</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {group.rows.map((row) => (
+                  <tr>
+                    <td>
+                      <span class="ad-name">{row.ad || 'Toda la campaña'}</span>
+                      {row.notes && <span class="row-note">{row.notes}</span>}
+                    </td>
+                    <td class="when">{period(row.date_from, row.date_to)}</td>
+                    <td class="num amount">{money.format(euros(row.amount))}</td>
+                    <td class="num">
+                      <details class="row-delete">
+                        <summary title="Eliminar esta línea" aria-label="Eliminar esta línea">
+                          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                            <path d={icons.trash} />
+                          </svg>
+                        </summary>
+                        <form method="post" action="/api/admin/spend">
+                          <input type="hidden" name="action" value="delete" />
+                          <input type="hidden" name="id" value={row.id} />
+                          <input type="hidden" name="back" value={back} />
+                          <button class="btn btn-danger" type="submit">
+                            Eliminar
+                          </button>
+                        </form>
+                      </details>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <aside class="card panel add">
+      <div class="panel-head">
+        <h2>Registrar gasto</h2>
+        <p>
+          Si el anuncio y las fechas ya existen, se actualiza el importe (por ejemplo, al cerrar el
+          día).
+        </p>
+      </div>
+      <form class="add-form" method="post" action="/api/admin/spend">
+        <input type="hidden" name="back" value={back} />
+        <label for="platform">Plataforma</label>
+        <select class="field" id="platform" name="platform" required>
+          {PLATFORMS.map((p) => (
+            <option value={p}>{PLATFORM_LABELS[p]}</option>
+          ))}
+        </select>
+        <label for="campaign">Campaña</label>
+        <input
+          class="field"
+          id="campaign"
+          name="campaign"
+          list="campaigns"
+          maxlength="160"
+          required
+        />
+        <datalist id="campaigns">
+          {campaignNames.map((name) => (
+            <option value={name} />
+          ))}
+        </datalist>
+        <label for="ad">
+          Anuncio <span class="optional">(opcional)</span>
+        </label>
+        <input class="field" id="ad" name="ad" list="ads" maxlength="160" />
+        <datalist id="ads">
+          {adNames.map((name) => (
+            <option value={name} />
+          ))}
+        </datalist>
+        <div class="two">
+          <div>
+            <label for="date_from">Desde</label>
+            <input
+              class="field"
+              id="date_from"
+              name="date_from"
+              type="date"
+              value={today}
+              required
+            />
+          </div>
+          <div>
+            <label for="date_to">Hasta</label>
+            <input class="field" id="date_to" name="date_to" type="date" value={today} required />
+          </div>
+        </div>
+        <label for="amount">Importe (€)</label>
+        <input
+          class="field"
+          id="amount"
+          name="amount"
+          inputmode="decimal"
+          placeholder="0,00"
+          pattern="[0-9]+([.,][0-9]{1,2})?"
+          required
+        />
+        <label for="notes">
+          Nota <span class="optional">(opcional)</span>
+        </label>
+        <input
+          class="field"
+          id="notes"
+          name="notes"
+          maxlength="300"
+          placeholder="Ej.: día en curso"
+        />
+        <button class="btn btn-primary" type="submit">
+          Guardar gasto
+        </button>
+      </form>
+    </aside>
+  </div>
+  <p class="note foot">
+    Las cifras se copian del Administrador de anuncios de Meta y de Google Ads. Los contactos
+    cuentan por el canal del que vienen (Meta incluye su formulario instantáneo).
+  </p>
+</AdminLayout>
+
+<style is:global>
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi {
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    padding: 18px 18px 16px;
+  }
+  .kpi-icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    color: var(--blue);
+    background: var(--blue-soft);
+  }
+  .kpi-icon svg,
+  .row-delete svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .kpi-label {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .kpi strong {
+    font: 700 26px/1.15 var(--display);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--faint);
+  }
+  .spend-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 16px;
+    align-items: start;
+  }
+  .campaigns {
+    display: grid;
+    gap: 16px;
+  }
+  .campaign-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .campaign-head h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+  .campaign-head > strong {
+    font: 700 20px/1.2 var(--display);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .platform {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .platform.meta {
+    background: #e7f0ff;
+    color: var(--meta);
+  }
+  .platform.google {
+    background: #fff4d6;
+    color: #8a5a00;
+  }
+  .ad-name {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .row-note {
+    display: block;
+    font-size: 12px;
+    color: var(--amber);
+  }
+  td.when {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  td.amount {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .row-delete {
+    position: relative;
+    display: inline-block;
+  }
+  .row-delete summary {
+    list-style: none;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    color: #e5776d;
+    cursor: pointer;
+  }
+  .row-delete summary::-webkit-details-marker {
+    display: none;
+  }
+  .row-delete summary:hover,
+  .row-delete[open] summary {
+    color: var(--red);
+    background: var(--red-soft);
+  }
+  .row-delete form {
+    position: absolute;
+    right: 0;
+    top: 34px;
+    z-index: 5;
+    padding: 6px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow-hover);
+  }
+  .row-delete .btn {
+    height: 32px;
+    padding: 0 12px;
+  }
+  .table-wrap:has(.row-delete[open]) {
+    overflow: visible;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .add {
+    position: sticky;
+    top: 24px;
+  }
+  .add-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  .add-form .field {
+    min-width: 0;
+  }
+  .add-form label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .add-form label:first-of-type {
+    margin-top: 0;
+  }
+  .optional {
+    font-weight: 400;
+    color: var(--faint);
+  }
+  .add-form select {
+    appearance: none;
+    padding-right: 34px;
+    background: #fff
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23667089' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      no-repeat right 12px center;
+  }
+  .two {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+  .two > div {
+    display: grid;
+    gap: 6px;
+  }
+  .add-form .btn {
+    margin-top: 12px;
+  }
+  .empty {
+    display: grid;
+    gap: 4px;
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--muted);
+  }
+  .empty strong {
+    color: var(--ink);
+    font-family: var(--display);
+  }
+  .note {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .note.foot {
+    text-align: center;
+    margin-top: 20px;
+  }
+  @media (max-width: 1100px) {
+    .kpis {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .spend-layout {
+      grid-template-columns: 1fr;
+    }
+    .add {
+      position: static;
+      order: -1;
+    }
+  }
+  @media (max-width: 560px) {
+    .kpis {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .kpi strong {
+      font-size: 22px;
+    }
+  }
+</style>
