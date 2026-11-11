@@ -124,6 +124,26 @@ const icons = {
     </nav>
   </div>
 
+  <div class={`sync ${metaSync && !metaSync.ok ? 'bad' : metaConnected ? 'ok' : 'off'}`}>
+    <span class="sync-dot" aria-hidden="true"></span>
+    <span class="sync-text">
+      {!metaConnected
+        ? 'Meta todavía no está conectada: el gasto se registra a mano.'
+        : metaSync && !metaSync.ok
+          ? metaSync.message
+          : `Meta se actualiza sola${metaSync ? ` · ${ago(metaSync.at)}` : ''}. Google Ads se registra a mano.`}
+    </span>
+    {metaConnected && (
+      <form method="post" action="/api/admin/spend">
+        <input type="hidden" name="action" value="sync" />
+        <input type="hidden" name="back" value={back} />
+        <button class="btn btn-secondary sync-btn" type="submit">
+          Actualizar ahora
+        </button>
+      </form>
+    )}
+  </div>
+
   {done && (
     <div class="alert alert-ok" role="status">
       {done}
@@ -322,8 +342,9 @@ const icons = {
     </aside>
   </div>
   <p class="note foot">
-    Las cifras se copian del Administrador de anuncios de Meta y de Google Ads. Los contactos
-    cuentan por el canal del que vienen (Meta incluye su formulario instantáneo).
+    El gasto de Meta llega solo desde su Administrador de anuncios (por anuncio y día); el de
+    Google Ads se registra a mano. Los contactos cuentan por el canal del que vienen (Meta
+    incluye su formulario instantáneo).
   </p>
 </AdminLayout>
 
