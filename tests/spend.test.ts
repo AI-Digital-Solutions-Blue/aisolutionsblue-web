@@ -108,6 +108,12 @@ test('convierte las estadísticas de Meta en líneas por anuncio y día', () => 
       { campaign_name: 'Web', ad_name: 'D3-AUTO', spend: '7.94', date_start: '2026-11-10' },
       { campaign_name: 'Web', ad_name: 'D3', spend: '0', date_start: '2026-11-10' },
       { campaign_name: 'Form', ad_name: 'D3-AUTO', spend: '9.53', date_start: '2026-11-11' },
+      {
+        campaign_name: 'Prueba Adscena · adscena-2c5f-campaign',
+        ad_name: 'Prueba Adscena',
+        spend: '4.42',
+        date_start: '2026-11-09',
+      },
     ],
     '2026-11-11',
   );

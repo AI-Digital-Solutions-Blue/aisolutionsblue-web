@@ -66,10 +66,20 @@ export async function fetchMetaSpend(config: MetaAdsConfig, since: string, until
   return rows;
 }
 
-/** Insight rows → spend lines (one per ad and day). Ads that spent nothing are left out. */
+/**
+ * Campaigns of the ad account that are not Blue's own advertising (Adscena's tests run on the
+ * same account) and must not count as Blue's spend. Matched on the campaign name.
+ */
+export const isExcludedCampaign = (name = '') => /adscena/i.test(name);
+
+/**
+ * Insight rows → spend lines (one per ad and day). Ads that spent nothing, and campaigns that
+ * are not Blue's, are left out.
+ */
 export function toSpendLines(rows: InsightRow[], today: string): NewSpend[] {
   const lines = new Map<string, NewSpend>();
   for (const row of rows) {
+    if (isExcludedCampaign(row.campaign_name)) continue;
     const day = row.date_start || '';
     const amount = Math.round(euros(row.spend || 0) * 100) / 100;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || amount <= 0) continue;
