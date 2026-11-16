@@ -1,0 +1,454 @@
+---
+// Landing of the Google Ads search campaign «Software a medida» (PIEZA-011). Same message as the
+// ads: Blue studies how the company works and builds its own software. The contact form is the
+// shared one, so it fires the same conversions as /contacto (Google Ads, Meta Lead, GA4).
+// Copy rules: no prices, nothing «free», no invented figures, «IA» at most once, no sectors.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Contact from '../components/Contact.astro';
+import Icon from '../components/Icon.astro';
+import Orbits from '../components/Orbits.astro';
+
+export const prerender = true;
+
+const pains = [
+  {
+    title: 'Hojas de cálculo sueltas',
+    text: 'La información importante vive en archivos que solo entiende quien los hizo.',
+  },
+  {
+    title: 'Saltar entre aplicaciones',
+    text: 'Para saber cómo va el negocio hay que abrir varias herramientas que no se hablan entre sí.',
+  },
+  {
+    title: 'Datos copiados a mano',
+    text: 'Los mismos datos se escriben dos y tres veces, y con ellos llegan los errores.',
+  },
+];
+
+const builds = [
+  {
+    title: 'Software de gestión a medida',
+    text: 'Todo tu negocio en un solo lugar: clientes, pedidos, equipo y procesos, organizados como trabaja tu empresa.',
+    icon: 'M4 5h16v14H4zM4 10h16M9 10v9',
+  },
+  {
+    title: 'Aplicaciones para empresas',
+    text: 'Web, móvil o de gestión interna. Una aplicación hecha para tu equipo o para tus clientes, no un programa genérico.',
+    icon: 'M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM11 18h2',
+  },
+  {
+    title: 'Automatización de procesos e integración de herramientas',
+    text: 'Automatizamos las tareas que hoy se hacen a mano y conectamos las herramientas que ya usas, para que los datos pasen solos de una a otra. Y, donde aporta, la IA trabaja dentro de tu software.',
+    icon: 'M4 7h6v6H4zM14 11h6v6h-6zM10 10h2a2 2 0 0 1 2 2v2',
+  },
+  {
+    title: 'CRM y ERP a medida',
+    text: 'Un CRM o un ERP pensado para tu forma de vender y de operar, sin pantallas ni pasos que tu equipo no necesita.',
+    icon: 'M4 19V9M10 19V5M16 19v-7M21 19H3',
+  },
+];
+
+const steps = [
+  {
+    title: 'Escuchar',
+    text: 'Nos cuentas cómo es tu empresa, qué te frena y hacia dónde quieres crecer.',
+  },
+  {
+    title: 'Estudiar el proceso',
+    text: 'Analizamos cómo trabaja tu equipo hoy, paso a paso, antes de proponer nada.',
+  },
+  {
+    title: 'Diseñar',
+    text: 'Te proponemos una solución a tu medida y la ajustamos contigo antes de programarla.',
+  },
+  {
+    title: 'Construir',
+    text: 'Desarrollamos tu software y lo probamos con tu forma real de trabajar.',
+  },
+  {
+    title: 'Acompañar',
+    text: 'Lo ponemos en marcha contigo y con tu equipo, para que se use desde el primer día.',
+  },
+];
+---
+
+<Layout
+  title="Software a medida para tu empresa · Blue"
+  description="Desarrollamos software a medida para empresas: software de gestión, aplicaciones, automatización de procesos, integración de herramientas y CRM o ERP a medida. Primero estudiamos cómo trabajas."
+>
+  <Header />
+  <main id="main" class="sam">
+    <section class="sam-hero" aria-labelledby="sam-title">
+      <Orbits at="top-right" />
+      <div class="shell">
+        <p class="sam-eyebrow">Software a medida</p>
+        <h1 id="sam-title">Software a medida para tu empresa.</h1>
+        <div class="sam-hero-lead">
+          <p class="sam-promise">
+            Primero estudiamos cómo trabaja tu empresa. Después construimos tu software.{' '}
+            <span class="blue-text">Solo tuyo, a tu medida.</span>
+          </p>
+          <div class="sam-actions">
+            <a class="button button-blue" href="#contacto">
+              Cuéntanos cómo trabajas <Icon name="arrow" size={18} />
+            </a>
+            <a class="text-link" href="#caso">
+              Ver un caso real <Icon name="arrow" size={16} />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sam-section sam-problem" aria-labelledby="sam-problem-title">
+      <div class="shell">
+        <div class="sam-intro">
+          <div>
+            <p class="sam-eyebrow">El problema</p>
+            <h2 id="sam-problem-title">Tu empresa creció. Tus herramientas, no.</h2>
+          </div>
+          <p>
+            Lo que funcionaba cuando erais pocos hoy se queda corto. El día a día se reparte entre
+            archivos, aplicaciones y la memoria de alguien del equipo.
+          </p>
+        </div>
+        <ul class="sam-pains">
+          {pains.map((pain) => (
+            <li>
+              <span class="sam-x" aria-hidden="true">
+                <Icon name="close" size={16} />
+              </span>
+              <h3>{pain.title}</h3>
+              <p>{pain.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="sam-section sam-builds" aria-labelledby="sam-builds-title">
+      <div class="shell">
+        <div class="sam-intro">
+          <div>
+            <p class="sam-eyebrow">Qué construimos</p>
+            <h2 id="sam-builds-title">El software que tu empresa necesita, hecho para ella.</h2>
+          </div>
+          <p>
+            Diseñamos tu software, automatizamos tus procesos y creamos las herramientas que tu
+            empresa necesita. Para que trabaje mejor y crezca.
+          </p>
+        </div>
+        <ul class="sam-cards">
+          {builds.map((build) => (
+            <li class="sam-card">
+              <svg class="sam-card-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={build.icon} />
+              </svg>
+              <h3>{build.title}</h3>
+              <p>{build.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section
+      class="sam-section sam-steps-section"
+      id="como-trabajamos"
+      aria-labelledby="sam-steps-title"
+    >
+      <div class="shell">
+        <div class="sam-intro">
+          <div>
+            <p class="sam-eyebrow">Cómo trabajamos</p>
+            <h2 id="sam-steps-title">Primero te escuchamos. Después construimos.</h2>
+          </div>
+          <p>Un software a medida empieza por entender tu negocio, no por programar.</p>
+        </div>
+        <ol class="sam-steps">
+          {steps.map((step, i) => (
+            <li>
+              <span class="sam-step-n" aria-hidden="true">
+                {i + 1}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="sam-section sam-case" id="caso" aria-labelledby="sam-case-title">
+      <div class="shell sam-case-layout">
+        <div class="sam-case-copy">
+          <p class="sam-eyebrow">Un caso real</p>
+          <h2 id="sam-case-title">Siweb, una plataforma hecha a medida.</h2>
+          <p>
+            Siweb reúne en un solo lugar las llamadas, los contactos, las campañas y las
+            estadísticas de un equipo. Es software a medida: pensado para su forma de trabajar.
+          </p>
+          <a class="text-link" href="/productos/siweb">
+            Ver el caso de Siweb <Icon name="arrow" size={16} />
+          </a>
+        </div>
+        <figure class="sam-case-shot">
+          <img
+            src="/assets/siweb/siweb.2.webp"
+            alt="Plataforma Siweb con llamadas programadas y la ficha de un contacto"
+            width="1200"
+            height="900"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </div>
+    </section>
+
+    <Contact
+      heading="h2"
+      title="Cuéntanos cómo trabajas."
+      intro="Cuéntanos cómo trabaja tu empresa y qué te gustaría mejorar. Te respondemos para ver juntos qué software necesita."
+      placeholder="Por ejemplo: llevamos los pedidos en hojas de cálculo y queremos tenerlo todo en un solo lugar."
+    />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .sam-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(72px, 10vw, 140px) clamp(64px, 8vw, 110px);
+    background: radial-gradient(70rem 32rem at 85% -10%, #e8eeff 0%, transparent 70%);
+  }
+  .sam-hero > .shell {
+    position: relative;
+  }
+  .sam-eyebrow {
+    margin: 0 0 18px;
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: 0.4px;
+    color: var(--blue);
+  }
+  .sam-hero h1 {
+    max-width: 15ch;
+    margin: 0;
+    font-family: var(--display);
+    font-size: clamp(46px, 7vw, 96px);
+    font-weight: 550;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+  .sam-hero-lead {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 32px 64px;
+    align-items: end;
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+  .sam-promise {
+    margin: 0;
+    max-width: 30ch;
+    font-family: var(--display);
+    font-size: clamp(22px, 2.2vw, 30px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+  .sam-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 28px;
+  }
+  .sam-section {
+    padding-block: clamp(72px, 9vw, 120px);
+  }
+  .sam-problem {
+    background: var(--mist);
+  }
+  .sam-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 24px 64px;
+    align-items: end;
+    margin-bottom: clamp(36px, 5vw, 64px);
+  }
+  .sam-intro h2,
+  .sam-case h2 {
+    margin: 0;
+    font-size: clamp(34px, 4.2vw, 58px);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+  .sam-intro > p {
+    margin: 0;
+    max-width: 46ch;
+    color: var(--muted);
+    font-size: 17px;
+  }
+  .sam-pains,
+  .sam-cards,
+  .sam-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .sam-pains {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .sam-pains li {
+    padding: 28px;
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .sam-x {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 18px;
+    border-radius: 50%;
+    color: #c2410c;
+    background: #fff1e8;
+  }
+  .sam-pains h3,
+  .sam-card h3,
+  .sam-steps h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .sam-pains p,
+  .sam-card p,
+  .sam-steps p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .sam-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sam-card {
+    padding: 32px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: linear-gradient(160deg, #fff 0%, #f6f8ff 100%);
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s,
+      border-color 0.25s;
+  }
+  .sam-card:hover {
+    transform: translateY(-3px);
+    border-color: #c9d6ff;
+    box-shadow: 0 18px 40px -22px #2f5bff55;
+  }
+  .sam-card-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 22px;
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--blue);
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sam-steps-section {
+    background: var(--ink);
+    color: #fff;
+  }
+  .sam-steps-section .sam-eyebrow {
+    color: var(--blue-light);
+  }
+  .sam-steps-section .sam-intro > p,
+  .sam-steps p {
+    color: #b8c2d8;
+  }
+  .sam-steps {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    counter-reset: step;
+  }
+  .sam-steps li {
+    position: relative;
+    padding-top: 22px;
+    border-top: 1px solid #ffffff2a;
+  }
+  .sam-step-n {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    font-family: var(--display);
+    font-weight: 650;
+    background: var(--blue);
+    color: #fff;
+  }
+  .sam-case-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 40px 72px;
+    align-items: center;
+  }
+  .sam-case-copy p:not(.sam-eyebrow) {
+    margin: 22px 0 18px;
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 44ch;
+  }
+  .sam-case-shot {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 24px;
+    background: linear-gradient(150deg, #0d2a73 0%, #1f5bff 120%);
+    padding: clamp(18px, 3vw, 36px);
+  }
+  .sam-case-shot img {
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    box-shadow: 0 30px 60px -30px #000a;
+  }
+  @media (max-width: 1100px) {
+    .sam-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      row-gap: 36px;
+    }
+  }
+  @media (max-width: 860px) {
+    .sam-hero-lead,
+    .sam-intro,
+    .sam-case-layout {
+      grid-template-columns: 1fr;
+    }
+    .sam-pains,
+    .sam-cards {
+      grid-template-columns: 1fr;
+    }
+    .sam-steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 520px) {
+    .sam-steps {
+      grid-template-columns: 1fr;
+    }
+    .sam-pains li,
+    .sam-card {
+      padding: 24px;
+    }
+  }
+</style>

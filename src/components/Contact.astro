@@ -7,8 +7,18 @@ interface Props {
   id?: string;
   /** Section heading; the home page closes with its own line. */
   title?: string;
+  /** Line under the heading. */
+  intro?: string;
+  /** Example shown in the message field. */
+  placeholder?: string;
 }
-const { heading = 'h1', id = 'contacto', title = 'Contáctanos.' } = Astro.props;
+const {
+  heading = 'h1',
+  id = 'contacto',
+  title = 'Contáctanos.',
+  intro = 'Cuéntanos cómo es tu negocio y vemos juntos qué te frena y qué tecnología te ayudaría a crecer.',
+  placeholder = 'Por ejemplo: contestamos muchas llamadas para dar citas y se nos escapan clientes.',
+} = Astro.props;
 const Heading = heading;
 ---
 
@@ -16,10 +26,7 @@ const Heading = heading;
   <div class="shell contact-layout">
     <div class="contact-copy">
       <Heading id="contact-title">{title}</Heading>
-      <p>
-        Cuéntanos cómo es tu negocio y vemos juntos qué te frena y qué tecnología te ayudaría a
-        crecer.
-      </p>
+      <p>{intro}</p>
       <ul class="contact-promises">
         <li>Sin compromiso.</li>
         <li>Sin tecnicismos: hablamos de tu negocio.</li>
@@ -97,7 +104,7 @@ const Heading = heading;
           required
           minlength="10"
           maxlength="3000"
-          placeholder="Por ejemplo: contestamos muchas llamadas para dar citas y se nos escapan clientes."
+          placeholder={placeholder}
         ></textarea>
       </div>
       <div class="form-trap" aria-hidden="true">
