@@ -7,10 +7,13 @@ import { hasTracking } from '../lib/tracking-config';
 interface Props {
   title?: string;
   description?: string;
+  /** Pages made only for ads stay out of search results. */
+  noindex?: boolean;
 }
 const {
   title = 'Blue · Inteligencia artificial para impulsar tu negocio',
   description = 'IA y automatización a medida para tu negocio. Atención al cliente, procesos conectados y soluciones para trabajar mejor.',
+  noindex = false,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const schema = {
@@ -44,6 +47,7 @@ const schema = {
     <meta name="color-scheme" content="light" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/assets/aisolutionsblue-favicon.ico" sizes="16x16" />
     <meta property="og:type" content="website" />

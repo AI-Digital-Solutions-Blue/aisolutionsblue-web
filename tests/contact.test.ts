@@ -121,3 +121,19 @@ test('el formulario corto puede llegar sin interés y se marca como sin indicar'
   assert.ok(result.ok);
   assert.equal(result.data.interest, 'Sin indicar');
 });
+
+test('guarda la empresa y la pone en el asunto y en el email', () => {
+  const form = valid();
+  form.set('company', 'Talleres Norte S.L.');
+  const result = validateContact(form);
+  assert.ok(result.ok);
+  assert.equal(result.data.company, 'Talleres Norte S.L.');
+  const email = contactEmail(result.data);
+  assert.equal(email.subject, 'Nueva consulta Blue · María López (Talleres Norte S.L.)');
+  assert.match(email.text, /Empresa: Talleres Norte S\.L\./);
+  const without = validateContact(valid());
+  assert.ok(without.ok);
+  assert.equal(contactEmail(without.data).subject, 'Nueva consulta Blue · María López');
+  form.set('company', 'x'.repeat(121));
+  assert.equal(validateContact(form).ok, false);
+});

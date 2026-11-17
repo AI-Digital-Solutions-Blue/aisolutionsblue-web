@@ -84,6 +84,7 @@ const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
 if (form) {
   let requestId = crypto.randomUUID();
   let submitting = false;
+  const idleLabel = form.querySelector<HTMLElement>('[data-submit-label]')?.textContent || 'Enviar';
   form.addEventListener('input', () => {
     if (!submitting) requestId = crypto.randomUUID();
   });
@@ -118,7 +119,9 @@ if (form) {
       window.blueTracking?.lead(requestId, data.get('interest') || '');
       status.dataset.state = 'success';
       status.textContent =
+        form.dataset.success ||
         '¡Gracias! Hemos recibido tu consulta. Nuestro equipo se pondrá en contacto contigo.';
+      form.dispatchEvent(new CustomEvent('contact:sent', { bubbles: true }));
       form.reset();
       requestId = crypto.randomUUID();
     } catch (error) {
@@ -135,7 +138,7 @@ if (form) {
     } finally {
       submitting = false;
       button.disabled = false;
-      label.textContent = 'Hablemos de tu proyecto';
+      label.textContent = idleLabel;
       form.removeAttribute('aria-busy');
       status.hidden = false;
       status.focus({ preventScroll: true });

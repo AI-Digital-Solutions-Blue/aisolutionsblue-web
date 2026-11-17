@@ -44,6 +44,7 @@ export interface NewContact {
   source: ContactSource;
   created_at?: string;
   name: string;
+  company?: string | null;
   email?: string | null;
   phone?: string | null;
   interest?: string | null;

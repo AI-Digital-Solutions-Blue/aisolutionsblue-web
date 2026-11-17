@@ -1,0 +1,618 @@
+---
+// Landing of the Meta ads: the form first, on the first screen of a phone. No navigation and no
+// way out but the legal pages; kept out of search results (noindex) so it never competes with
+// /software-a-medida. The form is the shared one (data-contact-form, /api/contact): same
+// conversions as /contacto, and the contact reaches the portal with its campaign (utm_source).
+// Copy rules: no prices, nothing «free», no invented figures, no deadlines, no sectors.
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Orbits from '../components/Orbits.astro';
+import '../styles/home.css';
+import '../styles/software-medida.css';
+
+export const prerender = true;
+
+const trust = [
+  {
+    title: 'Te contacta una persona del equipo',
+    text: 'Hablas con alguien que va a entender tu caso, no con una respuesta automática.',
+    icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z',
+  },
+  {
+    title: 'Primero escuchamos cómo trabajas',
+    text: 'Antes de proponer nada, entendemos tu empresa y lo que hoy te frena.',
+    icon: 'M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0ZM12 7v5l3 2',
+  },
+  {
+    title: 'Software solo tuyo, a tu medida',
+    text: 'Hecho para tu forma de trabajar, no un programa genérico.',
+    icon: 'M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5Z',
+  },
+];
+
+const steps = [
+  {
+    title: 'Te escuchamos',
+    text: 'Nos cuentas cómo trabaja tu empresa y qué necesitas mejorar.',
+    icon: 'M6 9a5 5 0 0 1 5-5h10a5 5 0 0 1 5 5v6a5 5 0 0 1-5 5h-6l-5 4v-4a5 5 0 0 1-4-5zM11 12h10M11 16h6',
+  },
+  {
+    title: 'Diseñamos',
+    text: 'Te proponemos una solución a tu medida y la ajustamos contigo.',
+    icon: 'M5 7h22v18H5zM5 12h22M10 17h7M10 21h12M22 16l3 3-3 3',
+  },
+  {
+    title: 'Construimos',
+    text: 'Desarrollamos tu software y lo ponemos en marcha con tu equipo.',
+    icon: 'M6 10l10-5 10 5-10 5zM6 16l10 5 10-5M6 22l10 5 10-5',
+  },
+];
+---
+
+<Layout
+  title="Cuéntanos qué necesita tu empresa · Blue"
+  description="Software a medida, automatización de procesos y herramientas profesionales para tu empresa. Déjanos tus datos y una persona de nuestro equipo te contacta."
+  noindex
+>
+  <header class="hb-header">
+    <div class="shell">
+      <img src="/assets/logo.webp" alt="AI Digital Solutions Blue" width="1016" height="472" />
+    </div>
+  </header>
+
+  <main id="main" class="hb">
+    <!-- 1. First screen: who we are for, and the form. -->
+    <section class="hb-hero" aria-labelledby="hb-title">
+      <div class="smx-stage hb-stage">
+        <span class="smx-gridlines" aria-hidden="true"></span>
+        <span class="smx-glow" aria-hidden="true"></span>
+        <Orbits at="top-right" tone="dark" />
+        <div class="shell hb-hero-layout">
+          <div class="hb-copy">
+            <p class="smx-pill hb-pill">
+              <span aria-hidden="true"></span>Software a medida
+            </p>
+            <h1 id="hb-title">
+              Cuéntanos qué necesita tu empresa. <span class="smx-gradient">Te escuchamos.</span>
+            </h1>
+            <p class="hb-sub">
+              Si necesitas software a medida, automatizar procesos o una herramienta profesional
+              para tu negocio, déjanos tus datos y una persona de nuestro equipo te contacta.
+            </p>
+            <ul class="hb-checks">
+              {trust.map((item) => (
+                <li>
+                  <Icon name="check" size={16} />
+                  {item.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <form
+            id="formulario"
+            class="contact-form hb-form"
+            action="/api/contact"
+            method="POST"
+            aria-labelledby="hb-form-title"
+            data-contact-form
+            data-success="Recibido. Una persona de nuestro equipo leerá lo que necesitas y te contactará muy pronto."
+          >
+            <p class="form-title" id="hb-form-title">
+              Déjanos tus datos y te contactamos.
+            </p>
+            <div class="hb-fields">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="name">
+                    Nombre <span aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    placeholder="Tu nombre"
+                    required
+                    minlength="2"
+                    maxlength="100"
+                  />
+                </div>
+                <div class="form-field">
+                  <label for="company">
+                    Empresa <span aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="company"
+                    name="company"
+                    autocomplete="organization"
+                    placeholder="Tu empresa"
+                    required
+                    maxlength="120"
+                  />
+                </div>
+                <div class="form-field">
+                  <label for="phone">
+                    Teléfono <span aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    autocomplete="tel"
+                    placeholder="Tu teléfono"
+                    required
+                    pattern="[+\d\s().\-]{6,30}"
+                    maxlength="30"
+                  />
+                </div>
+                <div class="form-field">
+                  <label for="email">
+                    Email <span aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="tu@email.com"
+                    required
+                    maxlength="254"
+                  />
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="message">
+                  ¿Qué necesitas? <span aria-hidden="true">*</span>
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="3"
+                  required
+                  minlength="10"
+                  maxlength="3000"
+                  placeholder="Por ejemplo: llevamos los pedidos en hojas de cálculo y queremos tenerlo todo en un solo lugar."
+                ></textarea>
+              </div>
+              <div class="form-trap" aria-hidden="true">
+                <label for="website">Deja este campo vacío</label>
+                <input id="website" name="website" tabindex="-1" autocomplete="off" />
+              </div>
+              <label class="consent-label">
+                <input type="checkbox" name="consent" required value="yes" />
+                <span>
+                  Acepto la{' '}
+                  <a href="/privacy-policy" target="_blank" rel="noopener">
+                    política de privacidad<span class="sr-only"> (nueva pestaña)</span>
+                  </a>{' '}
+                  y los{' '}
+                  <a href="/terms-and-conditions" target="_blank" rel="noopener">
+                    términos<span class="sr-only"> (nueva pestaña)</span>
+                  </a>
+                  .
+                </span>
+              </label>
+              <button type="submit" class="button button-blue form-submit">
+                <span data-submit-label>Quiero que me contactéis</span>
+                <Icon name="arrow" size={20} />
+              </button>
+              <p class="form-note">Usaremos tus datos solo para responder a tu consulta.</p>
+            </div>
+            <div class="form-status" tabindex="-1" role="status" aria-live="polite" hidden></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Why talk to Blue. -->
+    <section class="hb-trust" aria-labelledby="hb-trust-title">
+      <div class="shell">
+        <div class="section-intro">
+          <div>
+            <p class="section-eyebrow">Por qué hablar con Blue</p>
+            <h2 id="hb-trust-title" data-reveal>
+              Una conversación con quien lo va a construir.
+            </h2>
+          </div>
+          <p>
+            Somos un equipo que desarrolla software a medida: herramientas de gestión, aplicaciones
+            y procesos automatizados, pensados para cada empresa.
+          </p>
+        </div>
+        <ul class="hb-cards">
+          {trust.map((item) => (
+            <li class="hb-card">
+              <svg class="hb-card-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={item.icon} />
+              </svg>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3. Proof: Siweb. -->
+    <section class="smx-case hb-case" aria-labelledby="hb-case-title">
+      <div class="shell smx-case-layout">
+        <div class="smx-case-copy">
+          <p class="section-eyebrow">Un caso real</p>
+          <h2 id="hb-case-title" data-reveal>
+            Siweb, una plataforma hecha a medida.
+          </h2>
+          <p class="smx-lead">
+            Siweb reúne en un solo lugar las llamadas, los contactos, las campañas y las
+            estadísticas de un equipo. Es software a medida: pensado para su forma de trabajar.
+          </p>
+          <ul class="smx-case-tags">
+            <li>Llamadas</li>
+            <li>Contactos</li>
+            <li>Campañas</li>
+            <li>Estadísticas</li>
+          </ul>
+        </div>
+        <div class="smx-case-visual">
+          <figure class="smx-case-shot" data-case-shot>
+            <img
+              src="/assets/siweb/siweb.2.webp"
+              alt="Plataforma Siweb con llamadas programadas y la ficha de un contacto"
+              width="1200"
+              height="900"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. How it goes, in three steps. -->
+    <section class="process hb-process" aria-labelledby="hb-steps-title">
+      <Orbits at="bottom-right" />
+      <div class="shell">
+        <div class="section-intro">
+          <div>
+            <p class="section-eyebrow">Cómo trabajamos</p>
+            <h2 id="hb-steps-title" data-reveal>
+              Escuchamos, diseñamos, construimos.
+            </h2>
+          </div>
+          <p>Todo empieza por una conversación sobre tu empresa.</p>
+        </div>
+        <div class="process-track" data-process>
+          <span class="process-line" aria-hidden="true">
+            <span data-process-fill></span>
+          </span>
+          <ol class="process-steps">
+            {steps.map((step, i) => (
+              <li class="process-step">
+                <span class="process-index" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <svg class="process-icon" viewBox="0 0 32 32" aria-hidden="true">
+                  <path d={step.icon} pathLength="1" />
+                </svg>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Back to the form. -->
+    <section class="hb-end" aria-labelledby="hb-end-title">
+      <div class="shell">
+        <h2 id="hb-end-title" data-reveal>
+          ¿Nos cuentas qué necesita tu empresa?
+        </h2>
+        <a class="button button-blue" href="#formulario" data-to-form>
+          Ir al formulario <Icon name="arrow" size={18} />
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="hb-footer">
+    <div class="shell">
+      <span>© AI Digital Solutions Blue, S.L.</span>
+      <nav aria-label="Textos legales">
+        <a href="/privacy-policy">Privacidad</a>
+        <a href="/terms-and-conditions">Aviso legal</a>
+        <a href="/cookies">Cookies</a>
+        <button type="button" data-consent-open>
+          Configurar cookies
+        </button>
+      </nav>
+    </div>
+  </footer>
+</Layout>
+
+<script>
+  import '../scripts/home';
+  import '../scripts/softwareMedida';
+
+  // Once sent, the form gives way to a clear confirmation in the same place.
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  form?.addEventListener('contact:sent', () => {
+    form.classList.add('is-sent');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  // The last button takes the visitor back to the form and puts the cursor in it.
+  document.querySelector('[data-to-form]')?.addEventListener('click', () => {
+    setTimeout(() => form?.querySelector<HTMLInputElement>('#name')?.focus(), 500);
+  });
+</script>
+
+<style>
+  .hb-header {
+    position: relative;
+    z-index: 2;
+    padding-block: 14px;
+    background: #fff;
+  }
+  .hb-header img {
+    height: 40px;
+    width: auto;
+  }
+  .hb-hero {
+    padding-inline: clamp(8px, 2.4vw, 32px);
+  }
+  .hb-hero-layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+    gap: 40px 64px;
+    align-items: center;
+    padding-block: clamp(44px, 6vw, 88px);
+  }
+  .hb-copy h1 {
+    font-size: clamp(40px, 4.6vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  .hb-sub {
+    max-width: 44ch;
+    margin-top: 24px;
+    color: #b9c4e4;
+    font-size: clamp(17px, 1.4vw, 20px);
+    line-height: 1.55;
+  }
+  .hb-checks {
+    display: grid;
+    gap: 12px;
+    margin: 30px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hb-checks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #e3e9ff;
+    font-weight: 550;
+  }
+  .hb-checks :global(svg) {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    padding: 5px;
+    border-radius: 50%;
+    background: #2f5bff;
+    color: #fff;
+  }
+  .hb-form {
+    position: relative;
+    padding: clamp(22px, 2.6vw, 34px);
+    border: 0;
+    border-radius: 24px;
+    color: var(--ink);
+    box-shadow:
+      0 40px 90px -40px #000c,
+      0 0 0 1px #ffffff1f;
+  }
+  .hb-form .form-title {
+    margin-bottom: 18px;
+    font-family: var(--display);
+    font-size: clamp(21px, 1.8vw, 25px);
+    font-weight: 600;
+  }
+  .hb-form .form-grid {
+    gap: 14px 14px;
+  }
+  .hb-form .form-field > label {
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .hb-form input:not([type='checkbox']),
+  .hb-form textarea {
+    min-height: 46px;
+    padding: 10px 12px;
+    border-color: #c6d2e6;
+    border-radius: 10px;
+    background: #fbfcff;
+  }
+  .hb-form textarea {
+    min-height: 92px;
+  }
+  .hb-form .hb-fields > .form-field {
+    margin-top: 14px;
+  }
+  .hb-form .consent-label {
+    margin-top: 14px;
+  }
+  .hb-form .form-submit {
+    margin-top: 16px;
+  }
+  .hb-form.is-sent .hb-fields,
+  .hb-form.is-sent .form-title {
+    display: none;
+  }
+  .hb-form.is-sent .form-status {
+    margin: 0;
+    padding: 28px;
+    border-radius: 16px;
+    font-family: var(--display);
+    font-size: clamp(19px, 1.6vw, 23px);
+    line-height: 1.45;
+  }
+  .hb-trust {
+    padding-block: clamp(72px, 8vw, 120px);
+  }
+  .hb-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hb-card {
+    padding: 30px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: linear-gradient(160deg, #fff 0%, #f6f8ff 100%);
+    transition:
+      transform 0.25s,
+      box-shadow 0.25s,
+      border-color 0.25s;
+  }
+  .hb-card:hover {
+    transform: translateY(-3px);
+    border-color: #c9d6ff;
+    box-shadow: 0 18px 40px -22px #2f5bff55;
+  }
+  .hb-card-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 22px;
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--blue);
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .hb-card h3 {
+    font-size: 20px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .hb-card p {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .hb-process :global(.process-steps) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .hb-end {
+    padding-block: clamp(72px, 8vw, 120px);
+    text-align: center;
+  }
+  .hb-end h2 {
+    max-width: 18ch;
+    margin: 0 auto 30px;
+    font-size: clamp(32px, 3.6vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+  }
+  .hb-footer {
+    padding-block: 26px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .hb-footer .shell {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 24px;
+  }
+  .hb-footer nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+  .hb-footer a,
+  .hb-footer button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .hb-footer a:hover,
+  .hb-footer button:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  @media (max-width: 900px) {
+    .hb-hero-layout,
+    .hb-cards {
+      grid-template-columns: 1fr;
+    }
+    .hb-process :global(.process-steps) {
+      grid-template-columns: 1fr;
+    }
+    /* On a phone the form comes right after the headline; the reassurances follow it. */
+    .hb-copy {
+      display: contents;
+    }
+    .hb-pill {
+      display: none;
+    }
+    #formulario {
+      order: 3;
+    }
+    .hb-checks {
+      order: 4;
+      margin-top: 4px;
+    }
+    .hb-hero-layout {
+      gap: 16px;
+      padding-block: 24px 36px;
+    }
+  }
+  @media (max-width: 640px) {
+    .hb-header {
+      padding-block: 10px;
+    }
+    .hb-header img {
+      height: 32px;
+    }
+    .hb-copy h1 {
+      font-size: 30px;
+    }
+    .hb-sub {
+      margin-top: 0;
+      font-size: 15.5px;
+    }
+    .hb-form {
+      padding: 18px 16px;
+      border-radius: 18px;
+    }
+    .hb-form .form-title {
+      margin-bottom: 12px;
+      font-size: 19px;
+    }
+    .hb-form .form-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .hb-form input:not([type='checkbox']) {
+      min-height: 44px;
+      font-size: 16px;
+    }
+  }
+</style>

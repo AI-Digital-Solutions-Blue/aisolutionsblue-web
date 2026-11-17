@@ -54,3 +54,6 @@ create index if not exists ad_spend_date_to_idx on public.ad_spend (date_to desc
 
 alter table public.ad_spend enable row level security;
 revoke all on table public.ad_spend from anon, authenticated;
+
+-- Empresa del contacto (la pide el formulario de /hablemos, la página de los anuncios).
+alter table public.contacts add column if not exists company text;

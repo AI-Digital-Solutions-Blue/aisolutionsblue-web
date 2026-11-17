@@ -84,6 +84,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     await insertContact(store, {
       source: 'web',
       name: data.name,
+      ...(data.company ? { company: data.company } : {}),
       email: data.email,
       phone: data.phone || null,
       interest: data.interest,

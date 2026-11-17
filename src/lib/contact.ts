@@ -30,6 +30,8 @@ export const CONTACT_INTERESTS = [
 ];
 export interface ContactData {
   name: string;
+  /** Company of the person, when the form asks for it (the ads landing). */
+  company: string;
   email: string;
   phone: string;
   interest: string;
@@ -47,12 +49,15 @@ type Validation = { ok: true; data: ContactData } | { ok: false; message: string
 export function validateContact(form: URLSearchParams): Validation {
   const get = (key: string) => (form.get(key) || '').trim();
   const name = get('name'),
+    company = get('company'),
     email = get('email'),
     phone = get('phone'),
     interest = get('interest'),
     message = get('message');
   if (name.length < 2 || name.length > 100 || /[\r\n\x00-\x1f]/.test(name))
     return { ok: false, message: 'Escribe un nombre válido, de entre 2 y 100 caracteres.' };
+  if (company.length > 120 || /[\r\n\x00-\x1f]/.test(company))
+    return { ok: false, message: 'Revisa el nombre de la empresa (como mucho 120 caracteres).' };
   if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n]/.test(email))
     return { ok: false, message: 'Revisa tu dirección de email.' };
   if (phone.length > 30 || (phone && !/^[+\d\s().-]{6,30}$/.test(phone)))
@@ -81,6 +86,7 @@ export function validateContact(form: URLSearchParams): Validation {
     ok: true,
     data: {
       name,
+      company,
       email,
       phone,
       interest: interest || 'Sin indicar',
@@ -98,11 +104,12 @@ export function contactEmail(data: ContactData) {
   return {
     to: [...CONTACT_RECIPIENTS],
     replyTo: data.email,
-    subject: `Nueva consulta Blue · ${data.interest}`,
+    subject: `Nueva consulta Blue · ${data.name}${data.company ? ` (${data.company})` : ''}`,
     text: [
       'Nueva consulta desde aisolutionsblue.com',
       '',
       `Nombre: ${data.name}`,
+      ...(data.company ? [`Empresa: ${data.company}`] : []),
       `Email: ${data.email}`,
       `Teléfono: ${data.phone || 'No indicado'}`,
       `Interés: ${data.interest}`,
