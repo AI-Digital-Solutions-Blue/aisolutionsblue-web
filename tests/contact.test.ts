@@ -35,7 +35,7 @@ test('rechaza inyección de cabeceras, direcciones inválidas y datos fuera de l
     ['name', 'Persona\nOtra'],
     ['name', 'a'.repeat(101)],
     ['message', 'x'.repeat(3001)],
-    ['message', 'hola'],
+    ['message', '   '],
     ['phone', 'un teléfono'],
     ['interest', 'opción no permitida'],
   ]) {
@@ -136,4 +136,21 @@ test('guarda la empresa y la pone en el asunto y en el email', () => {
   assert.equal(contactEmail(without.data).subject, 'Nueva consulta Blue · María López');
   form.set('company', 'x'.repeat(121));
   assert.equal(validateContact(form).ok, false);
+});
+
+test('el email es opcional si hay teléfono y basta un «no lo sé» como necesidad', () => {
+  const form = valid();
+  form.set('email', '');
+  form.set('message', 'no lo sé');
+  const result = validateContact(form);
+  assert.ok(result.ok);
+  assert.equal(result.data.email, '');
+  const email = contactEmail(result.data);
+  assert.ok(!('replyTo' in email));
+  assert.match(email.text, /Email: No indicado/);
+  form.set('phone', '');
+  assert.equal(validateContact(form).ok, false);
+  const blank = valid();
+  blank.set('message', '   ');
+  assert.equal(validateContact(blank).ok, false);
 });

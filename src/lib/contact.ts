@@ -58,17 +58,24 @@ export function validateContact(form: URLSearchParams): Validation {
     return { ok: false, message: 'Escribe un nombre válido, de entre 2 y 100 caracteres.' };
   if (company.length > 120 || /[\r\n\x00-\x1f]/.test(company))
     return { ok: false, message: 'Revisa el nombre de la empresa (como mucho 120 caracteres).' };
-  if (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n]/.test(email))
+  // Email is optional when there is a phone (the ads landing asks for the phone, not the email).
+  if (
+    email &&
+    (email.length > 254 || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) || /[\r\n]/.test(email))
+  )
     return { ok: false, message: 'Revisa tu dirección de email.' };
   if (phone.length > 30 || (phone && !/^[+\d\s().-]{6,30}$/.test(phone)))
     return { ok: false, message: 'Revisa el teléfono o deja el campo vacío.' };
+  if (!email && !phone)
+    return { ok: false, message: 'Déjanos un teléfono o un email para poder contactarte.' };
   // Optional since the short form: when sent, it must be one of the listed options.
   if (interest && !CONTACT_INTERESTS.includes(interest))
     return { ok: false, message: 'Selecciona en qué podemos ayudarte.' };
-  if (message.length < 10 || message.length > 3000 || message.includes('\0'))
+  // Any text is enough («no lo sé» too); each page may ask for more in its own form.
+  if (!message || message.length > 3000 || message.includes('\0'))
     return {
       ok: false,
-      message: 'Cuéntanos qué necesitas en un mensaje de entre 10 y 3000 caracteres.',
+      message: 'Cuéntanos qué necesitas (como mucho 3000 caracteres).',
     };
   if (get('consent') !== 'yes')
     return {
@@ -103,14 +110,14 @@ export function validateContact(form: URLSearchParams): Validation {
 export function contactEmail(data: ContactData) {
   return {
     to: [...CONTACT_RECIPIENTS],
-    replyTo: data.email,
+    ...(data.email ? { replyTo: data.email } : {}),
     subject: `Nueva consulta Blue · ${data.name}${data.company ? ` (${data.company})` : ''}`,
     text: [
       'Nueva consulta desde aisolutionsblue.com',
       '',
       `Nombre: ${data.name}`,
       ...(data.company ? [`Empresa: ${data.company}`] : []),
-      `Email: ${data.email}`,
+      `Email: ${data.email || 'No indicado'}`,
       `Teléfono: ${data.phone || 'No indicado'}`,
       `Interés: ${data.interest}`,
       '',

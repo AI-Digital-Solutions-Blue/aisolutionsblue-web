@@ -83,3 +83,23 @@ test('el Lead para Meta lleva los datos cifrados y el mismo id que el píxel', (
   assert.equal(event.user_data.fbc, 'fb.1.1730000000000.AbC123');
   assert.equal(JSON.stringify(payload).includes('maria@example.com'), false);
 });
+
+test('sin email, el Lead para Meta se empareja solo con el teléfono', () => {
+  const form = new URLSearchParams({
+    name: 'Luis',
+    phone: '611 222 333',
+    message: 'una app',
+    consent: 'yes',
+    consent_ads: 'yes',
+  });
+  const result = validateContact(form);
+  assert.ok(result.ok);
+  const payload = leadPayload(result.data, {
+    pixelId: '1',
+    token: 't',
+    url: 'https://aisolutionsblue.com/hablemos',
+  });
+  const user = payload.data[0].user_data as Record<string, unknown>;
+  assert.equal(user.em, undefined);
+  assert.ok(Array.isArray(user.ph));
+});

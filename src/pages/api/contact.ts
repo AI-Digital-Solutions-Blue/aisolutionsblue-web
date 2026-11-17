@@ -85,7 +85,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       source: 'web',
       name: data.name,
       ...(data.company ? { company: data.company } : {}),
-      email: data.email,
+      email: data.email || null,
       phone: data.phone || null,
       interest: data.interest,
       message: data.message,

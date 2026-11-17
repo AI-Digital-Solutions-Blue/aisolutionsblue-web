@@ -20,7 +20,9 @@ export interface LeadContext {
 
 export function leadPayload(data: ContactData, context: LeadContext, now = Date.now()) {
   const phone = data.phone.replace(/\D/g, '');
-  const user: Record<string, string | string[]> = { em: [sha256(data.email.toLowerCase())] };
+  // Email or phone, whichever the form brought (the ads landing only requires the phone).
+  const user: Record<string, string | string[]> = {};
+  if (data.email) user.em = [sha256(data.email.toLowerCase())];
   if (phone.length >= 6) user.ph = [sha256(phone.length === 9 ? `34${phone}` : phone)];
   if (context.ip) user.client_ip_address = context.ip;
   if (context.userAgent) user.client_user_agent = context.userAgent;

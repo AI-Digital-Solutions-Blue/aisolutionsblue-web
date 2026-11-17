@@ -75,10 +75,11 @@ const steps = ['Escuchamos', 'Diseñamos', 'Construimos'];
                       name="company"
                       autocomplete="organization"
                       placeholder=" "
-                      required
                       maxlength="120"
                     />
-                    <label for="company">Empresa</label>
+                    <label for="company">
+                      Empresa <span class="hb-optional">(opcional)</span>
+                    </label>
                   </div>
                 </div>
                 <div class="hb-row">
@@ -102,10 +103,11 @@ const steps = ['Escuchamos', 'Diseñamos', 'Construimos'];
                       type="email"
                       autocomplete="email"
                       placeholder=" "
-                      required
                       maxlength="254"
                     />
-                    <label for="email">Email</label>
+                    <label for="email">
+                      Email <span class="hb-optional">(opcional)</span>
+                    </label>
                   </div>
                 </div>
                 <div class="hb-field hb-field-area">
@@ -115,7 +117,6 @@ const steps = ['Escuchamos', 'Diseñamos', 'Construimos'];
                     rows="3"
                     placeholder=" "
                     required
-                    minlength="10"
                     maxlength="3000"
                     aria-describedby="message-hint"
                   ></textarea>
@@ -213,6 +214,12 @@ const steps = ['Escuchamos', 'Diseñamos', 'Construimos'];
 <script>
   // Once sent, the form gives way to the confirmation in the same place.
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  // «¿Qué necesitas?» takes any text (even «no lo sé»), but not only spaces.
+  const need = form?.querySelector<HTMLTextAreaElement>('#message');
+  const checkNeed = () =>
+    need?.setCustomValidity(need.value.trim() ? '' : 'Cuéntanos en pocas palabras qué necesitas.');
+  need?.addEventListener('input', checkNeed);
+  checkNeed();
   form?.addEventListener('contact:sent', () => {
     form.classList.add('is-sent');
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -446,6 +453,10 @@ const steps = ['Escuchamos', 'Diseñamos', 'Construimos'];
   .hb-field textarea:not(:placeholder-shown) + label {
     transform: translateY(-11px) scale(0.76);
     color: #c9d4ff;
+  }
+  .hb-optional {
+    color: #7c88ad;
+    font-size: 0.85em;
   }
   .hb-hint {
     display: block;
